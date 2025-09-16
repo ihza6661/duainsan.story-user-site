@@ -57,7 +57,11 @@ export interface AddToCartPayload {
  */
 export const fetchCart = async (): Promise<Cart> => {
   console.log('fetchCart: Making API call to /cart'); // ADDED LOG
-  const response = await apiClient.get<CartResponse>('/cart');
+  const response = await apiClient.get<CartResponse>('/cart', {
+    headers: {
+      'X-Session-ID': localStorage.getItem('cartSessionId') || '',
+    },
+  });
   console.log('fetchCart: API response received:', response.data); // ADDED LOG
   return response.data.data;
 };
@@ -95,6 +99,6 @@ export const removeCartItem = async (itemId: number): Promise<Cart> => {
  * Removes all items from the cart.
  */
 export const clearCart = async (): Promise<Cart> => {
-  const response = await apiClient.post<CartResponse>('/cart/clear');
+  const response = await apiClient.delete<CartResponse>('/cart');
   return response.data.data;
 };

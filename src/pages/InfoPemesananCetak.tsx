@@ -9,7 +9,7 @@ const InfoPemesananCetak = () => {
       description: 'Hubungi kami melalui WhatsApp untuk mendiskusikan konsep dan kebutuhan undangan cetak Anda.',
     },
     {
-      icon: <FaPaintBrush className="text-4x" />,
+      icon: <FaPaintBrush className="text-4xl" />,
       title: '2. Konsultasi & Proses Desain',
       description: 'Tim desainer kami akan membantu mewujudkan desain impian Anda. Proses desain dimulai setelah konfirmasi.',
     },
@@ -62,7 +62,7 @@ const InfoPemesananCetak = () => {
     <div className="container mx-auto px-4 py-24 font-serif">
       <div className="text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-800">Pesan Undangan Cetak Custom</h1>
-        <p className="text-lg text-gray-600 mt-4">Wujudkan undangan impian Anda bersama Dua Insan Story. Kualitas terbaik dengan desain eksklusif.</p>
+        {/* <p className="text-lg text-gray-600 mt-4">Wujudkan undangan impian Anda bersama Dua Insan Story. Kualitas terbaik dengan desain eksklusif.</p> */}
       </div>
 
       <div className="max-w-4xl mx-auto">
@@ -113,7 +113,7 @@ const InfoPemesananCetak = () => {
           href="https://wa.me/6281234567890" // Ganti dengan nomor WhatsApp Anda
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center px-8 py-4 bg-green-500 text-white font-bold rounded-full shadow-lg hover:bg-green-600 transition-colors duration-300 text-lg"
+          className="inline-flex items-center justify-center px-8 py-4 bg-green-500 text-white font-bold rounded-full shadow-md hover:bg-green-600 transition-colors duration-300 text-lg"
         >
           <FaWhatsapp className="mr-3 text-2xl" />
           Hubungi via WhatsApp

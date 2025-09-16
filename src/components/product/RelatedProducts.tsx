@@ -31,7 +31,7 @@ const RelatedProducts = ({ categorySlug, currentProductId }: RelatedProductsProp
   return (
     <section className="py-10 bg-white">
       <h2 className="text-lg sm:text-2xl font-normal mb-4 sm:mb-6 text-center uppercase tracking-widest pt-6 sm:pt-16">
-        Produk Lainnya
+        You Might Also Like
       </h2>
       <div className="custom-scrollbar flex space-x-2 overflow-x-scroll pb-6 sm:pb-10 m-6">
         {isLoading ? (

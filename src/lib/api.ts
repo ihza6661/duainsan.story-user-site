@@ -1,25 +1,4 @@
-// src/lib/api.ts
-
 import axios from "axios";
-
-// ===================================================================
-// --- Manajemen Session ID In-Memory ---
-// ===================================================================
-
-// 1. Baca session ID dari localStorage HANYA SEKALI saat modul ini dimuat.
-let inMemoryCartSessionId: string | null = localStorage.getItem('cartSessionId');
-
-// 2. Buat helper yang bekerja dengan variabel in-memory.
-const getCartSessionId = (): string | null => {
-  return inMemoryCartSessionId;
-};
-
-// 3. Saat menyimpan, update variabel in-memory DAN localStorage.
-const setCartSessionId = (id: string) => {
-  inMemoryCartSessionId = id;
-  localStorage.setItem('cartSessionId', id);
-};
-// ===================================================================
 
 const getAuthToken = () => localStorage.getItem("authToken");
 
@@ -39,11 +18,17 @@ apiClient.interceptors.request.use(
     const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    } else if (config.url?.includes('/cart')) {
-      // Sekarang membaca dari variabel in-memory yang cepat
-      const sessionId = getCartSessionId();
+    }
+
+    // Always attach X-Session-ID for cart and guest-checkout related requests
+    if (config.url?.includes('/cart') || config.url?.includes('/guest-checkout')) {
+      const sessionId = localStorage.getItem('cartSessionId');
+      console.log(`[API Interceptor] Before request - localStorage cartSessionId: ${sessionId}`);
       if (sessionId) {
         config.headers['X-Session-ID'] = sessionId;
+        console.log(`[API Interceptor] Attaching X-Session-ID: ${sessionId} to request for ${config.url}`);
+      } else {
+        console.log(`[API Interceptor] No session ID found for ${config.url}`);
       }
     }
     return config;
@@ -54,10 +39,18 @@ apiClient.interceptors.request.use(
 // --- Response Interceptor ---
 apiClient.interceptors.response.use(
   (response) => {
+    console.log('[API Interceptor] Response from:', response.config.url);
+    console.log('[API Interceptor] Response headers:', response.headers);
+
     const newSessionId = response.headers['x-session-id'];
-    // Selalu gunakan helper untuk menyimpan, yang akan mengupdate in-memory dan localStorage
-    if (newSessionId && newSessionId !== getCartSessionId()) {
-      setCartSessionId(newSessionId);
+    if (newSessionId) {
+      console.log('[API Interceptor] Found x-session-id header:', newSessionId);
+      if (newSessionId !== localStorage.getItem('cartSessionId')) {
+        console.log('[API Interceptor] New session ID is different. Saving...', newSessionId);
+        localStorage.setItem('cartSessionId', newSessionId);
+      } else {
+        console.log('[API Interceptor] Session ID is the same. No change.');
+      }
     }
     return response;
   },

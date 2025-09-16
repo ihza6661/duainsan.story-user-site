@@ -1,7 +1,7 @@
 import api from '@/lib/api';
 
 /**
- * Mengirimkan data checkout ke server.
+ * Mengirimkan data checkout ke server untuk pengguna yang terautentikasi.
  * @param checkoutData Data dari form checkout, harus dalam bentuk FormData.
  * @returns Respon dari server.
  */
@@ -12,13 +12,30 @@ export const createOrder = async (checkoutData: FormData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-
-    const orderData = response.data.data;
-
-    return orderData;
+    return response.data.data;
   } catch (error) {
-    // Biarkan error ditangani oleh pemanggil fungsi ini
-    // agar bisa menampilkan notifikasi yang sesuai di UI.
+    throw error;
+  }
+};
+
+/**
+ * Mengirimkan data checkout ke server untuk tamu.
+ * @param checkoutData Data dari form checkout, harus dalam bentuk FormData.
+ * @returns Respon dari server.
+ */
+export const createGuestOrder = async (checkoutData: FormData) => {
+  try {
+    const sessionId = localStorage.getItem('cartSessionId');
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'multipart/form-data',
+    };
+    if (sessionId) {
+      headers['X-Session-ID'] = sessionId;
+    }
+
+    const response = await api.post('/guest-checkout', checkoutData, { headers });
+    return response.data.data;
+  } catch (error) {
     throw error;
   }
 };

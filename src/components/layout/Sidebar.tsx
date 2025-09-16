@@ -25,6 +25,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const companyItems = [
     { name: "Gallery", path: "/gallery" },
     { name: "About", path: "/about" },
+    { name: "Info Pemesanan Undangan Cetak", path: "/info-pemesanan-cetak"},
     { name: "Cara Memesan", path: "/CaraPesan" },
     { name: "Pengiriman", path: "/shipping" },
   ];
@@ -35,7 +36,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     toggleOpen: () => void,
     items: { name: string; path: string }[]
   ) => (
-    <div>
+    <div className="border-b border-gray-200 py-4">
       <button
         className={`text-shop-accent w-full text-left text-base uppercase tracking-widest flex items-center justify-between ${
           isOpen ? "text-gray-400" : ""
@@ -52,7 +53,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </button>
       <div
         className={`space-y-4 overflow-hidden transition-all duration-200 ${
-          isOpen ? "max-h-96 opacity-100 mt-4 mb-8" : "max-h-0 opacity-0"
+          isOpen ? "max-h-96 opacity-100 mt-4" : "max-h-0 opacity-0"
         }`}
       >
         {items.map((item) => (
@@ -100,8 +101,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-4 tracking-widest">
-            {/* Perbaikan: Menggunakan data kategori dari API */}
+          <nav className="flex-1 tracking-widest">
             {isLoading ? (
               <p>Memuat kategori...</p>
             ) : isError ? (

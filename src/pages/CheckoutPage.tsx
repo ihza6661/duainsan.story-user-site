@@ -6,7 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, ShoppingCart } from 'lucide-react';
 import { formatRupiah } from '@/lib/utils';
-import { createOrder } from '@/services/checkoutService';
+import { createGuestOrder, createOrder } from '@/services/checkoutService';
+import { useAuth } from '@/context/AuthContext';
+
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -14,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 
 const CheckoutPage = () => {
+  const { user } = useAuth();
   const { cart, isLoading: isCartLoading } = useCart();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,6 +24,8 @@ const CheckoutPage = () => {
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
+    customer_name: '',
+    customer_email: '',
     shipping_address: '',
     bride_full_name: '',
     groom_full_name: '',
@@ -65,7 +70,12 @@ const CheckoutPage = () => {
     });
 
     try {
-      const order = await createOrder(data);
+      let order;
+      if (user) {
+        order = await createOrder(data);
+      } else {
+        order = await createGuestOrder(data);
+      }
       toast({
         title: "Pesanan Berhasil Dibuat!",
         description: "Anda akan segera dihubungi oleh tim kami untuk proses selanjutnya.",
@@ -74,9 +84,18 @@ const CheckoutPage = () => {
       navigate(`/order-confirmation/${orderId}`);
     } catch (error: any) {
       console.error("Checkout error:", error);
+      let errorMessage = "Terjadi kesalahan saat memproses pesanan Anda.";
+      if (error.response && error.response.data) {
+        if (error.response.data.errors) {
+          // Convert validation errors object to a string
+          errorMessage = Object.values(error.response.data.errors).flat().join('\n');
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+      }
       toast({
         title: "Gagal Membuat Pesanan",
-        description: error.response?.data?.message || "Terjadi kesalahan saat memproses pesanan Anda.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -110,6 +129,23 @@ const CheckoutPage = () => {
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Kontak Anda</CardTitle>
+              <p className="text-sm text-gray-500">Kami akan mengirimkan konfirmasi pesanan ke email ini.</p>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="customer_name">Nama Anda</Label>
+                <Input id="customer_name" name="customer_name" value={formData.customer_name} onChange={handleChange} placeholder="Nama Lengkap Anda" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="customer_email">Email Anda</Label>
+                <Input id="customer_email" name="customer_email" type="email" value={formData.customer_email} onChange={handleChange} placeholder="email@example.com" required />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Form Data Pernikahan */}
           <Card>
             <CardHeader>

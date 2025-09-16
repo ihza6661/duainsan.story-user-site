@@ -10,6 +10,7 @@ import { AddToCartPayload } from "@/hooks/useCart";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Minus, ShoppingCart } from "lucide-react";
+import { SocialShare } from "@/components/ui/SocialShare";
 import ProductGallery from "./ProductGallery";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import AddOnSelector from "./AddOnSelector";
@@ -219,11 +220,24 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
             <ShoppingCart className="w-5 h-5" />
             TAMBAH KE KERANJANG
           </Button>
-          {!activeVariant && (
+
+           {!activeVariant && (
             <p className="text-sm text-center text-gray-500 mt-2">
               Pilih semua opsi untuk melanjutkan.
             </p>
           )}
+
+          <div className="pt-4 flex justify-center">
+            <SocialShare
+              url={window.location.href}
+              title={product.name}
+              media={
+                activeVariant?.images.length
+                  ? activeVariant.images[0].image_url
+                  : product.featured_image?.image_url || ""
+              }
+            />
+          </div>
         </div>
       </div>
     </div>

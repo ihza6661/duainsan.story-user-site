@@ -316,6 +316,19 @@ const CheckoutPage = () => {
                 )})}
               </div>
               <div className="border-t border-gray-200 pt-4 space-y-2">
+                <Label htmlFor="courier">Kurir</Label>
+                <Select onValueChange={setSelectedCourier} defaultValue={selectedCourier}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih kurir" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="jne">JNE</SelectItem>
+                    <SelectItem value="pos">POS Indonesia</SelectItem>
+                    <SelectItem value="jnt">J&T</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="border-t border-gray-200 pt-4 space-y-2">
                 <Label htmlFor="shipping-service">Layanan Pengiriman</Label>
                 <Select onValueChange={handleServiceSelection} disabled={isCalculatingCost || shippingServices.length === 0}>
                   <SelectTrigger>

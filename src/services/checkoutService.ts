@@ -45,7 +45,7 @@ export const createOrder = async (checkoutData: FormData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw error;
   }
@@ -67,7 +67,7 @@ export const createGuestOrder = async (checkoutData: FormData) => {
     }
 
     const response = await api.post('/guest-checkout', checkoutData, { headers });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw error;
   }

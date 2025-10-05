@@ -24,13 +24,30 @@ const CheckoutPage = () => {
   const { cart, isLoading: isCartLoading } = useCart();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [snapToken, setSnapToken] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
+    const clientKey = "Mid-client-6W1y3oBKXW-BmodW";
+
+    const script = document.createElement("script");
+    script.src = snapScript;
+    script.setAttribute("data-client-key", clientKey);
+    script.async = true;
+
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Shipping State
   const [shippingServices, setShippingServices] = useState<any[]>([]);
   const [selectedCourier, setSelectedCourier] = useState<string>("jne");
   const [shippingCost, setShippingCost] = useState<number>(0);
-  const [shippingService, setShippingService] = useState<string>("Gratis");
+  const [shippingService, setShippingService] = useState<string>(" ");
   const [isCalculatingCost, setIsCalculatingCost] = useState(false);
 
 
@@ -96,7 +113,16 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
-    formData.append("shipping_address", user?.address || "");
+    const fullAddress = [
+      user?.address,
+      user?.city_name,
+      user?.province_name,
+      user?.postal_code,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    formData.append("shipping_address", fullAddress);
     formData.append("destination_city_id", String(user?.city_id));
     formData.append("weight", "1000");
     formData.append("courier", selectedCourier);
@@ -105,8 +131,30 @@ const CheckoutPage = () => {
 
     try {
       const order = user ? await createOrder(formData) : await createGuestOrder(formData);
-      toast({ title: "Pesanan Berhasil Dibuat!", description: "Anda akan segera dihubungi oleh tim kami." });
-      navigate(`/order-confirmation/${order.id}`);
+      setSnapToken(order.snap_token);
+
+      if (order.snap_token) {
+        window.snap.pay(order.snap_token, {
+          onSuccess: function (result) {
+            console.log("success", result);
+            toast({ title: "Pembayaran Berhasil!", description: "Anda akan diarahkan ke halaman konfirmasi pesanan." });
+            navigate(`/order-confirmation/${order.data.id}`);
+          },
+          onPending: function (result) {
+            console.log("pending", result);
+            toast({ title: "Pembayaran Tertunda", description: "Selesaikan pembayaran Anda sebelum batas waktu." });
+            navigate(`/order-confirmation/${order.data.id}`);
+          },
+          onError: function (result) {
+            console.log("error", result);
+            toast({ title: "Pembayaran Gagal", description: "Silakan coba lagi.", variant: "destructive" });
+          },
+          onClose: function () {
+            toast({ title: "Pembayaran Dibatalkan", description: "Anda dapat melanjutkan pembayaran nanti dari halaman pesanan Anda." });
+          }
+        });
+      }
+
     } catch (error: any) {
       console.error("Checkout error:", error);
       const errorMessage = error.response?.data?.errors ? Object.values(error.response.data.errors).flat().join('\n') : error.response?.data?.message || "Terjadi kesalahan.";
@@ -164,17 +212,9 @@ const CheckoutPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Alamat Pengiriman</CardTitle>
-              <p className="text-sm text-gray-500">Alamat pengiriman akan diambil dari profil anda</p>
+              <p className="text-sm text-gray-500">Alamat pengiriman dari profil anda</p>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Provinsi</Label>
-                <p className="text-sm text-gray-500">{user?.province_name || ''}</p>
-              </div>
-              <div className="space-y-2">
-                <Label>Kota/Kabupaten</Label>
-                <p className="text-sm text-gray-500">{user?.city_name || ''}</p>
-              </div>
               <div className="space-y-2">
                 <Label>Provinsi</Label>
                 <p className="text-sm text-gray-500">{user?.province_name || ''}</p>
@@ -198,7 +238,7 @@ const CheckoutPage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Data Pernikahan</CardTitle>
-              <p className="text-sm text-gray-500">Silakan isi detail lengkap untuk undangan Anda.</p>
+              <p className="text-sm text-gray-500">Isi detail lengkap untuk undangan Anda.</p>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Data Mempelai */}

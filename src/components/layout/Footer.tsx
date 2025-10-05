@@ -131,7 +131,7 @@ const Footer = () => {
             >
               <li>
                 <Link
-                  to="/refunds"
+                  to="/syarat-ketentuan"
                   className="text-gray-800 text-sm block py-1 hover:text-black"
                 >
                   Syarat & Ketentuan

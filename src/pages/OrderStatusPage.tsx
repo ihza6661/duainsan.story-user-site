@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 const statusMap: { [key: string]: { text: string; variant: "default" | "secondary" | "destructive" } } = {
   pending_payment: { text: "Menunggu Pembayaran", variant: "secondary" },
   processing: { text: "Sedang Diproses", variant: "default" },
+  packing: { text: "Sedang Dikemas", variant: "default" },
   shipped: { text: "Telah Dikirim", variant: "default" },
   completed: { text: "Selesai", variant: "default" },
   cancelled: { text: "Dibatalkan", variant: "destructive" },

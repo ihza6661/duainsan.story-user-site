@@ -11,7 +11,7 @@ const features = [
   {
     icon: <FaHandshake className="text-shop-gray text-2xl md:text-3xl" />,
     title: "Legacy of Trust Since 2015",
-    desc: "Pilihan Terbaik di Kota Pontianak. Sejak 2015.",
+    desc: "Pilihan Terbaik di Kota Pontianak.",
   },
   {
     icon: <FaPaintBrush className="text-shop-gray text-2xl md:text-3xl" />,

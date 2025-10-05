@@ -35,6 +35,7 @@ import ProfilePage from "./pages/ProfilePage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderStatusPage from "./pages/OrderStatusPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+import SyaratKetentuan from "./pages/SyaratKetentuan";
 
 // Inisialisasi Query Client
 const queryClient = new QueryClient();
@@ -90,6 +91,7 @@ const App = () => (
                 <Route path="CaraPesan" element={<CaraMemesan />} />
                 <Route path="info-pemesanan-cetak" element={<InfoPemesananCetak />} />
                 <Route path="shipping-calculator" element={<ShippingForm />} />
+                <Route path="syarat-ketentuan" element={<SyaratKetentuan />} />
 
                 <Route path="*" element={<NotFound />} />
               </Route>

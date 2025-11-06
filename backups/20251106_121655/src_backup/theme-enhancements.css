@@ -1,0 +1,275 @@
+/* ============================================
+   THEME TEXTURES & DEPTH ENHANCEMENTS
+   Add these optional styles to enhance the minimalist luxury feel
+   ============================================ */
+
+@layer components {
+  /* 1. LINEN TEXTURE - Subtle fabric-like pattern */
+  .texture-linen {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      );
+  }
+
+  /* 2. PAPER GRAIN - Subtle noise texture */
+  .texture-paper-grain {
+    background-image: 
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  /* 3. WATERCOLOR WASH - Subtle gradient blend */
+  .texture-watercolor {
+    background: linear-gradient(
+      135deg, 
+      hsl(40 30% 97%) 0%, 
+      hsl(40 35% 96%) 50%, 
+      hsl(40 30% 98%) 100%
+    );
+  }
+
+  /* 4. SOFT SHADOW - Subtle depth for cards */
+  .shadow-soft {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 
+                0 2px 6px rgba(0, 0, 0, 0.03);
+  }
+
+  /* 5. ELEVATED SHADOW - More prominent depth */
+  .shadow-elevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06),
+                0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  /* 6. INSET SHADOW - Subtle pressed/recessed effect */
+  .shadow-inset {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+  }
+
+  /* 7. GLASSMORPHISM - Premium frosted glass effect */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass-effect {
+    background: rgba(40, 25, 60, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* 8. GRADIENT ACCENT - Subtle gradient for primary elements */
+  .gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(20 25% 26%) 100%
+    );
+  }
+
+  .dark .gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(270 20% 43%) 100%
+    );
+  }
+
+  /* 9. GRADIENT ACCENT GOLD - Rich gold gradient */
+  .gradient-accent {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--accent)) 0%,
+      hsl(35 50% 52%) 100%
+    );
+  }
+
+  /* 10. BUTTON HOVER WITH TEXTURE - Enhanced button interaction */
+  .btn-elegant {
+    @apply transition-all duration-200 active:scale-95;
+  }
+
+  .btn-elegant-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active;
+  }
+
+  .btn-elegant-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent-hover;
+  }
+
+  /* 11. INPUT FOCUS RING - Enhanced focus state with gold ring */
+  .input-elegant {
+    @apply bg-input border border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:outline-none transition-all duration-200;
+  }
+
+  .input-elegant-accent {
+    @apply focus:ring-accent;
+  }
+
+  /* 12. CARD WITH HOVER EFFECT - Subtle elevation on hover */
+  .card-elegant {
+    @apply bg-card text-card-foreground border border-border rounded-lg transition-all duration-300;
+  }
+
+  .card-elegant:hover {
+    @apply shadow-elevated border-border;
+  }
+
+  /* 13. LINK WITH UNDERLINE ANIMATION - Elegant link effect */
+  .link-elegant {
+    @apply relative inline-block text-primary hover:text-primary-hover transition-colors duration-200 pb-1;
+  }
+
+  .link-elegant::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300;
+  }
+
+  .link-elegant:hover::after {
+    @apply w-full;
+  }
+
+  /* 14. SECTION DIVIDER - Elegant separator with gradient fade */
+  .divider-elegant {
+    @apply h-px bg-gradient-to-r from-transparent via-border to-transparent my-8;
+  }
+
+  /* 15. ACCENT HIGHLIGHT - Highlight text with warm gold background */
+  .highlight-accent {
+    @apply bg-accent/10 text-accent px-2 py-1 rounded;
+  }
+
+  /* ============================================
+     DARK MODE SPECIFIC TEXTURES
+     ============================================ */
+
+  .dark {
+    /* Slightly warmer background for dark mode */
+    background-color: hsl(270 15% 11%);
+  }
+
+  .dark .texture-linen {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 2px,
+        rgba(255, 255, 255, 0.03) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.03) 2px,
+        rgba(255, 255, 255, 0.03) 4px
+      );
+  }
+
+  .dark .texture-paper-grain {
+    background-image: 
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilterDark'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilterDark)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+
+  .dark .shadow-soft {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 
+                0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .shadow-elevated {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25),
+                0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* ============================================
+     ANIMATION UTILITIES
+     ============================================ */
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(
+      to right,
+      hsl(var(--card)) 0%,
+      hsl(var(--card)) 20%,
+      hsl(var(--muted)) 50%,
+      hsl(var(--card)) 80%,
+      hsl(var(--card)) 100%
+    );
+    background-size: 1000px 100%;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+/* ============================================
+   USAGE GUIDE
+   ============================================
+
+   ADD TO BODY:
+   - texture-linen: Subtle fabric texture
+   - texture-paper-grain: Paper grain effect
+   - texture-watercolor: Gradient watercolor blend
+
+   ADD TO CARDS:
+   - card-elegant: Base elegant card with hover
+   - shadow-soft: Subtle shadow
+   - shadow-elevated: More prominent shadow
+
+   ADD TO BUTTONS:
+   - btn-elegant: Base button with interactions
+   - btn-elegant-primary: Primary button style
+   - btn-elegant-accent: Accent button style
+
+   ADD TO INPUTS:
+   - input-elegant: Base input with enhanced focus
+   - input-elegant-accent: Focus ring is gold
+
+   ADD TO LINKS:
+   - link-elegant: Animated underline on hover
+
+   ADD TO SECTIONS:
+   - divider-elegant: Elegant separator line
+
+   EXAMPLE HTML:
+   
+   <body class="texture-linen">
+     <card class="card-elegant shadow-soft">
+       <h2>Invitation</h2>
+       <p>Join us for a celebration</p>
+       <button class="btn-elegant btn-elegant-accent">RSVP</button>
+     </card>
+     <a href="/gallery" class="link-elegant">View Gallery</a>
+   </body>
+
+   ============================================ */

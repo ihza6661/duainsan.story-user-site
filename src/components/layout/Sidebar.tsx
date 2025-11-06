@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCategories } from "@/services/productService";
-import type { ProductCategory } from "@/services/productService";
+import { fetchCategories } from "@/services/ecommerce/productService";
+import type { ProductCategory } from "@/services/ecommerce/productService";
 
 interface SidebarProps {
   isOpen: boolean;

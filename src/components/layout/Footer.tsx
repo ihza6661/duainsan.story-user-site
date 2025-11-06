@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCategories } from "@/services/productService";
-import type { ProductCategory } from "@/services/productService";
-import "../../index.css";
+import { fetchCategories } from "@/services/ecommerce/productService";
+import type { ProductCategory } from "@/services/ecommerce/productService";
+import "@/styles/index.css";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

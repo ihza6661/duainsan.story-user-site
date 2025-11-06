@@ -14,7 +14,7 @@
     "allowSyntheticDefaultImports": true,
     "moduleDetection": "force",
     "noEmit": true,
-e   "jsx": "react-jsx",
+"jsx": "react-jsx",
 
     /* Linting */
     "strict": false,

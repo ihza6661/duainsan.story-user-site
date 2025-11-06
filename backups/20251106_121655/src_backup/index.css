@@ -1,0 +1,397 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode: Modern minimalist invitation theme - Soft cream, warm brown, subtle gold */
+    
+    /* Base colors */
+    --background: 40 30% 97%;
+    /* Warm cream background with subtle warmth */
+    --foreground: 20 20% 25%;
+    /* Warm dark brown for optimal readability */
+
+    /* Cards - slightly warmer with subtle depth */
+    --card: 40 40% 96%;
+    /* Soft warm cream with gentle gold undertone */
+    --card-foreground: 20 20% 25%;
+    /* Warm brown text for consistency */
+
+    /* Popovers - consistent with cards */
+    --popover: 40 40% 96%;
+    /* Warm cream background for popovers */
+    --popover-foreground: 20 20% 25%;
+    /* Warm brown text */
+
+    /* Primary - Deep warm brown (main action color) */
+    --primary: 20 25% 22%;
+    /* Deep warm brown - elegant and sophisticated */
+    --primary-foreground: 40 30% 97%;
+    /* Cream text on dark brown */
+
+    /* Primary hover state - slightly lighter for interaction feedback */
+    --primary-hover: 20 25% 28%;
+    /* Lighter warm brown for hover */
+
+    /* Primary active state - slightly darker for pressed appearance */
+    --primary-active: 20 25% 18%;
+    /* Darker warm brown for active state */
+
+    /* Secondary - Light warm neutral */
+    --secondary: 40 25% 88%;
+    /* Very light warm cream for secondary elements */
+    --secondary-foreground: 20 20% 25%;
+    /* Warm brown text on light cream */
+
+    /* Muted - Subtle warm gray */
+    --muted: 30 20% 88%;
+    /* Muted warm neutral for disabled/secondary text */
+    --muted-foreground: 20 15% 55%;
+    /* Muted warm brown text */
+
+    /* Accent - Warm gold (elegant highlight) */
+    --accent: 35 45% 58%;
+    /* Warm gold - luxury accent without overwhelming */
+    --accent-foreground: 40 30% 97%;
+    /* Cream text on gold for contrast */
+
+    /* Accent hover state */
+    --accent-hover: 35 50% 52%;
+    /* Richer gold for interactive states */
+
+    /* Destructive - Warm muted red */
+    --destructive: 0 70% 52%;
+    /* Warm red with better contrast */
+    --destructive-foreground: 0 0% 100%;
+    /* White text on red */
+
+    /* Borders - subtle warm gray */
+    --border: 30 15% 88%;
+    /* Subtle warm border for delicate lines */
+    
+    /* Input - slightly warmer than background */
+    --input: 40 30% 94%;
+    /* Warm input background for visual hierarchy */
+    
+    /* Ring - warm brown for focus states */
+    --ring: 20 25% 30%;
+    /* Warm brown focus ring for accessibility */
+
+    --radius: 0.5rem;
+
+    /* Sidebar - light warm neutral */
+    --sidebar-background: 40 30% 96%;
+    /* Very light warm sidebar background */
+    --sidebar-foreground: 20 20% 25%;
+    /* Warm brown sidebar text */
+    --sidebar-primary: 20 25% 22%;
+    /* Deep warm brown for sidebar primary */
+    --sidebar-primary-foreground: 40 30% 97%;
+    /* Cream text on dark */
+    --sidebar-accent: 35 45% 58%;
+    /* Warm gold accent for sidebar */
+    --sidebar-accent-foreground: 40 30% 97%;
+    /* Cream text on gold */
+    --sidebar-border: 30 15% 88%;
+    /* Warm border for sidebar */
+    --sidebar-ring: 20 25% 30%;
+    /* Warm brown focus ring */
+  }
+
+  .dark {
+    /* Dark mode: Slate Gray & Rose Gold - Modern minimalist luxury */
+    
+    /* Base colors */
+    --background: 210 15% 15%;
+    /* Deep Slate Gray - sophisticated neutral base */
+    --foreground: 0 0% 95%;
+    /* Near White - clean, minimal text */
+
+    /* Cards - slightly lighter with modern tone */
+    --card: 210 12% 22%;
+    /* Slightly lighter slate for card depth */
+    --card-foreground: 0 0% 95%;
+    /* Near white text */
+
+    /* Popovers */
+    --popover: 210 12% 22%;
+    /* Slate popovers */
+    --popover-foreground: 0 0% 95%;
+    /* Near white text */
+
+    /* Primary - Charcoal Gray (main action) */
+    --primary: 210 15% 30%;
+    /* Charcoal Gray - sophisticated, minimalist primary */
+    --primary-foreground: 0 0% 95%;
+    /* Near white text on slate */
+
+    /* Primary hover state */
+    --primary-hover: 210 15% 38%;
+    /* Lighter slate for hover feedback */
+
+    /* Primary active state */
+    --primary-active: 210 15% 23%;
+    /* Darker slate for pressed appearance */
+
+    /* Secondary - Medium Gray */
+    --secondary: 210 8% 45%;
+    /* Medium Gray - secondary elements */
+    --secondary-foreground: 210 15% 15%;
+    /* Deep slate text */
+
+    /* Muted - Muted Slate Gray */
+    --muted: 210 10% 35%;
+    /* Muted slate */
+    --muted-foreground: 0 0% 70%;
+    /* Muted light gray text */
+
+    /* Accent - Rose Gold (warm, luxurious shimmer) */
+    --accent: 15 50% 60%;
+    /* Rose Gold - adds warm luxury against cool slate */
+    --accent-foreground: 210 15% 15%;
+    /* Deep slate text on rose gold for readability */
+
+    /* Accent hover state */
+    --accent-hover: 15 55% 68%;
+    /* Brighter rose gold for interactive states */
+
+    /* Destructive - Warm coral */
+    --destructive: 0 70% 50%;
+    /* Warm coral-red with good contrast */
+    --destructive-foreground: 0 0% 95%;
+    /* Near white text on red */
+
+    /* Borders - Subtle slate */
+    --border: 210 12% 28%;
+    /* Minimal, elegant contrast */
+    
+    /* Input - slightly lighter slate */
+    --input: 210 10% 25%;
+    /* Slate input for visual hierarchy */
+    
+    /* Ring - Rose Gold for warm, minimal focus */
+    --ring: 15 50% 60%;
+    /* Rose Gold focus ring for excellent visibility */
+
+    /* Sidebar */
+    --sidebar-background: 210 12% 18%;
+    /* Slightly lighter slate sidebar */
+    --sidebar-foreground: 0 0% 95%;
+    /* Near white text */
+    --sidebar-primary: 210 15% 30%;
+    /* Charcoal Gray primary */
+    --sidebar-primary-foreground: 0 0% 95%;
+    /* Near white text */
+    --sidebar-accent: 15 50% 60%;
+    /* Rose Gold accent */
+    --sidebar-accent-foreground: 210 15% 15%;
+    /* Deep slate text on rose gold */
+    --sidebar-border: 210 12% 28%;
+    /* Slate borders */
+    --sidebar-ring: 15 50% 60%;
+    /* Rose Gold focus ring */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    width: 100%;
+    position: relative;
+  }
+
+  body {
+    @apply bg-background text-foreground font-['Jost'] antialiased;
+    /* Linen texture - subtle fabric-like pattern */
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.02) 2px,
+        rgba(0, 0, 0, 0.02) 4px
+      );
+  }
+
+  /* Dark mode - use white opacity for visible texture on dark backgrounds */
+  .dark body {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.04) 2px,
+        rgba(255, 255, 255, 0.04) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 255, 255, 0.04) 2px,
+        rgba(255, 255, 255, 0.04) 4px
+      );
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-medium tracking-tight text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  .container {
+    @apply px-4 md:px-6 max-w-[1400px] mx-auto;
+  }
+
+  /* Product transition effects */
+  .product-card-image {
+    @apply transition-all duration-300;
+  }
+
+  .product-card:hover .product-card-image {
+    @apply scale-105;
+  }
+
+  /* Smooth transition for buttons */
+  .btn-transition {
+    @apply transition-all duration-200;
+  }
+
+  /* For sticky header */
+  .sticky-header {
+    @apply fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b bg-background/90 border-border;
+  }
+}
+/* Target the scrollbar track */
+::-webkit-scrollbar {
+  width: 3px; /* vertical scrollbar width */
+  height: 3px; /* horizontal scrollbar height */
+  background: hsl(var(--border));
+}
+
+/* Scrollbar track (the background area of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary)); /* Use new theme primary color */
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* Optional: Scrollbar corner (bottom-right corner where vertical and horizontal scrollbars meet) */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* hover underline style  */
+.link-underline-animation {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.link-underline-animation::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease-in-out;
+}
+
+.link-underline-animation:hover::after {
+  transform: scaleX(1);
+}
+
+/* brand slider style */
+.slider {
+  width: 100%;
+  overflow: hidden;
+  background: hsl(var(--card));
+  padding: 2rem 0;
+}
+
+.slider .list {
+  display: flex;
+  width: max-content;
+  animation: scroll 20s linear infinite;
+}
+
+.slider .item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+}
+
+.slider .item img {
+  height: 150px;
+  width: auto;
+  filter: grayscale(100%);
+  transition: filter 0.3s;
+}
+
+.slider .item img:hover {
+  filter: grayscale(0%);
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.3333%);
+  }
+}
+
+
+/* Optional pause on hover */
+.slider:hover .list {
+  animation-play-state: paused;
+}
+
+/* Make Swiper pagination bullets use theme colors */
+.swiper-pagination-bullet {
+  background-color: hsl(var(--primary)) !important;
+}
+.swiper-pagination-bullet-active {
+  background-color: hsl(var(--accent)) !important;
+}

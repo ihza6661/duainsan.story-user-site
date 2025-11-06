@@ -18,7 +18,18 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/pages': path.resolve(__dirname, './src/pages'),
+      '@/services': path.resolve(__dirname, './src/services'),
+      '@/hooks': path.resolve(__dirname, './src/hooks'),
+      '@/types': path.resolve(__dirname, './src/types'),
+      '@/lib': path.resolve(__dirname, './src/lib'),
+      '@/context': path.resolve(__dirname, './src/context'),
+      '@/styles': path.resolve(__dirname, './src/styles'),
+      '@/assets': path.resolve(__dirname, './src/assets'),
+      '@/utils': path.resolve(__dirname, './src/lib/utils'),
+      '@/api': path.resolve(__dirname, './src/lib/api'),
     },
   },
 }));

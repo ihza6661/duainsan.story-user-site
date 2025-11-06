@@ -6,12 +6,12 @@ import ShoppingBag from "@/svg/shopping-bag.svg?react";
 import UserIcon from "@/svg/user.svg?react";
 import SearchIcon from "@/svg/search.svg?react";
 import MenuIcon from "@/svg/menu.svg?react";
-import Sidebar from "./Sidebar";
-import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import Sidebar from "@/components/layout/Sidebar";
+import { ThemeSwitcher } from "@/components/ui/feature/ThemeSwitcher";
 
 // --- Impor Hook Kustom & Konteks ---
-import { useCart } from "@/hooks/use-cart";
-import { useScrollDirection } from "@/hooks/useScrollDirection";
+import { useCart } from "@/hooks/cart/use-cart";
+import { useScrollDirection } from "@/hooks/navigation/useScrollDirection";
 import { useAuth } from "@/context/useAuth";
 
 const Header = () => {

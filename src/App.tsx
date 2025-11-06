@@ -5,39 +5,39 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
 // --- Imports Provider Konteks ---
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { CartProvider } from "@/hooks/useCart";
+import { TooltipProvider } from "@/components/ui/utils/tooltip";
+import { CartProvider } from "@/hooks/cart/useCart";
 import { AuthProvider } from "@/context/AuthContext";
 
 // --- Imports Komponen UI & Layout ---
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/feedback/toaster";
+import { Toaster as Sonner } from "@/components/ui/feedback/sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/layout/ScrollToTop";
-import FloatingIcons from "@/components/ui/WhatsAppFloat";
-import ProtectedRoute from "@/components/ProtectedRoute";
-import PublicOnlyRoute from "@/components/PublicOnlyRoute";
+import FloatingIcons from "@/components/ui/feature/WhatsAppFloat";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import PublicOnlyRoute from "@/components/auth/PublicOnlyRoute";
 
 // --- Imports Halaman (Pages) ---
-import Home from "./pages/Home";
-import ShippingForm from "./components/ShippingForm"; // Import ShippingForm
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import NotFound from "./pages/NotFound";
-import Cart from "./pages/Cart";
-import Gallery from "./pages/Gallery";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import CaraMemesan from "./pages/CaraMemesan";
-import InfoPemesananCetak from "./pages/InfoPemesananCetak";
-import ProfilePage from "./pages/ProfilePage";
-import CheckoutPage from "./pages/CheckoutPage";
-import OrderStatusPage from "./pages/OrderStatusPage";
-import OrderConfirmationPage from "./pages/OrderConfirmationPage";
-import SyaratKetentuan from "./pages/SyaratKetentuan";
-import KebijakanPrivasi from "./pages/KebijakanPrivasi";
-import PengembalianRefund from "./pages/PengembalianRefund";
+import Home from "@/pages/info/Home";
+import ShippingForm from "@/components/auth/ShippingForm"; // Import ShippingForm
+import Products from "@/pages/shopping/Products";
+import ProductDetail from "@/pages/shopping/ProductDetail";
+import NotFound from "@/pages/error/NotFound";
+import Cart from "@/pages/shopping/Cart";
+import Gallery from "@/pages/info/Gallery";
+import LoginPage from "@/pages/auth/LoginPage";
+import RegisterPage from "@/pages/auth/RegisterPage";
+import CaraMemesan from "@/pages/info/CaraMemesan";
+import InfoPemesananCetak from "@/pages/info/InfoPemesananCetak";
+import ProfilePage from "@/pages/auth/ProfilePage";
+import CheckoutPage from "@/pages/shopping/CheckoutPage";
+import OrderStatusPage from "@/pages/info/OrderStatusPage";
+import OrderConfirmationPage from "@/pages/shopping/OrderConfirmationPage";
+import SyaratKetentuan from "@/pages/info/SyaratKetentuan";
+import KebijakanPrivasi from "@/pages/info/KebijakanPrivasi";
+import PengembalianRefund from "@/pages/info/PengembalianRefund";
 
 // Inisialisasi Query Client
 const queryClient = new QueryClient();

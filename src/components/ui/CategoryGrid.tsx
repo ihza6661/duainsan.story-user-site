@@ -2,8 +2,8 @@
 
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchCategories } from "@/services/productService"; // Import the API function
-import type { ProductCategory } from "@/services/productService"; // Import the type
+import { fetchCategories } from "@/services/ecommerce/productService"; // Import the API function
+import type { ProductCategory } from "@/services/ecommerce/productService"; // Import the type
 
 // Skeleton component for a better loading experience
 const CategorySkeleton = () => (

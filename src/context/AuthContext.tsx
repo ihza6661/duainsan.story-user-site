@@ -1,10 +1,10 @@
 // src/context/AuthContext.tsx (Updated with updateUser function)
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { User, logoutUser } from '../services/authService';
+import { User, logoutUser } from '@/services/auth/authService';
 
 // --- Type Definitions & Context ---
-import { AuthContext, AuthContextType } from './AuthContext-definition';
+import { AuthContext, AuthContextType } from '@/context/AuthContext-definition';
 
 
 

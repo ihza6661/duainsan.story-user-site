@@ -20,7 +20,6 @@ Reorganisasi struktur folder telah **SELESAI** dan **LIVE IN PRODUCTION**! 🎉
 For detailed information, check these files:
 
 - **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Complete folder structure details
-- **[STRUCTURE_DIAGRAM.md](./STRUCTURE_DIAGRAM.md)** - Visual before/after comparison
 - **[IMPORT_PATHS_GUIDE.md](./IMPORT_PATHS_GUIDE.md)** - Path aliases setup reference
 - **[REORGANIZATION_SUMMARY.md](./REORGANIZATION_SUMMARY.md)** - Executive summary
 - **[REORGANIZATION_COMPLETED.md](./REORGANIZATION_COMPLETED.md)** - Completion details

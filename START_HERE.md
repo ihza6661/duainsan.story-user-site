@@ -21,7 +21,6 @@ For detailed information, check these files:
 
 - **[PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - Complete folder structure details
 - **[IMPORT_PATHS_GUIDE.md](./IMPORT_PATHS_GUIDE.md)** - Path aliases setup reference
-- **[REORGANIZATION_SUMMARY.md](./REORGANIZATION_SUMMARY.md)** - Executive summary
 - **[REORGANIZATION_COMPLETED.md](./REORGANIZATION_COMPLETED.md)** - Completion details
 
 ---

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Newsletter from "@/components/ui/feature/Newsletter";
-import { products } from "@/lib/data";
+// import { products } from "@/lib/data";
 import ExploreTheNewestTrend from "@/components/layout/sections/ExploreTheNewestTrend";
 import ActualBrandSlider from "@/components/ui/feature/ActualBrandSlider";
 import CategoryGrid from "@/components/ui/CategoryGrid";
@@ -9,6 +9,9 @@ import OrderSteps from "@/pages/info/CaraMemesan";
 import DuaInsanQuotes from "@/components/layout/sections/DuaInsanQuotes";
 import BestSeller from "@/components/product/categories/BestSeller";
 import { Hero } from "@/components/hero/Hero";
+import FaqSection from "@/components/info/FaqSection";
+import MetodePembayaran from "@/components/info/MetodePembayaran";
+
 
 const Home = () => {
   const highlight = [
@@ -61,7 +64,8 @@ const Home = () => {
           </div>
         </div>
       </section>
-
+      <MetodePembayaran />
+      <FaqSection />
       <ActualBrandSlider />
 
       <Newsletter />

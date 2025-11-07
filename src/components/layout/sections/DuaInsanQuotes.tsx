@@ -1,7 +1,7 @@
 
 const VogueQuote = () => {
   return (
-    <div className="bg-background min-h-32 flex flex-col justify-center items-center text-center px-4 py-14 relative">
+    <div className="bg-secondary min-h-32 flex flex-col justify-center items-center text-center px-4 py-14 relative">
       {/* Brand Logo */}
       <img
         src="/brand_logo/duainsan.png"

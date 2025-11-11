@@ -1,5 +1,5 @@
 import { getImageUrl } from "@/lib/utils";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,7 +12,12 @@ import { formatRupiah } from "@/lib/utils";
 import { Separator } from "@/components/ui/layout-ui/separator";
 import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getOrderById, fetchOrders, getFinalPaymentSnapToken } from "@/features/order/services/orderService";
+import {
+  getOrderById,
+  fetchOrders,
+  getFinalPaymentSnapToken,
+  retryPayment,
+} from "@/features/order/services/orderService";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -28,21 +33,19 @@ interface Snap {
   ) => void;
 }
 
-declare global {
-  interface Window {
-    snap: Snap;
-  }
-}
+// declare global {
+//   interface Window {
+//     snap: Snap;
+//   }
+// }
 
+type StatusVariant = "default" | "secondary" | "destructive";
+type StatusInfo = { text: string; variant: StatusVariant; textColor?: string };
+type PaymentStatusInfo = { text: string; variant: StatusVariant };
 
-const statusMap: {
-  [key: string]: {
-    text: string;
-    variant: "default" | "secondary" | "destructive";
-    textColor?: string;
-  };
-} = {
+const statusMap: Record<string, StatusInfo> = {
   pending: { text: "Menunggu Pembayaran", variant: "secondary" },
+  pending_payment: { text: "Menunggu Pembayaran", variant: "secondary" },
   partially_paid: { text: "Dibayar Sebagian", variant: "secondary" },
   paid: { text: "Lunas", variant: "default" },
   processing: { text: "Sedang Diproses", variant: "default" },
@@ -51,13 +54,9 @@ const statusMap: {
   cancelled: { text: "Dibatalkan", variant: "destructive" },
 };
 
-const paymentStatusMap: {
-  [key: string]: {
-    text: string;
-    variant: "default" | "secondary" | "destructive";
-  };
-} = {
+const paymentStatusMap: Record<string, PaymentStatusInfo> = {
   pending: { text: "Menunggu Pembayaran", variant: "secondary" },
+  pending_payment: { text: "Menunggu Pembayaran", variant: "secondary" },
   partially_paid: { text: "Dibayar Sebagian", variant: "secondary" },
   paid: { text: "Lunas", variant: "default" },
   expired: { text: "Kedaluwarsa", variant: "destructive" },
@@ -65,9 +64,59 @@ const paymentStatusMap: {
   cancelled: { text: "Dibatalkan", variant: "destructive" },
 };
 
+const statusFallback: StatusInfo = {
+  text: "Status Tidak Diketahui",
+  variant: "secondary",
+};
+
+const paymentStatusFallback: PaymentStatusInfo = {
+  text: "Status Tidak Diketahui",
+  variant: "secondary",
+};
+
+const paymentOptionLabels: Record<string, string> = {
+  dp: "Down Payment (DP)",
+  full: "Pembayaran Penuh",
+  final: "Pelunasan Akhir",
+};
+
+const getPaymentOptionLabel = (option?: string | null) =>
+  option ? paymentOptionLabels[option] ?? option : "-";
+
+const getStatusInfo = <T extends { text: string; variant: StatusVariant }>(
+  status: string | undefined,
+  map: Record<string, T>,
+  fallback: T
+): T => {
+  if (!status) {
+    return fallback;
+  }
+
+  const direct = map[status];
+  if (direct) {
+    return direct;
+  }
+
+  const lower = status.toLowerCase();
+  if (map[lower]) {
+    return map[lower];
+  }
+
+  const normalized = lower.replace(/\s+/g, "_");
+  return map[normalized] ?? fallback;
+};
+
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
   const queryClient = useQueryClient();
+  const [retryingOrderId, setRetryingOrderId] = useState<string | null>(null);
+
+  const invalidateOrderQueries = () => {
+    if (orderId) {
+      queryClient.invalidateQueries({ queryKey: ["order", orderId] });
+    }
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -84,15 +133,14 @@ const OrderStatusPage = () => {
     };
   }, []);
 
-  const payFinalMutation = useMutation({
-    mutationFn: getFinalPaymentSnapToken,
+  const payFinalMutation = useMutation<{ token: string }, Error, string>({
+    mutationFn: (id: string) => getFinalPaymentSnapToken(id),
     onSuccess: (data) => {
       if (window.snap && data.token) {
         window.snap.pay(data.token, {
           onSuccess: () => {
             toast.success("Pembayaran sisa tagihan berhasil!");
-            queryClient.invalidateQueries({ queryKey: ["order", orderId] });
-            queryClient.invalidateQueries({ queryKey: ["orders"] });
+            invalidateOrderQueries();
           },
           onPending: () => {
             toast.info("Menunggu pembayaran Anda...");
@@ -113,6 +161,47 @@ const OrderStatusPage = () => {
     },
   });
 
+  const retryPaymentMutation = useMutation<
+    { snap_token: string; message: string },
+    Error,
+    string
+  >({
+    mutationFn: (id: string) => retryPayment(id),
+    onMutate: (id) => {
+      setRetryingOrderId(id);
+    },
+    onSuccess: (data) => {
+      if (window.snap && data.snap_token) {
+        window.snap.pay(data.snap_token, {
+          onSuccess: () => {
+            toast.success("Pembayaran berhasil!");
+            invalidateOrderQueries();
+          },
+          onPending: () => {
+            toast.info("Menunggu pembayaran Anda...");
+          },
+          onError: () => {
+            toast.error("Pembayaran gagal. Silakan coba lagi.");
+          },
+          onClose: () => {
+            toast.info("Anda menutup pop-up pembayaran.");
+          },
+        });
+      } else {
+        toast.error("Gagal memproses pembayaran. Snap.js tidak ditemukan.");
+      }
+    },
+    onError: (error) => {
+      toast.error(`Gagal memulai pembayaran: ${error.message}`);
+    },
+    onSettled: () => {
+      setRetryingOrderId(null);
+    },
+  });
+
+  const handleRetryPayment = (id: string) => {
+    retryPaymentMutation.mutate(id);
+  };
 
   // Fetch single order if orderId is present
   const {
@@ -179,20 +268,30 @@ const OrderStatusPage = () => {
       );
     }
 
-    const statusInfo = statusMap[order.order_status] || {
-      text: "Status Tidak Diketahui",
-      variant: "secondary",
-    };
+    const statusInfo = getStatusInfo(
+      order.order_status,
+      statusMap,
+      statusFallback
+    );
 
-    const paymentStatusInfo = paymentStatusMap[order.payment_status] || {
-      text: "Status Tidak Diketahui",
-      variant: "secondary",
-    };
+    const paymentStatusInfo = getStatusInfo(
+      order.payment_status,
+      paymentStatusMap,
+      paymentStatusFallback
+    );
+
+    const amountPaid = Number(order.amount_paid ?? 0);
+    const remainingBalance = Number(
+      order.remaining_balance ?? Math.max(order.total_amount - amountPaid, 0)
+    );
+    const paymentOptionLabel = getPaymentOptionLabel(order.payment_option);
 
     const handlePayFinal = () => {
       payFinalMutation.mutate(order.id.toString());
     };
 
+    const isRetryingThisOrder =
+      retryPaymentMutation.isPending && retryingOrderId === order.id.toString();
 
     return (
       <div className="container mt-20 mx-auto px-4 py-8">
@@ -208,19 +307,23 @@ const OrderStatusPage = () => {
                     Pesanan #{order.order_number}
                   </p>
                 </div>
-                <Badge variant={statusInfo.variant} className="text-base">
+                <Badge 
+                  variant={statusInfo.variant}
+                  className="text-base">
                   {statusInfo.text}
                 </Badge>
-                <Badge variant={paymentStatusInfo.variant} className="text-base">
+                {/* <Badge
+                  variant={paymentStatusInfo.variant}
+                  className="text-base">
                   {paymentStatusInfo.text}
-                </Badge>
+                </Badge> */}
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               {/* Ringkasan Pesanan */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Tanggal Pesanan</p>
+                  <p className="text-foreground">Tanggal Pesanan</p>
                   <p className="font-medium">
                     {new Date(order.created_at).toLocaleDateString("id-ID", {
                       day: "numeric",
@@ -230,21 +333,21 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Total Pesanan</p>
-                  <p className="font-medium text-lg text-primary">
+                  <p className="text-foreground">Total Pesanan</p>
+                  <p className="font-medium text-lg text-muted-foreground">
                     {formatRupiah(order.total_amount)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Jumlah Dibayar</p>
-                  <p className="font-medium text-lg text-primary">
-                    {formatRupiah(order.amount_paid)}
+                  <p className="text-foreground">Jumlah Dibayar</p>
+                  <p className="font-medium text-lg text-muted-foreground">
+                    {formatRupiah(amountPaid)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Sisa Tagihan</p>
-                  <p className="font-medium text-lg text-primary">
-                    {formatRupiah(order.remaining_balance)}
+                  <p className="text-foreground">Sisa Tagihan</p>
+                  <p className="font-medium text-lg text-muted-foreground">
+                    {formatRupiah(remainingBalance)}
                   </p>
                 </div>
               </div>
@@ -286,6 +389,14 @@ const OrderStatusPage = () => {
                         </div>
                         <p className="text-sm font-medium text-foreground">
                           {formatRupiah(item.sub_total)}
+                          <div>
+                            <p className="text-muted-foreground">
+                              Opsi Pembayaran:
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {paymentOptionLabel}
+                            </p>
+                          </div>
                         </p>
                       </div>
                     );
@@ -334,11 +445,30 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
               </div>
+              {order.payment_status === "pending" && (
+                <div className="mt-6 text-center">
+                  <Button
+                    size="default"
+                    variant="outline"
+                    onClick={() => handleRetryPayment(order.id.toString())}
+                    disabled={isRetryingThisOrder}
+                  >
+                    {isRetryingThisOrder
+                      ? "Membuka Pembayaran..."
+                      : "Bayar Sekarang"}
+                  </Button>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Lanjutkan pembayaran untuk memproses pesanan Anda.
+                  </p>
+                </div>
+              )}
               {order.payment_status === "partially_paid" && (
                 <div className="mt-6 text-center">
                   <Button
                     onClick={handlePayFinal}
-                    disabled={payFinalMutation.isPending || order.remaining_balance <= 0}
+                    disabled={
+                      payFinalMutation.isPending || remainingBalance <= 0
+                    }
                   >
                     {payFinalMutation.isPending
                       ? "Membuka Pembayaran..."
@@ -384,14 +514,21 @@ const OrderStatusPage = () => {
       </h1>
       <div className="space-y-4">
         {orders.map((order) => {
-          const statusInfo = statusMap[order.order_status] || {
-            text: "Status Tidak Diketahui",
-            variant: "secondary",
-          };
-          const paymentStatusInfo = statusMap[order.payment_status] || {
-            text: "Status Tidak Diketahui",
-            variant: "secondary",
-          };
+          const statusInfo = getStatusInfo(
+            order.order_status,
+            statusMap,
+            statusFallback
+          );
+          const paymentStatusInfo = getStatusInfo(
+            order.payment_status,
+            paymentStatusMap,
+            paymentStatusFallback
+          );
+          const listAmountPaid = Number(order.amount_paid ?? 0);
+          const listRemainingBalance = Number(
+            order.remaining_balance ??
+              Math.max(order.total_amount - listAmountPaid, 0)
+          );
           return (
             <Card key={order.id}>
               <CardContent className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -415,19 +552,38 @@ const OrderStatusPage = () => {
                     Total: {formatRupiah(order.total_amount)}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Sisa Tagihan: {formatRupiah(order.remaining_balance)}
+                    Sisa Tagihan: {formatRupiah(listRemainingBalance)}
                   </p>
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <Badge variant={statusInfo.variant} className="text-base">
+                  <Badge 
+                    variant={statusInfo.variant}
+                    className="text-base text-center">
                     {statusInfo.text}
                   </Badge>
-                  <Badge
+                  {/* <Badge
                     variant={paymentStatusInfo.variant}
-                    className="text-base"
+                    className="text-base text-center"
                   >
                     {paymentStatusInfo.text}
-                  </Badge>
+                  </Badge> */}
+                  {order.payment_status === "pending" && (
+                    <Button
+                      size="default"
+                      variant="default"
+                      className="rounded-full"
+                      onClick={() => handleRetryPayment(order.id.toString())}
+                      disabled={
+                        retryPaymentMutation.isPending &&
+                        retryingOrderId === order.id.toString()
+                      }
+                    >
+                      {retryPaymentMutation.isPending &&
+                      retryingOrderId === order.id.toString()
+                        ? "Membuka Pembayaran..."
+                        : "Bayar Sekarang"}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

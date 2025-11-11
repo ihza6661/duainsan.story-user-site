@@ -145,7 +145,7 @@ const CheckoutPage = () => {
       .join(", ");
 
     formData.append("shipping_address", fullAddress);
-    formData.append("destination_city_id", String(user?.city_id));
+    formData.append("postal_code", String(user?.postal_code));
     formData.append("weight", "1000");
     formData.append("courier", selectedCourier);
     formData.append("shipping_cost", String(shippingCost));

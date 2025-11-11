@@ -43,6 +43,7 @@ export interface Order {
   shipping_address: string;
   order_status: 'pending' | 'partially_paid' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   payment_status: 'pending' | 'partially_paid' | 'paid' | 'expired' | 'failed';
+  payment_option?: 'dp' | 'full' | 'final' | null;
   amount_paid: number;
   remaining_balance: number;
   created_at: string;
@@ -72,5 +73,10 @@ export const fetchOrders = async (): Promise<Order[]> => {
 
 export const getFinalPaymentSnapToken = async (orderId: string): Promise<{ token: string }> => {
   const response = await api.post(`/orders/${orderId}/pay-final`);
+  return response.data;
+};
+
+export const retryPayment = async (orderId: string): Promise<{ snap_token: string; message: string }> => {
+  const response = await api.post(`/orders/${orderId}/retry-payment`);
   return response.data;
 };

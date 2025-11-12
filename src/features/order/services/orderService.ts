@@ -71,7 +71,9 @@ export const fetchOrders = async (): Promise<Order[]> => {
   return response.data.data;
 };
 
-export const getFinalPaymentSnapToken = async (orderId: string): Promise<{ token: string }> => {
+export const getFinalPaymentSnapToken = async (
+  orderId: string
+): Promise<{ snap_token: string; message?: string }> => {
   const response = await api.post(`/orders/${orderId}/pay-final`);
   return response.data;
 };

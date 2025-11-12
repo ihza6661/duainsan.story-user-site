@@ -40,9 +40,9 @@ const PaperTypes = () => {
           </div>
         ))}
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        {/* <p className="text-center text-sm text-muted-foreground mt-6">
           *Kertas dengan tekstur alis butterfly, glitter gundam tersedia dengan harga yang lebih tinggi.
-        </p>
+        </p> */}
       </div>
     </div>
   );

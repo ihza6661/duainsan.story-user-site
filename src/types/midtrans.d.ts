@@ -23,5 +23,5 @@ interface Snap {
 }
 
 interface Window {
-  snap: Snap;
+  snap?: Snap;
 }

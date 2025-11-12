@@ -1,5 +1,3 @@
-// src/pages/Products.tsx (With Slider Filter)
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -257,7 +255,7 @@ const Products = () => {
             </div>
           </div>
         </div>
-        <ActualBrandSlider />
+        {/* <ActualBrandSlider /> */}
       </main>
     </div>
   );

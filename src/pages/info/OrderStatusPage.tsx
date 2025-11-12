@@ -21,24 +21,6 @@ import {
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-interface Snap {
-  pay: (
-    token: string,
-    options: {
-      onSuccess: () => void;
-      onPending: () => void;
-      onError: () => void;
-      onClose: () => void;
-    }
-  ) => void;
-}
-
-// declare global {
-//   interface Window {
-//     snap: Snap;
-//   }
-// }
-
 type StatusVariant = "default" | "secondary" | "destructive";
 type StatusInfo = { text: string; variant: StatusVariant; textColor?: string };
 type PaymentStatusInfo = { text: string; variant: StatusVariant };
@@ -133,28 +115,42 @@ const OrderStatusPage = () => {
     };
   }, []);
 
-  const payFinalMutation = useMutation<{ token: string }, Error, string>({
+  const payFinalMutation = useMutation<
+    { snap_token: string; message?: string },
+    Error,
+    string
+  >({
     mutationFn: (id: string) => getFinalPaymentSnapToken(id),
     onSuccess: (data) => {
-      if (window.snap && data.token) {
-        window.snap.pay(data.token, {
-          onSuccess: () => {
-            toast.success("Pembayaran sisa tagihan berhasil!");
-            invalidateOrderQueries();
-          },
-          onPending: () => {
-            toast.info("Menunggu pembayaran Anda...");
-          },
-          onError: () => {
-            toast.error("Pembayaran gagal. Silakan coba lagi.");
-          },
-          onClose: () => {
-            toast.info("Anda menutup pop-up pembayaran.");
-          },
-        });
-      } else {
-        toast.error("Gagal memproses pembayaran. Snap.js tidak ditemukan.");
+      const snapInstance = window.snap;
+
+      if (!snapInstance) {
+        toast.error("Gagal memproses pembayaran. Snap.js belum dimuat.");
+        return;
       }
+
+      if (!data.snap_token) {
+        toast.error(
+          "Gagal memproses pembayaran. Token pembayaran tidak ditemukan."
+        );
+        return;
+      }
+
+      snapInstance.pay(data.snap_token, {
+        onSuccess: () => {
+          toast.success("Pembayaran sisa tagihan berhasil!");
+          invalidateOrderQueries();
+        },
+        onPending: () => {
+          toast.info("Menunggu pembayaran Anda...");
+        },
+        onError: () => {
+          toast.error("Pembayaran gagal. Silakan coba lagi.");
+        },
+        onClose: () => {
+          toast.info("Anda menutup pop-up pembayaran.");
+        },
+      });
     },
     onError: (error) => {
       toast.error(`Gagal mendapatkan token pembayaran: ${error.message}`);
@@ -171,25 +167,35 @@ const OrderStatusPage = () => {
       setRetryingOrderId(id);
     },
     onSuccess: (data) => {
-      if (window.snap && data.snap_token) {
-        window.snap.pay(data.snap_token, {
-          onSuccess: () => {
-            toast.success("Pembayaran berhasil!");
-            invalidateOrderQueries();
-          },
-          onPending: () => {
-            toast.info("Menunggu pembayaran Anda...");
-          },
-          onError: () => {
-            toast.error("Pembayaran gagal. Silakan coba lagi.");
-          },
-          onClose: () => {
-            toast.info("Anda menutup pop-up pembayaran.");
-          },
-        });
-      } else {
-        toast.error("Gagal memproses pembayaran. Snap.js tidak ditemukan.");
+      const snapInstance = window.snap;
+
+      if (!snapInstance) {
+        toast.error("Gagal memproses pembayaran. Snap.js belum dimuat.");
+        return;
       }
+
+      if (!data.snap_token) {
+        toast.error(
+          "Gagal memproses pembayaran. Token pembayaran tidak ditemukan."
+        );
+        return;
+      }
+
+      snapInstance.pay(data.snap_token, {
+        onSuccess: () => {
+          toast.success("Pembayaran berhasil!");
+          invalidateOrderQueries();
+        },
+        onPending: () => {
+          toast.info("Menunggu pembayaran Anda...");
+        },
+        onError: () => {
+          toast.error("Pembayaran gagal. Silakan coba lagi.");
+        },
+        onClose: () => {
+          toast.info("Anda menutup pop-up pembayaran.");
+        },
+      });
     },
     onError: (error) => {
       toast.error(`Gagal memulai pembayaran: ${error.message}`);

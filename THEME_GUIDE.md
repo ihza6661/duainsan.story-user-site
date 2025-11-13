@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-Your website now features a **modern minimalist invitation palette** that creates an elegant, luxurious experience suitable for online invitations and wedding websites.
+This website now features a **modern minimalist invitation palette** that creates an elegant, luxurious experience suitable for online invitations and wedding websites.
 
 ---
 
@@ -309,16 +309,6 @@ HSL Format: `hue saturation lightness%`
 - **Hue**: 0-360 (0=red, 120=green, 240=blue)
 - **Saturation**: 0-100% (0=gray, 100=pure color)
 - **Lightness**: 0-100% (0=black, 50=pure color, 100=white)
-
----
-
-## 🚀 Next Steps
-
-1. **Apply texture** (choose one from recommendations)
-2. **Test accessibility** with a contrast checker tool
-3. **Implement button states** using the hover/active classes
-4. **Verify on mobile** that the minimal design scales well
-5. **User test** with actual users to ensure the elegant feel resonates
 
 ---
 

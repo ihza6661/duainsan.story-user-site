@@ -619,7 +619,8 @@ const CheckoutPage = () => {
               </div>
               <Button
                 type="submit"
-                className="w-full bg-muted-foreground hover:bg-foreground hover:text-background"
+                variant="default"
+                className="w-full"
                 disabled={
                   isSubmitting ||
                   isCalculatingCost ||

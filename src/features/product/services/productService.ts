@@ -40,6 +40,7 @@ export interface ProductVariant {
   id: number;
   price: number;
   stock: number;
+  weight: number | null;
   options: AttributeValue[];
   images: ProductImage[];
 }
@@ -49,6 +50,8 @@ export interface Product {
   name: string;
   slug: string;
   base_price: number;
+  weight?: number | null;
+  requires_shipping?: boolean;
   featured_image: ProductImage | null;
 }
 

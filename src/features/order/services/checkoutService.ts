@@ -65,12 +65,42 @@ export const createGuestOrder = async (checkoutData: FormData) => {
     return response.data;
 };
 
-export const getShippingCost = async (origin: string, destination: string, weight: number, courier: string) => {
-    const response = await api.post('/rajaongkir/cost', {
-      origin,
-      destination,
-      weight,
-      courier,
-    });
-    return response.data;
+export interface ShippingCostBreakdown {
+  value: number;
+  etd: string;
+  note: string;
+}
+
+export interface ShippingService {
+  service: string;
+  description: string;
+  cost: ShippingCostBreakdown[];
+}
+
+interface ShippingCostResponse {
+  rajaongkir?: {
+    results?: Array<{
+      code: string;
+      name: string;
+      costs: ShippingService[];
+    }>;
+  };
+  data?: Array<{
+    service: string;
+    description: string;
+    cost: number;
+    etd: string | null;
+  }>;
+  total_weight?: number;
+}
+
+export const calculateShippingCost = async (
+  postalCode: string,
+  courier: string
+): Promise<ShippingCostResponse> => {
+  const response = await api.post('/shipping-cost', {
+    postal_code: postalCode,
+    courier,
+  });
+  return response.data;
 };

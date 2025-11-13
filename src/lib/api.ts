@@ -21,7 +21,8 @@ apiClient.interceptors.request.use(
     }
 
     // Always attach X-Session-ID for cart and guest-checkout related requests
-    if (config.url?.includes('/cart') || config.url?.includes('/guest-checkout')) {
+    const sessionAwareEndpoints = ['/cart', '/guest-checkout', '/shipping-cost'];
+    if (config.url && sessionAwareEndpoints.some((endpoint) => config.url?.includes(endpoint))) {
       const sessionId = localStorage.getItem('cartSessionId');
       if (sessionId) {
         config.headers['X-Session-ID'] = sessionId;

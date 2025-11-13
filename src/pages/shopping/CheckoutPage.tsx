@@ -20,7 +20,8 @@ import { formatRupiah } from "@/lib/utils";
 import {
   createGuestOrder,
   createOrder,
-  getShippingCost,
+  calculateShippingCost,
+  type ShippingService,
 } from "@/features/order/services/checkoutService";
 import { AxiosError } from "axios";
 
@@ -30,16 +31,6 @@ import { useToast } from "@/hooks/ui/use-toast";
 import { Textarea } from "@/components/ui/forms/textarea";
 
 import { useNavigate } from "react-router-dom";
-
-interface ShippingService {
-  service: string;
-  description: string;
-  cost: {
-    value: number;
-    etd: string;
-    note: string;
-  }[];
-}
 
 const CheckoutPage = () => {
   const { cart, isLoading } = useCart();
@@ -52,79 +43,138 @@ const CheckoutPage = () => {
   const [paymentOption, setPaymentOption] = useState("full");
 
   // Shipping State
-  const [shippingServices, setShippingServices] = useState<ShippingService[]>(
-    []
-  );
+  const [shippingServices, setShippingServices] = useState<ShippingService[]>([]);
   const [selectedCourier, setSelectedCourier] = useState<string>("jne");
   const [shippingCost, setShippingCost] = useState<number>(0);
-  const [shippingService, setShippingService] = useState<string>(" ");
+  const [shippingService, setShippingService] = useState<string>("");
+  const [shippingSelection, setShippingSelection] = useState<string>("");
   const [isCalculatingCost, setIsCalculatingCost] = useState(false);
+  const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
 
   useEffect(() => {
-    if (user) {
-      if (!user.phone_number) {
-        toast({
-          title: "Nomor Telepon Tidak Ditemukan",
-          description:
-            "Mohon tambahkan nomor telepon Anda di halaman profil sebelum melanjutkan checkout.",
-          variant: "destructive",
-        });
-      } else if (!user.address || !user.postal_code) {
-        toast({
-          title: "Alamat Profil Tidak Lengkap",
-          description:
-            "Mohon lengkapi alamat Anda di halaman profil sebelum melanjutkan checkout.",
-          variant: "destructive",
-        });
-        // Optionally disable checkout button or redirect
-      } else if (user.postal_code && selectedCourier) {
-        const fetchShippingCost = async () => {
-          setIsCalculatingCost(true);
-          try {
-            const response = await getShippingCost(
-              "78116",
-              user.postal_code,
-              1000,
-              selectedCourier
-            );
-            setShippingServices(response.rajaongkir.results[0].costs);
-          } catch (error) {
-            console.error("Error fetching shipping cost:", error);
-            toast({
-              title: "Gagal Menghitung Biaya Kirim",
-              description: "Tidak dapat mengambil data biaya pengiriman.",
-              variant: "destructive",
-            });
-          } finally {
-            setIsCalculatingCost(false);
-          }
-        };
-        fetchShippingCost();
-      }
-    } else {
+    if (!user) {
       toast({
         title: "Login Diperlukan",
         description:
           "Mohon login untuk melanjutkan checkout. Checkout sebagai tamu tidak didukung tanpa alamat profil.",
         variant: "destructive",
       });
-      // Optionally disable checkout button or redirect
+      return;
     }
-  }, [selectedCourier, toast, user]);
+
+    if (!user.phone_number) {
+      toast({
+        title: "Nomor Telepon Tidak Ditemukan",
+        description:
+          "Mohon tambahkan nomor telepon Anda di halaman profil sebelum melanjutkan checkout.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user.address || !user.postal_code) {
+      toast({
+        title: "Alamat Profil Tidak Lengkap",
+        description:
+          "Mohon lengkapi alamat Anda di halaman profil sebelum melanjutkan checkout.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!cart || cart.items.length === 0) {
+  setShippingServices([]);
+  setShippingService("");
+  setShippingSelection("");
+  setShippingCost(0);
+      setCalculatedWeight(null);
+      return;
+    }
+
+    setCalculatedWeight(typeof cart.total_weight === "number" ? cart.total_weight : null);
+
+    const fetchShippingCost = async () => {
+      setIsCalculatingCost(true);
+      try {
+        const response = await calculateShippingCost(String(user.postal_code), selectedCourier);
+
+        let services: ShippingService[] = [];
+        if (response?.rajaongkir?.results?.length) {
+          services = response.rajaongkir.results[0].costs ?? [];
+        } else if (Array.isArray(response?.data)) {
+          services = response.data.map((service) => ({
+            service: service.service,
+            description: service.description,
+            cost: [
+              {
+                value: service.cost,
+                etd: service.etd ?? "",
+                note: "",
+              },
+            ],
+          }));
+        }
+
+  setShippingServices(services);
+  setShippingService("");
+  setShippingSelection("");
+  setShippingCost(0);
+
+        if (typeof response?.total_weight === "number") {
+          setCalculatedWeight(response.total_weight);
+        } else if (typeof cart.total_weight === "number") {
+          setCalculatedWeight(cart.total_weight);
+        } else {
+          setCalculatedWeight(null);
+        }
+
+        if (services.length === 0) {
+          toast({
+            title: "Layanan Pengiriman Tidak Tersedia",
+            description: "Tidak ada layanan pengiriman yang tersedia untuk kombinasi alamat dan courier ini.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching shipping cost:", error);
+  setShippingServices([]);
+  setShippingService("");
+  setShippingSelection("");
+  setShippingCost(0);
+        setCalculatedWeight(cart.total_weight ?? null);
+        toast({
+          title: "Gagal Menghitung Biaya Kirim",
+          description: "Tidak dapat mengambil data biaya pengiriman.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsCalculatingCost(false);
+      }
+    };
+
+    fetchShippingCost();
+  }, [
+    cart?.id,
+    cart?.items.length,
+    cart?.total_weight,
+    selectedCourier,
+    toast,
+    user,
+  ]);
 
   const handleServiceSelection = (value: string) => {
+    setShippingSelection(value);
+
     const [service, cost] = value.split("|");
     setShippingService(service);
-    setShippingCost(Number(cost));
+
+    const parsedCost = Number(cost);
+    setShippingCost(Number.isFinite(parsedCost) ? parsedCost : 0);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      shippingCost === 0 &&
-      cart &&
-      cart.items.some((item) => item.product?.requires_shipping)
-    ) {
+    if (shippingCost === 0 && cart && cart.total_weight > 0) {
       toast({
         title: "Pilih Layanan Pengiriman",
         description: "Anda harus memilih layanan pengiriman terlebih dahulu.",
@@ -146,7 +196,6 @@ const CheckoutPage = () => {
 
     formData.append("shipping_address", fullAddress);
     formData.append("postal_code", String(user?.postal_code));
-    formData.append("weight", "1000");
     formData.append("courier", selectedCourier);
     formData.append("shipping_cost", String(shippingCost));
     formData.append("shipping_service", shippingService);
@@ -540,7 +589,7 @@ const CheckoutPage = () => {
                 <Label htmlFor="courier">Kurir</Label>
                 <Select
                   onValueChange={setSelectedCourier}
-                  defaultValue={selectedCourier}
+                  value={selectedCourier}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Pilih kurir" />
@@ -556,6 +605,7 @@ const CheckoutPage = () => {
                 <Label htmlFor="shipping-service">Layanan Pengiriman</Label>
                 <Select
                   onValueChange={handleServiceSelection}
+                  value={shippingSelection}
                   disabled={isCalculatingCost || shippingServices.length === 0}
                 >
                   <SelectTrigger>
@@ -566,28 +616,49 @@ const CheckoutPage = () => {
                     />
                   </SelectTrigger>
                   <SelectContent>
-                    {shippingServices.map((service) => (
-                      <SelectItem
-                        key={service.service}
-                        value={`${service.service}|${service.cost[0].value}`}
-                      >
-                        <div className="flex justify-between w-full">
-                          <span>
-                            {service.description} ({service.service})
-                          </span>
-                          <span>{formatRupiah(service.cost[0].value)}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    {shippingServices.map((service) => {
+                      const primaryCost = service.cost[0];
+                      if (!primaryCost) {
+                        return null;
+                      }
+
+                      const costValue = Number(primaryCost.value);
+                      if (!Number.isFinite(costValue)) {
+                        return null;
+                      }
+
+                      return (
+                        <SelectItem
+                          key={service.service}
+                          value={`${service.service}|${costValue}`}
+                        >
+                          <div className="flex justify-between w-full">
+                            <span>
+                              {service.description} ({service.service})
+                            </span>
+                            <span>{formatRupiah(costValue)}</span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
+              {calculatedWeight !== null && (
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Berat Dihitung</span>
+                  <span>{calculatedWeight.toLocaleString("id-ID")} gr</span>
+                </div>
+              )}
               <div className="border-t border-border pt-4 flex justify-between">
                 <span>Subtotal</span>
                 <span>{formatRupiah(cart.subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Biaya Pengiriman ({shippingService})</span>
+                <span>
+                  Biaya Pengiriman
+                  {shippingService ? ` (${shippingService})` : ""}
+                </span>
                 <span>{formatRupiah(shippingCost)}</span>
               </div>
               <div className="border-t border-border pt-4 space-y-2">

@@ -1,7 +1,7 @@
 // src/services/cartService.ts (Corrected for API v1.1.0)
 
 import apiClient from "@/lib/api";
-import type { Product, ProductVariant } from "./productService"; // Import ProductVariant
+import type { Product, ProductVariant } from "@/features/product/services/productService";
 
 // =================================================================================
 // --- TYPE DEFINITIONS (SYNCHRONIZED WITH API v1.1.0) ---
@@ -11,12 +11,25 @@ import type { Product, ProductVariant } from "./productService"; // Import Produ
  * Defines the structure for an item within the cart.
  * CORRECTED: Added the `variant` property.
  */
+export interface CartAddOnCustomization {
+  id?: number;
+  name: string;
+  price: number;
+  weight?: number | null;
+}
+
+export interface CartItemCustomizations {
+  options?: { name?: string; value: string }[];
+  add_ons?: CartAddOnCustomization[];
+}
+
 export interface CartItem {
   id: number;
   quantity: number;
   unit_price: number;
   sub_total: number;
-  customizations: { options: { value: string }[] } | null;
+  total_weight: number;
+  customizations: CartItemCustomizations | null;
   product: Product;
   variant: ProductVariant; // This now holds the specific variant details
 }
@@ -30,6 +43,7 @@ export interface Cart {
   session_id: string | null;
   total_items: number;
   subtotal: number;
+  total_weight: number;
   items: CartItem[];
 }
 

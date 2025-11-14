@@ -8,8 +8,8 @@ import OrderSteps from "@/pages/info/CaraMemesan";
 import DuaInsanQuotes from "@/components/layout/sections/DuaInsanQuotes";
 import BestSeller from "@/features/product/components/categories/BestSeller";
 import { Hero } from "@/features/home/components/Hero";
-import FaqSection from "../../features/info/components/FaqSection";
-import MetodePembayaran from "../../features/info/components/MetodePembayaran";
+import FaqSection from "@/features/info/components/FaqSection";
+import MetodePembayaran from "@/features/info/components/MetodePembayaran";
 
 const Home = () => {
   // const highlight = [
@@ -30,8 +30,8 @@ const Home = () => {
       <Hero />
       <CategoryGrid />
       <BestSeller />
-      <ExploreTheNewestTrend />
       <WhyDuaInsan />
+      <ExploreTheNewestTrend />
       <OrderSteps />
       <DuaInsanQuotes />
       {/* Termin Pembayaran dan Free items Information */}

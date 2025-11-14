@@ -17,9 +17,10 @@ const BestSeller = () => {
   const products = productData?.data.slice(0, 8) || [];
 
   return (
-    <div className="px-4 bg-background">
-      <h2 className="text-lg sm:text-xl font-normal mb-4 sm:mb-8 text-center uppercase tracking-widest pt-6 sm:pt-8 text-foreground">
-        Our Featured Products
+    
+<div className="px-4 text-center">
+      <h2 className="inline-block text-lg sm:text-xl font-medium mb-4 sm:mb-6 uppercase tracking-widest mt-6 bg-background text-muted-foreground px-6 py-2 rounded-full shadow-sm">
+        Produk Andalan Kami
       </h2>
       <div className="flex space-x-5 overflow-x-scroll pb-6 sm:pb-10 custom-scrollbar">
         {isLoading ? (

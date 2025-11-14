@@ -2,8 +2,8 @@ import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom"; // ⬅ Import for navigation
 import { useRegister } from "@/features/auth/hooks/useRegister";
 import type { RegisterPayload } from "@/features/auth/services/auth/authService";
-import { Button } from '@/components/ui/buttons/button';
-import { Input } from '@/components/ui/forms/input';
+import { Button } from "@/components/ui/buttons/button";
+import { Input } from "@/components/ui/forms/input";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState<RegisterPayload>({
@@ -14,7 +14,13 @@ const RegisterPage = () => {
     phone_number: "",
   });
 
-  const { isLoading, error, validationErrors, successMessage, performRegister } = useRegister();
+  const {
+    isLoading,
+    error,
+    validationErrors,
+    successMessage,
+    performRegister,
+  } = useRegister();
   const [clientError, setClientError] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -61,7 +67,9 @@ const RegisterPage = () => {
         className="w-full max-w-md p-8 space-y-6 bg-card rounded-xl shadow-lg"
         noValidate
       >
-        <h2 className="text-2xl font-normal tracking-wider text-card-foreground text-center">Buat Akun</h2>
+        <h2 className="text-2xl font-normal tracking-wider text-card-foreground text-center">
+          Buat Akun
+        </h2>
 
         {successMessage && (
           <div className="p-3 text-sm text-center text-emerald-800 bg-emerald-100 rounded-md">
@@ -95,7 +103,9 @@ const RegisterPage = () => {
             onChange={handleChange}
           />
           {validationErrors?.full_name && (
-            <p className="text-destructive text-xs mt-1">{validationErrors.full_name[0]}</p>
+            <p className="text-destructive text-xs mt-1">
+              {validationErrors.full_name[0]}
+            </p>
           )}
         </div>
 
@@ -112,7 +122,9 @@ const RegisterPage = () => {
             onChange={handleChange}
           />
           {validationErrors?.email && (
-            <p className="text-destructive text-xs mt-1">{validationErrors.email[0]}</p>
+            <p className="text-destructive text-xs mt-1">
+              {validationErrors.email[0]}
+            </p>
           )}
         </div>
 
@@ -129,7 +141,9 @@ const RegisterPage = () => {
             onChange={handleChange}
           />
           {validationErrors?.password && (
-            <p className="text-destructive text-xs mt-1">{validationErrors.password[0]}</p>
+            <p className="text-destructive text-xs mt-1">
+              {validationErrors.password[0]}
+            </p>
           )}
         </div>
 
@@ -159,7 +173,9 @@ const RegisterPage = () => {
             onChange={handleChange}
           />
           {validationErrors?.phone_number && (
-            <p className="text-destructive text-xs mt-1">{validationErrors.phone_number[0]}</p>
+            <p className="text-destructive text-xs mt-1">
+              {validationErrors.phone_number[0]}
+            </p>
           )}
         </div>
 

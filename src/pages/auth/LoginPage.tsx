@@ -1,13 +1,14 @@
-import { useState, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { useLogin } from '@/features/auth/hooks/useLogin';
-import { Button } from '@/components/ui/buttons/button';
-import { Input } from '@/components/ui/forms/input';
+import { useState, FormEvent } from "react";
+import { Link } from "react-router-dom";
+import { useLogin } from "@/features/auth/hooks/useLogin";
+import { Button } from "@/components/ui/buttons/button";
+import { Input } from "@/components/ui/forms/input";
+import { Label } from "@/components/ui/forms/label";
 
 const LoginPage = () => {
   // State lokal untuk mengelola nilai dari form input
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   // State lokal untuk efek UI floating label (tidak berubah)
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -29,13 +30,18 @@ const LoginPage = () => {
     <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
       <div className="w-full max-w-xs bg-card p-8 rounded-lg shadow-lg">
         <div className="text-center mb-8">
-          <h2 className="text-foreground text-2xl font-normal tracking-wider">MASUK</h2>
+          <h2 className="text-foreground text-2xl font-normal tracking-wider">
+            MASUK
+          </h2>
         </div>
 
         <form onSubmit={handleSubmit}>
           {/* Menampilkan pesan error jika login gagal */}
           {error && (
-            <div className="bg-destructive/10 border border-destructive/40 text-destructive px-4 py-3 rounded-md relative mb-4 text-sm" role="alert">
+            <div
+              className="bg-destructive/10 border border-destructive/40 text-destructive px-4 py-3 rounded-md relative mb-4 text-sm"
+              role="alert"
+            >
               <span className="block sm:inline">{error}</span>
             </div>
           )}
@@ -54,14 +60,17 @@ const LoginPage = () => {
               autoComplete="email"
               disabled={isLoading} // Nonaktifkan input saat loading
             />
-            <label
+            <Label
               htmlFor="email"
               className={`absolute left-3 transition-all duration-200 pointer-events-none
-                ${(isEmailFocused || email) ? 'bg-background top-0 text-xs px-1 -translate-y-1/2' : 'top-1/2 -translate-y-1/2 text-muted-foreground'}
+                ${isEmailFocused || email
+                  ? "bg-background top-0 text-xs px-1 -translate-y-1/2"
+                  : "top-1/2 -translate-y-1/2 text-muted-foreground"
+                }
                 peer-focus:top-0 peer-focus:text-xs peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-foreground`}
             >
               Email
-            </label>
+            </Label>
           </div>
 
           {/* Input Password dengan Floating Label */}
@@ -78,18 +87,23 @@ const LoginPage = () => {
               autoComplete="current-password"
               disabled={isLoading} // Nonaktifkan input saat loading
             />
-            <label
+            <Label
               htmlFor="password"
               className={`absolute left-3 transition-all duration-200 pointer-events-none
-                ${(isPasswordFocused || password) ? 'top-0 text-xs bg-background px-1 -translate-y-1/2 text-foreground' : 'top-1/2 -translate-y-1/2 text-muted-foreground'}
+                ${isPasswordFocused || password
+                  ? "top-0 text-xs bg-background px-1 -translate-y-1/2 text-foreground"
+                  : "top-1/2 -translate-y-1/2 text-muted-foreground"
+                }
                 peer-focus:top-0 peer-focus:text-xs peer-focus:bg-background peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-foreground`}
             >
               Password
-            </label>
+            </Label>
           </div>
 
           <div className="mb-6 text-right">
-            <a href="#" className="text-sm hover:underline">Lupa Password?</a>
+            <a href="#" className="text-sm hover:underline">
+              Lupa Password?
+            </a>
           </div>
 
           <Button
@@ -98,7 +112,7 @@ const LoginPage = () => {
             disabled={isLoading} // Tombol dinonaktifkan saat proses login berjalan
             className="w-full py-3 px-4 rounded-md focus:outline-none mb-4 tracking-widest transition-colors duration-300 disabled:cursor-not-allowed"
           >
-            {isLoading ? 'MEMPROSES...' : 'Masuk'}
+            {isLoading ? "MEMPROSES..." : "Masuk"}
           </Button>
 
           <div className="text-center">

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/utils/card";
 import { Trash2, Loader2, ShoppingCart } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
-import { formatRupiah } from "@/lib/utils"; 
+import { formatRupiah } from "@/lib/utils";
 import { CartItem } from "@/features/cart/components/CartItem";
 
 export default function CartPage() {
@@ -58,23 +58,23 @@ export default function CartPage() {
         className={`grid grid-cols-1 md:grid-cols-3 gap-8 relative ${isMutating ? "opacity-50 pointer-events-none" : ""}`}
       >
         {/* Kolom Kiri: Daftar Item */}
-        
-<div className="col-span-1 md:col-span-2 rounded-xl shadow-sm">
-  <Card className="h-full shadow-none bg-transparent">
-    <CardContent className="p-0 sm:p-2 md:p-4">
-      <div className="divide-y divide-border">
-        {cart.items.map((item) => (
-          <CartItem
-            key={item.id}
-            item={item}
-            onUpdateQuantity={debouncedUpdateQuantity}
-            onRemoveItem={removeItem}
-          />
-        ))}
-      </div>
-    </CardContent>
-  </Card>
-</div>
+
+        <div className="col-span-1 md:col-span-2 rounded-xl shadow-sm">
+          <Card className="h-full shadow-none bg-background">
+            <CardContent className="p-0 sm:p-2 md:p-4">
+              <div className="divide-y divide-border">
+                {cart.items.map((item) => (
+                  <CartItem
+                    key={item.id}
+                    item={item}
+                    onUpdateQuantity={debouncedUpdateQuantity}
+                    onRemoveItem={removeItem}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Kolom Kanan: Ringkasan Belanja */}
         <div className="md:col-span-1">

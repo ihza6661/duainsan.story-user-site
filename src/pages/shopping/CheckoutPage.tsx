@@ -154,9 +154,7 @@ const CheckoutPage = () => {
 
     fetchShippingCost();
   }, [
-    cart?.id,
-    cart?.items.length,
-    cart?.total_weight,
+    cart,
     selectedCourier,
     toast,
     user,

@@ -1,7 +1,9 @@
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom"; // ⬅ Import for navigation
 import { useRegister } from "@/features/auth/hooks/useRegister";
-import type { RegisterPayload } from "@/services/auth/authService";
+import type { RegisterPayload } from "@/features/auth/services/auth/authService";
+import { Button } from '@/components/ui/buttons/button';
+import { Input } from '@/components/ui/forms/input';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState<RegisterPayload>({
@@ -53,131 +55,121 @@ const RegisterPage = () => {
   }, [successMessage, navigate]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 font-sans">
+    <div className="flex items-center justify-center min-h-screen">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg"
+        className="w-full max-w-md p-8 space-y-6 bg-card rounded-xl shadow-lg"
         noValidate
       >
-        <h2 className="text-2xl font-normal tracking-wider text-gray-800 text-center">Buat Akun</h2>
+        <h2 className="text-2xl font-normal tracking-wider text-card-foreground text-center">Buat Akun</h2>
 
         {successMessage && (
-          <div className="p-3 text-sm text-center text-green-800 bg-green-100 rounded-md">
+          <div className="p-3 text-sm text-center text-emerald-800 bg-emerald-100 rounded-md">
             {successMessage}
           </div>
         )}
 
         {error && (
-          <div className="p-3 text-sm text-center text-red-800 bg-red-100 rounded-md">
+          <div className="p-3 text-sm text-center text-destructive-foreground bg-destructive/10 rounded-md">
             {error}
           </div>
         )}
 
         {clientError && (
-          <div className="p-3 text-sm text-center text-red-800 bg-red-100 rounded-md">
+          <div className="p-3 text-sm text-center text-destructive-foreground bg-destructive/10 rounded-md">
             {clientError}
           </div>
         )}
 
         {/* Input fields */}
         <div className="space-y-1">
-          <label htmlFor="full_name" className="text-sm font-medium text-gray-700">
-            Nama Lengkap
-          </label>
-          <input
+          <Input
             id="full_name"
             type="text"
             name="full_name"
-            placeholder=""
+            // label="Nama Lengkap"
+            placeholder="Nama Lengkap"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.full_name}
             onChange={handleChange}
           />
           {validationErrors?.full_name && (
-            <p className="text-red-600 text-xs mt-1">{validationErrors.full_name[0]}</p>
+            <p className="text-destructive text-xs mt-1">{validationErrors.full_name[0]}</p>
           )}
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
+          <Input
             id="email"
             type="email"
             name="email"
+            // label="Email"
             placeholder="email@gmail.com"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.email}
             onChange={handleChange}
           />
           {validationErrors?.email && (
-            <p className="text-red-600 text-xs mt-1">{validationErrors.email[0]}</p>
+            <p className="text-destructive text-xs mt-1">{validationErrors.email[0]}</p>
           )}
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password" className="text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
+          <Input
             id="password"
             type="password"
             name="password"
+            // label="Password"
             placeholder="Minimal 8 karakter"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.password}
             onChange={handleChange}
           />
           {validationErrors?.password && (
-            <p className="text-red-600 text-xs mt-1">{validationErrors.password[0]}</p>
+            <p className="text-destructive text-xs mt-1">{validationErrors.password[0]}</p>
           )}
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="password_confirmation" className="text-sm font-medium text-gray-700">
-            Konfirmasi Password
-          </label>
-          <input
+          <Input
             id="password_confirmation"
             type="password"
             name="password_confirmation"
+            // label="Konfirmasi Password"
             placeholder="Ulangi password Anda"
             required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.password_confirmation}
             onChange={handleChange}
           />
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="phone_number" className="text-sm font-medium text-gray-700">
-            Nomor Telepon <span className="text-gray-500">(Opsional)</span>
-          </label>
-          <input
+          <Input
             id="phone_number"
             type="tel"
             name="phone_number"
-            // placeholder="081234567890"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+            // label={<span>Nomor Telepon <span className="text-muted-foreground">(Opsional)</span></span>}
+            placeholder="081234567890"
+            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.phone_number || ""}
             onChange={handleChange}
           />
           {validationErrors?.phone_number && (
-            <p className="text-red-600 text-xs mt-1">{validationErrors.phone_number[0]}</p>
+            <p className="text-destructive text-xs mt-1">{validationErrors.phone_number[0]}</p>
           )}
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-black text-white font-semibold py-2.5 rounded-md hover:bg-gray-800 transition-colors duration-300 disabled:bg-blue-300 disabled:cursor-not-allowed"
+          className="w-full bg-primary text-primary-foreground font-semibold py-2.5 rounded-md hover:bg-primary/90 transition-colors duration-300 disabled:bg-primary/50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Mendaftar..." : "Daftar"}
-        </button>
+        </Button>
       </form>
     </div>
   );

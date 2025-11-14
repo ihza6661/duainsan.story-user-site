@@ -1,8 +1,8 @@
-// src/pages/LoginPage.tsx (Dengan Redirect setelah Login)
-
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useLogin } from '@/features/auth/hooks/useLogin';
+import { Button } from '@/components/ui/buttons/button';
+import { Input } from '@/components/ui/forms/input';
 
 const LoginPage = () => {
   // State lokal untuk mengelola nilai dari form input
@@ -26,30 +26,30 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white py-12 px-4">
-      <div className="w-full max-w-xs">
+    <div className="flex flex-col items-center justify-center min-h-screen py-12 px-4">
+      <div className="w-full max-w-xs bg-card p-8 rounded-lg shadow-lg">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-normal tracking-wider text-gray-800">MASUK</h2>
+          <h2 className="text-foreground text-2xl font-normal tracking-wider">MASUK</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
           {/* Menampilkan pesan error jika login gagal */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-4 text-sm" role="alert">
+            <div className="bg-destructive/10 border border-destructive/40 text-destructive px-4 py-3 rounded-md relative mb-4 text-sm" role="alert">
               <span className="block sm:inline">{error}</span>
             </div>
           )}
 
           {/* Input Email dengan Floating Label */}
           <div className="relative mb-6">
-            <input
+            <Input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setIsEmailFocused(true)}
               onBlur={() => setIsEmailFocused(false)}
-              className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black peer"
+              className="w-full px-3 py-3 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring peer"
               required
               autoComplete="email"
               disabled={isLoading} // Nonaktifkan input saat loading
@@ -57,8 +57,8 @@ const LoginPage = () => {
             <label
               htmlFor="email"
               className={`absolute left-3 transition-all duration-200 pointer-events-none
-                ${(isEmailFocused || email) ? 'top-0 text-xs bg-white px-1 -translate-y-1/2 text-black' : 'top-1/2 -translate-y-1/2 text-gray-500'}
-                peer-focus:top-0 peer-focus:text-xs peer-focus:bg-white peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-black`}
+                ${(isEmailFocused || email) ? 'bg-background top-0 text-xs px-1 -translate-y-1/2' : 'top-1/2 -translate-y-1/2 text-muted-foreground'}
+                peer-focus:top-0 peer-focus:text-xs peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-foreground`}
             >
               Email
             </label>
@@ -66,14 +66,14 @@ const LoginPage = () => {
 
           {/* Input Password dengan Floating Label */}
           <div className="relative mb-6">
-            <input
+            <Input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setIsPasswordFocused(true)}
               onBlur={() => setIsPasswordFocused(false)}
-              className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black peer"
+              className="w-full px-3 py-3 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring peer"
               required
               autoComplete="current-password"
               disabled={isLoading} // Nonaktifkan input saat loading
@@ -81,28 +81,29 @@ const LoginPage = () => {
             <label
               htmlFor="password"
               className={`absolute left-3 transition-all duration-200 pointer-events-none
-                ${(isPasswordFocused || password) ? 'top-0 text-xs bg-white px-1 -translate-y-1/2 text-black' : 'top-1/2 -translate-y-1/2 text-gray-500'}
-                peer-focus:top-0 peer-focus:text-xs peer-focus:bg-white peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-black`}
+                ${(isPasswordFocused || password) ? 'top-0 text-xs bg-background px-1 -translate-y-1/2 text-foreground' : 'top-1/2 -translate-y-1/2 text-muted-foreground'}
+                peer-focus:top-0 peer-focus:text-xs peer-focus:bg-background peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-foreground`}
             >
               Password
             </label>
           </div>
 
           <div className="mb-6 text-right">
-            <a href="#" className="text-sm text-gray-600 hover:underline">Lupa Password?</a>
+            <a href="#" className="text-sm hover:underline">Lupa Password?</a>
           </div>
 
-          <button
+          <Button
             type="submit"
+            variant="default"
             disabled={isLoading} // Tombol dinonaktifkan saat proses login berjalan
-            className="w-full bg-black text-white py-3 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black mb-4 tracking-widest transition-colors duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 rounded-md focus:outline-none mb-4 tracking-widest transition-colors duration-300 disabled:cursor-not-allowed"
           >
             {isLoading ? 'MEMPROSES...' : 'Masuk'}
-          </button>
+          </Button>
 
           <div className="text-center">
             {/* 4. Menggunakan komponen <Link> untuk navigasi yang lebih baik */}
-            <Link to="/register" className="text-sm text-gray-600 hover:underline">
+            <Link to="/register" className="text-sm hover:underline">
               Buat Akun
             </Link>
           </div>

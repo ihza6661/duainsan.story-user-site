@@ -40,7 +40,7 @@ const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productName }) 
         loop={images.length > 1} // Aktifkan loop jika ada lebih dari 1 gambar
       >
         {images.map((image) => {
-          const imageUrl = getImageUrl(image?.image);
+          const imageUrl = getImageUrl(image?.image_url);
           return (
             <SwiperSlide key={image.id}>
               <div className="aspect-square w-full">

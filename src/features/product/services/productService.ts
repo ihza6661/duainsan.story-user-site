@@ -8,6 +8,7 @@ export interface ProductCategory {
   slug: string;
   description: string | null;
   image: string | null;
+  image_url: string | null;
 }
 
 /**
@@ -16,7 +17,8 @@ export interface ProductCategory {
  */
 export interface ProductImage {
   id: number;
-  image: string; // Sebelumnya `url` atau `image_url`
+  image: string;
+  image_url: string;
   alt_text: string | null;
   is_featured: boolean;
 }

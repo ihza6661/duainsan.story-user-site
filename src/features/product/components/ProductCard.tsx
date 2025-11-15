@@ -8,7 +8,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, loading = false }: ProductCardProps) => {
-  const imageUrl = getImageUrl(product.featured_image?.image);
+  const imageUrl = getImageUrl(product.featured_image?.image_url);
 
   if (loading) {
     return (

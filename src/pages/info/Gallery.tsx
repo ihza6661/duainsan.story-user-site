@@ -6,6 +6,7 @@ import ExploreTheNewestTrend from "@/components/layout/sections/ExploreTheNewest
 import { Skeleton } from "@/components/ui/utils/skeleton";
 import { Button } from "@/components/ui/buttons/button";
 import React from "react";
+import { getImageUrl } from "@/lib/utils";
 
 export default function GalleryPage() {
   const { 
@@ -61,7 +62,7 @@ export default function GalleryPage() {
               {galleryItems.map((item) => (
               <div key={item.id} className="relative overflow-hidden mb-4 break-inside-avoid">
                   <img 
-                      src={item.file_url} 
+                      src={getImageUrl(item.file_url)} 
                       alt={item.title} 
                       className="w-full h-auto rounded-lg shadow-md" 
                   />

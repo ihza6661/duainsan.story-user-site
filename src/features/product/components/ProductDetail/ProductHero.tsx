@@ -210,8 +210,8 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
               title={product.name}
               media={getImageUrl(
                 activeVariant?.images.length
-                  ? activeVariant.images[0].image
-                  : product.featured_image?.image
+                  ? activeVariant.images[0].image_url
+                  : product.featured_image?.image_url
               )}
             />
           </div>

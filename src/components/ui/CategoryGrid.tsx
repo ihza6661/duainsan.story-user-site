@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCategories } from "@/features/product/services/productService";
 import type { ProductCategory } from "@/features/product/services/productService";
+import { getImageUrl } from "@/lib/utils";
 
 // Skeleton component for a better loading experience
 const CategorySkeleton = () => (
@@ -47,7 +48,7 @@ const CategoryGrid = () => {
                 <div className="relative h-[500px] overflow-hidden">
                   <img
                     // Use the image_url from the API
-                    src={category.image}
+                    src={getImageUrl(category.image_url)}
                     alt={category.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />

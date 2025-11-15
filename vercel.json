@@ -1,0 +1,17 @@
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://dua-insan-story-g8bpeagbdec3evd2.indonesiacentral-01.azurewebsites.net/api/:path*"
+    }
+  ]
+}

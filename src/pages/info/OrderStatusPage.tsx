@@ -369,7 +369,7 @@ const OrderStatusPage = () => {
                   {(order.items || []).map((item) => {
                     // Build image src using the utility function
                     const imageUrl = getImageUrl(
-                      item.product.featured_image?.image
+                      item.product.featured_image?.image_url
                     );
 
                     return (

@@ -29,7 +29,7 @@ export function CartItem({ item, onUpdateQuantity, onRemoveItem }: CartItemProps
   }
 
   // 4. Construct the final URL safely.
-  const imageUrl = getImageUrl(imageToDisplay?.image);
+  const imageUrl = getImageUrl(imageToDisplay?.image_url);
 
   const variantDescription = item.customizations?.options?.map(opt => opt.value).join(' / ');
 

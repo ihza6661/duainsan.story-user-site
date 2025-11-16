@@ -86,7 +86,7 @@ const OrderConfirmationPage = () => {
           <h3 className="text-xl font-semibold mb-4">Item Pesanan</h3>
           <div className="space-y-4 mb-6">
             {order.items.map((item) => {
-              const variantImage = item.product.variants.find(v => v.id === item.variant.id)?.images[0]?.image;
+              const variantImage = item.product.variants.find(v => v.id === item.variant.id)?.images[0]?.image_url;
               const imageUrl = variantImage ? getImageUrl(variantImage) : '/placeholder.svg';
               return (
               <div key={item.id} className="flex justify-between items-center border-b pb-2">

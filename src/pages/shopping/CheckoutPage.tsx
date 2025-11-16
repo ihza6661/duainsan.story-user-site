@@ -550,20 +550,40 @@ const CheckoutPage = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 {cart.items.map((item) => {
+                  const getImageUrlForItem = () => {
+                    let imageToRender = null;
+                    const featuredVariantImage = item.variant?.images?.find(
+                      (img) => img.is_featured
+                    );
+                    if (featuredVariantImage) {
+                      imageToRender = featuredVariantImage;
+                    }
+                    if (!imageToRender && item.product.featured_image) {
+                      imageToRender = item.product.featured_image;
+                    }
+                    if (
+                      !imageToRender &&
+                      item.variant?.images?.length > 0
+                    ) {
+                      imageToRender = item.variant.images[0];
+                    }
+                    return imageToRender
+                      ? getImageUrl(imageToRender.image_url)
+                      : "/placeholder.svg";
+                  };
+                  const imageUrl = getImageUrlForItem();
+
                   return (
                     <div
                       key={item.id}
                       className="flex justify-between items-center"
                     >
                       <div className="flex items-center space-x-2">
-                        {item.variant?.images &&
-                          item.variant.images.length > 0 && (
-                            <img
-                              src={item.variant.images[0].image_url}
-                              alt={item.product?.name}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                          )}
+                        <img
+                          src={imageUrl}
+                          alt={item.product?.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
                         <div>
                           <p className="text-sm font-medium">
                             {item.product?.name} x {item.quantity}

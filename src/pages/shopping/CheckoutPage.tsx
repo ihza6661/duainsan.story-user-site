@@ -16,7 +16,7 @@ import {
   RadioGroupItem,
 } from "@/components/ui/forms/radio-group";
 import { Loader2, ShoppingCart } from "lucide-react";
-import { formatRupiah } from "@/lib/utils";
+import { formatRupiah, getImageUrl } from "@/lib/utils";
 import {
   createGuestOrder,
   createOrder,

@@ -1,5 +1,3 @@
-// src/App.tsx (Versi Final)
-
 // --- Imports dari library ---
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
@@ -125,11 +123,6 @@ const App = () => (
                     path="info-pemesanan-cetak"
                     element={<InfoPemesananCetak />}
                   />
-
-                  {/* <Route */}
-                  {/*   path="shipping-calculator" */}
-                  {/*   element={<ShippingForm />} */}
-                  {/* /> */}
 
                   <Route
                     path="syarat-ketentuan"

@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 // --- Impor Aset & Komponen Anak ---
 import ShoppingBag from "@/svg/shopping-bag.svg?react";
 import UserIcon from "@/svg/user.svg?react";
-import SearchIcon from "@/svg/search.svg?react";
 import MenuIcon from "@/svg/menu.svg?react";
 import Sidebar from "@/components/layout/Sidebar";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
@@ -13,6 +12,7 @@ import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { useCart } from "@/features/cart/hooks/cart/use-cart";
 import { useScrollDirection } from "@/hooks/navigation/useScrollDirection";
 import { useAuth } from "../../features/auth/hooks/useAuth";
+import { Button } from "../ui/buttons/button";
 
 const Header = () => {
   // --- State Lokal untuk UI ---
@@ -45,7 +45,10 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowUserDropdown(false);
       }
     };
@@ -60,7 +63,8 @@ const Header = () => {
   };
 
   // --- Kalkulasi Class untuk Styling Dinamis ---
-  const baseHeaderClasses = "fixed top-0 left-0 right-0 z-40 w-full transition-transform duration-300";
+  const baseHeaderClasses =
+    "fixed top-0 left-0 right-0 z-40 w-full transition-transform duration-300";
   const showHideClass = isVisible ? "translate-y-0" : "-translate-y-full";
   const pageStyle = isProductDetailPage
     ? isAtTop
@@ -74,28 +78,35 @@ const Header = () => {
 
       <header className={`${baseHeaderClasses} ${showHideClass} ${pageStyle}`}>
         <div className="px-0 sm:px-8 flex items-center justify-between h-16 md:h-20">
-
           {/* ================== Sisi Kiri (Navigasi) ================== */}
           <div className="flex items-center pl-3">
-            <button
-              className="text-shop-text md:hidden"
+            <Button
+              variant="ghost"
+              className="md:hidden"
               onClick={() => setSidebarOpen(true)}
             >
               <MenuIcon className="w-6 h-6 text-foreground" />
-            </button>
+            </Button>
             <div className="hidden md:flex items-center space-x-8">
-              <button
-                className="text-shop-text"
+              <Button
+                variant="ghost"
+                className=""
                 onClick={() => setSidebarOpen(true)}
               >
                 <MenuIcon className="w-6 h-6 text-foreground" />
-              </button>
+              </Button>
               <nav className="hidden tablet-custom:flex items-center space-x-6 tracking-normal">
-                <Link to="/products" className="text-sm uppercase link-underline-animation">
-                  All Products
+                <Link
+                  to="/products"
+                  className="text-sm uppercase link-underline-animation"
+                >
+                  Semua Produk
                 </Link>
-                <Link to="/gallery" className="text-sm uppercase link-underline-animation">
-                  Gallery
+                <Link
+                  to="/gallery"
+                  className="text-sm uppercase link-underline-animation"
+                >
+                  Galleri
                 </Link>
               </nav>
             </div>
@@ -124,12 +135,13 @@ const Header = () => {
                 </div>
               ) : user ? (
                 <div className="relative" ref={dropdownRef}>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setShowUserDropdown(!showUserDropdown)}
                     className="relative flex items-center justify-center w-8 h-10"
                   >
                     <UserIcon className="w-6 h-6 text-foreground" />
-                  </button>
+                  </Button>
                   {showUserDropdown && (
                     <div className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-xl z-50 py-2 text-sm">
                       <div className="px-4 py-2 border-b font-medium text-foreground truncate">
@@ -149,18 +161,22 @@ const Header = () => {
                       >
                         Status Pesanan
                       </Link>
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={handleLogout}
-                        className="block w-full text-left px-4 py-2 hover:bg-muted text-destructive font-medium"
+                        className="block w-full text-left hover:bg-accent/30 text-destructive font-medium"
                       >
-                        Logout
-                      </button>
+                        Keluar
+                      </Button>
                     </div>
                   )}
                 </div>
               ) : (
-                <Link to="/login" className="relative flex items-center justify-center w-10 h-10">
-                  <p>Login</p>
+                <Link
+                  to="/login"
+                  className="relative flex items-center justify-center w-10 h-10"
+                >
+                  <p>Masuk</p>
                 </Link>
               )}
 

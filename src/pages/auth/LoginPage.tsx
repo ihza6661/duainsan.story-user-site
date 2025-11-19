@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // State lokal untuk efek UI floating label (tidak berubah)
+  // State lokal untuk efek UI floating label
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
@@ -55,7 +55,6 @@ const LoginPage = () => {
               onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setIsEmailFocused(true)}
               onBlur={() => setIsEmailFocused(false)}
-              className="w-full px-3 py-3 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring peer"
               required
               autoComplete="email"
               disabled={isLoading} // Nonaktifkan input saat loading
@@ -63,9 +62,10 @@ const LoginPage = () => {
             <Label
               htmlFor="email"
               className={`absolute left-3 transition-all duration-200 pointer-events-none
-                ${isEmailFocused || email
-                  ? "bg-background top-0 text-xs px-1 -translate-y-1/2"
-                  : "top-1/2 -translate-y-1/2 text-muted-foreground"
+                ${
+                  isEmailFocused || email
+                    ? "bg-card rounded-md top-0 text-xs px-1 -translate-y-1/2"
+                    : "top-1/2 -translate-y-1/2 text-muted-foreground"
                 }
                 peer-focus:top-0 peer-focus:text-xs peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-foreground`}
             >
@@ -82,7 +82,6 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               onFocus={() => setIsPasswordFocused(true)}
               onBlur={() => setIsPasswordFocused(false)}
-              className="w-full px-3 py-3 border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-ring peer"
               required
               autoComplete="current-password"
               disabled={isLoading} // Nonaktifkan input saat loading
@@ -90,9 +89,10 @@ const LoginPage = () => {
             <Label
               htmlFor="password"
               className={`absolute left-3 transition-all duration-200 pointer-events-none
-                ${isPasswordFocused || password
-                  ? "top-0 text-xs bg-background px-1 -translate-y-1/2 text-foreground"
-                  : "top-1/2 -translate-y-1/2 text-muted-foreground"
+                ${
+                  isPasswordFocused || password
+                    ? "top-0 text-xs bg-card rounded-md px-1 -translate-y-1/2 text-foreground"
+                    : "top-1/2 -translate-y-1/2 text-muted-foreground"
                 }
                 peer-focus:top-0 peer-focus:text-xs peer-focus:bg-background peer-focus:px-1 peer-focus:-translate-y-1/2 peer-focus:text-foreground`}
             >
@@ -112,11 +112,11 @@ const LoginPage = () => {
             disabled={isLoading} // Tombol dinonaktifkan saat proses login berjalan
             className="w-full py-3 px-4 rounded-md focus:outline-none mb-4 tracking-widest transition-colors duration-300 disabled:cursor-not-allowed"
           >
-            {isLoading ? "MEMPROSES..." : "Masuk"}
+            {isLoading ? "Memproses..." : "Masuk"}
           </Button>
 
           <div className="text-center">
-            {/* 4. Menggunakan komponen <Link> untuk navigasi yang lebih baik */}
+            {/* Menggunakan komponen <Link> untuk navigasi yang lebih baik */}
             <Link to="/register" className="text-sm hover:underline">
               Buat Akun
             </Link>

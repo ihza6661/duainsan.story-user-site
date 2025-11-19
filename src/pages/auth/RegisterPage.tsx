@@ -98,7 +98,6 @@ const RegisterPage = () => {
             // label="Nama Lengkap"
             placeholder="Nama Lengkap"
             required
-            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.full_name}
             onChange={handleChange}
           />
@@ -114,10 +113,8 @@ const RegisterPage = () => {
             id="email"
             type="email"
             name="email"
-            // label="Email"
             placeholder="email@gmail.com"
             required
-            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.email}
             onChange={handleChange}
           />
@@ -133,10 +130,8 @@ const RegisterPage = () => {
             id="password"
             type="password"
             name="password"
-            // label="Password"
             placeholder="Minimal 8 karakter"
             required
-            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.password}
             onChange={handleChange}
           />
@@ -152,10 +147,8 @@ const RegisterPage = () => {
             id="password_confirmation"
             type="password"
             name="password_confirmation"
-            // label="Konfirmasi Password"
             placeholder="Ulangi password Anda"
             required
-            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.password_confirmation}
             onChange={handleChange}
           />
@@ -168,7 +161,6 @@ const RegisterPage = () => {
             name="phone_number"
             // label={<span>Nomor Telepon <span className="text-muted-foreground">(Opsional)</span></span>}
             placeholder="081234567890"
-            className="w-full px-4 py-2 border border-border rounded-md focus:ring-ring focus:border-primary transition"
             value={formData.phone_number || ""}
             onChange={handleChange}
           />

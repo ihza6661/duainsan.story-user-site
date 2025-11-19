@@ -143,7 +143,7 @@ const Header = () => {
                     <UserIcon className="w-6 h-6 text-foreground" />
                   </Button>
                   {showUserDropdown && (
-                    <div className="absolute right-0 mt-2 w-48 bg-background border rounded-lg shadow-xl z-50 py-2 text-sm">
+                    <div className="bg-popover absolute right-0 mt-2 w-48 border rounded-lg shadow-xl z-50 py-2 text-sm">
                       <div className="px-4 py-2 border-b font-medium text-foreground truncate">
                         {user.full_name}
                       </div>

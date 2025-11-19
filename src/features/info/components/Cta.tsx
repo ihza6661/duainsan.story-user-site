@@ -3,11 +3,11 @@ import { FaWhatsapp } from "react-icons/fa";
 const Cta = () => {
   return (
     <>
-      <div className="bg-secondary text-primary-foreground py-16">
-        <div className="container mx-auto px-4 text-center">
+      <div className="container text-primary-foreground py-16">
+        <div className="container rounded-lg text-center py-16 bg-secondary">
           <h2 className="text-3xl md:text-4xl mb-4">
-            Konsultasi dengan tim Dua Insan Story <br /> untuk custom desain undangan
-            cetak!
+            Konsultasi dengan tim Dua Insan Story <br /> untuk custom desain
+            undangan cetak!
           </h2>
           <div className="container mx-auto px-4 mt-8 text-center flex justify-center gap-4">
             <a

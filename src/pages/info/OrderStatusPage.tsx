@@ -1,5 +1,5 @@
 import { getImageUrl } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -63,12 +63,12 @@ const paymentOptionLabels: Record<string, string> = {
 };
 
 const getPaymentOptionLabel = (option?: string | null) =>
-  option ? paymentOptionLabels[option] ?? option : "-";
+  option ? (paymentOptionLabels[option] ?? option) : "-";
 
 const getStatusInfo = <T extends { text: string; variant: StatusVariant }>(
   status: string | undefined,
   map: Record<string, T>,
-  fallback: T
+  fallback: T,
 ): T => {
   if (!status) {
     return fallback;
@@ -105,7 +105,7 @@ const OrderStatusPage = () => {
     script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
     script.setAttribute(
       "data-client-key",
-      import.meta.env.VITE_MIDTRANS_CLIENT_KEY
+      import.meta.env.VITE_MIDTRANS_CLIENT_KEY,
     );
     script.async = true;
     document.body.appendChild(script);
@@ -131,7 +131,7 @@ const OrderStatusPage = () => {
 
       if (!data.snap_token) {
         toast.error(
-          "Gagal memproses pembayaran. Token pembayaran tidak ditemukan."
+          "Gagal memproses pembayaran. Token pembayaran tidak ditemukan.",
         );
         return;
       }
@@ -176,7 +176,7 @@ const OrderStatusPage = () => {
 
       if (!data.snap_token) {
         toast.error(
-          "Gagal memproses pembayaran. Token pembayaran tidak ditemukan."
+          "Gagal memproses pembayaran. Token pembayaran tidak ditemukan.",
         );
         return;
       }
@@ -277,18 +277,18 @@ const OrderStatusPage = () => {
     const statusInfo = getStatusInfo(
       order.order_status,
       statusMap,
-      statusFallback
+      statusFallback,
     );
 
     const paymentStatusInfo = getStatusInfo(
       order.payment_status,
       paymentStatusMap,
-      paymentStatusFallback
+      paymentStatusFallback,
     );
 
     const amountPaid = Number(order.amount_paid ?? 0);
     const remainingBalance = Number(
-      order.remaining_balance ?? Math.max(order.total_amount - amountPaid, 0)
+      order.remaining_balance ?? Math.max(order.total_amount - amountPaid, 0),
     );
     const paymentOptionLabel = getPaymentOptionLabel(order.payment_option);
 
@@ -306,16 +306,16 @@ const OrderStatusPage = () => {
             <CardHeader className="bg-muted/50 rounded-t-lg">
               <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground">
-                    Detail Pesanan
-                  </h1>
+                  <CardTitle>
+                    <h1 className="text-2xl font-bold text-foreground">
+                      Detail Pesanan
+                    </h1>
+                  </CardTitle>
                   <p className="text-sm text-muted-foreground">
                     Pesanan #{order.order_number}
                   </p>
                 </div>
-                <Badge 
-                  variant={statusInfo.variant}
-                  className="text-base">
+                <Badge variant={statusInfo.variant} className="text-base">
                   {statusInfo.text}
                 </Badge>
                 {/* <Badge
@@ -369,7 +369,7 @@ const OrderStatusPage = () => {
                   {(order.items || []).map((item) => {
                     // Build image src using the utility function
                     const imageUrl = getImageUrl(
-                      item.product.featured_image?.image_url
+                      item.product.featured_image?.image_url,
                     );
 
                     return (
@@ -428,7 +428,7 @@ const OrderStatusPage = () => {
                       <span className="text-muted-foreground">Akad:</span>{" "}
                       {order.custom_data?.akad_date &&
                         new Date(
-                          order.custom_data.akad_date
+                          order.custom_data.akad_date,
                         ).toLocaleDateString("id-ID")}{" "}
                       di {order.custom_data?.akad_location}
                     </p>
@@ -436,7 +436,7 @@ const OrderStatusPage = () => {
                       <span className="text-muted-foreground">Resepsi:</span>{" "}
                       {order.custom_data?.reception_date &&
                         new Date(
-                          order.custom_data.reception_date
+                          order.custom_data.reception_date,
                         ).toLocaleDateString("id-ID")}{" "}
                       di {order.custom_data?.reception_location}
                     </p>
@@ -496,19 +496,19 @@ const OrderStatusPage = () => {
   const orders = ordersData;
   if (!orders || orders.length === 0) {
     return (
-      <div className="container mt-20 mx-auto text-center py-20">
-        <h1 className="text-2xl font-bold text-foreground">
-          Belum Ada Pesanan
-        </h1>
-        <p className="text-muted-foreground">
-          Anda belum memiliki pesanan apapun. Silakan jelajahi produk kami!
-        </p>
-        <Link
-          to="/products"
-          className="mt-4 inline-block bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/80"
-        >
-          Jelajahi Produk
-        </Link>
+      <div className="container rounded-md mt-20 text-center py-20">
+        <div className="bg-card inline-block px-16 py-12 rounded-md shadow-md">
+          <CardTitle>Belum Ada Pesanan</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Silakan jelajahi produk kami!
+          </p>
+          <Link
+            to="/products"
+            className="mt-4 inline-block bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/80"
+          >
+            Jelajahi Produk
+          </Link>
+        </div>
       </div>
     );
   }
@@ -523,17 +523,17 @@ const OrderStatusPage = () => {
           const statusInfo = getStatusInfo(
             order.order_status,
             statusMap,
-            statusFallback
+            statusFallback,
           );
           const paymentStatusInfo = getStatusInfo(
             order.payment_status,
             paymentStatusMap,
-            paymentStatusFallback
+            paymentStatusFallback,
           );
           const listAmountPaid = Number(order.amount_paid ?? 0);
           const listRemainingBalance = Number(
             order.remaining_balance ??
-              Math.max(order.total_amount - listAmountPaid, 0)
+              Math.max(order.total_amount - listAmountPaid, 0),
           );
           return (
             <Card key={order.id}>
@@ -562,9 +562,10 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <Badge 
+                  <Badge
                     variant={statusInfo.variant}
-                    className="text-base text-center">
+                    className="text-base text-center"
+                  >
                     {statusInfo.text}
                   </Badge>
                   {/* <Badge

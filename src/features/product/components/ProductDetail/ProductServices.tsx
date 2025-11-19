@@ -40,7 +40,7 @@ const ProductServices = () => {
         >
           {services.map((service, index) => (
             <SwiperSlide key={index}>
-              <div className="flex flex-col items-center text-center bg-card px-4 py-8">
+              <div className="flex flex-col items-center text-center px-4 py-8">
                 <div className="text-foreground">{service.icon}</div>
                 <h3 className="pt-2 text-sm font-normal tracking-widest text-foreground">
                   {service.title}

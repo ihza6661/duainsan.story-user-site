@@ -1,4 +1,3 @@
-// src/pages/ProductDetail.tsx
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
@@ -26,6 +25,7 @@ import Header from "@/components/layout/Header";
 import ProductHero from "@/features/product/components/ProductDetail/ProductHero";
 import ProductServices from "@/features/product/components/ProductDetail/ProductServices";
 import RelatedProducts from "@/features/product/components/ProductDetail/RelatedProducts";
+import ProductDetailSkeleton from "@/features/product/components/ProductDetail/ProductDetailSkeleton";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -70,7 +70,8 @@ const ProductDetail = () => {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <main className="flex-grow pt-8">
+        <main className="flex-grow">
+          <ProductDetailSkeleton />
         </main>
         <Footer />
       </div>
@@ -108,6 +109,7 @@ const ProductDetail = () => {
   // 3. Display the main content if data is loaded successfully
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Header />
       <main className="flex-grow">
         <ProductHero product={product} onAddToCart={handleAddToCart} />
         <ProductServices />
@@ -120,18 +122,30 @@ const ProductDetail = () => {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+                  <Link
+                    to="/"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Home
+                  </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/products" className="text-muted-foreground hover:text-foreground">Products</Link>
+                  <Link
+                    to="/products"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Products
+                  </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-foreground">{product.name}</BreadcrumbPage>
+                <BreadcrumbPage className="text-foreground">
+                  {product.name}
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -139,6 +153,7 @@ const ProductDetail = () => {
 
         <ActualBrandSlider />
       </main>
+      <Footer />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { getImageUrl } from "@/lib/utils";
 
 // Skeleton component for a better loading experience
 const CategorySkeleton = () => (
-  <div className="relative h-[500px] bg-gray-200 animate-pulse"></div>
+  <div className="relative h-[500px] bg-muted animate-pulse"></div>
 );
 
 const CategoryGrid = () => {

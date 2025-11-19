@@ -65,22 +65,33 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
 
   const pricePerItem = quantity > 0 ? totalPrice / quantity : 0;
 
-  const handleOptionChange = useCallback((groupName: string, valueId: number) => {
-    setSelectedOptions((prev) => ({ ...prev, [groupName]: valueId }));
-  }, []);
+  const handleOptionChange = useCallback(
+    (groupName: string, valueId: number) => {
+      setSelectedOptions((prev) => ({ ...prev, [groupName]: valueId }));
+    },
+    []
+  );
 
-  const handleAddOnChange = useCallback((addOnId: number, isSelected: boolean) => {
-    setSelectedAddOns((prev) =>
-      isSelected ? [...prev, addOnId] : prev.filter((id) => id !== addOnId)
-    );
-  }, []);
+  const handleAddOnChange = useCallback(
+    (addOnId: number, isSelected: boolean) => {
+      setSelectedAddOns((prev) =>
+        isSelected ? [...prev, addOnId] : prev.filter((id) => id !== addOnId)
+      );
+    },
+    []
+  );
 
-  const handleQuantityChange = useCallback((change: number) => {
-    setQuantity((prevQuantity) => {
-      const newQuantity = prevQuantity + change;
-      return newQuantity >= product.min_order_quantity ? newQuantity : prevQuantity;
-    });
-  }, [product.min_order_quantity]);
+  const handleQuantityChange = useCallback(
+    (change: number) => {
+      setQuantity((prevQuantity) => {
+        const newQuantity = prevQuantity + change;
+        return newQuantity >= product.min_order_quantity
+          ? newQuantity
+          : prevQuantity;
+      });
+    },
+    [product.min_order_quantity]
+  );
 
   const handleAddToCartClick = useCallback(() => {
     if (!activeVariant) {
@@ -99,7 +110,7 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
   }, [activeVariant, quantity, selectedAddOns, onAddToCart]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2">
       <ProductGallery
         images={
           activeVariant?.images.length
@@ -111,8 +122,8 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
         productName={product.name}
       />
 
-      <div className="pt-0 md:pt-20 px-4 sm:px-8 md:px-12 lg:px-16 sticky top-24 self-start">
-        <h1 className="text-2xl lg:text-3xl tracking-wide my-4 font-bold uppercase text-foreground">
+      <div className="py-4 px-4 sm:px-44 sm:py-6 sticky top-20 self-start">
+        <h1 className="text-xl tracking-wide my-4 uppercase text-foreground">
           {product.name}
         </h1>
 
@@ -126,7 +137,7 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
               minimumFractionDigits: 0,
             }).format(pricePerItem)}
           </div>
-          <div className="text-2xl text-muted-foreground font-bold pt-1">
+          <div className="text-2xl pt-1">
             Total:{" "}
             {new Intl.NumberFormat("id-ID", {
               style: "currency",
@@ -137,19 +148,18 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
         </div>
 
         <div className="py-4 border-y border-border">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowDescription(!showDescription)}
-            className="text-foreground flex flex-row justify-between w-full items-center"
+            className="text-foreground flex flex-row justify-between w-full items-center h-4"
           >
-            <p className="text-base tracking-widest font-normal">
-              Deskripsi produk
-            </p>
+            <p className="tracking-widest font-medium">DESKRIPSI</p>
             {showDescription ? (
               <Minus className="w-5 h-5" />
             ) : (
               <Plus className="w-5 h-5" />
             )}
-          </button>
+          </Button>
           <div
             className={`transition-all duration-300 ease-in-out overflow-hidden ${
               showDescription ? "max-h-[1000px] mt-4" : "max-h-0"

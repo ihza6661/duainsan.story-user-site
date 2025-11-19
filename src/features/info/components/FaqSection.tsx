@@ -1,4 +1,3 @@
-
 type FaqItem = {
   question: string;
   answer: string;
@@ -22,7 +21,6 @@ const faqs: FaqItem[] = [
   },
 ];
 
-
 import React from "react";
 
 const FaqSection: React.FC = () => {
@@ -32,7 +30,7 @@ const FaqSection: React.FC = () => {
         <h2 className="inline bg-card text-4xl font-semibold text-foreground rounded-lg px-4">
           Pertanyaan Umum
         </h2>
-        <div className="grid md:grid-cols-2 gap-x-12 gap-y-12 leading-relaxed pt-6">
+        <div className="grid md:grid-cols-2 leading-relaxed pt-4">
           {faqs.map((faq, index) => (
             <div className="px-4 py-4" key={index}>
               <div className="bg-card p-4 rounded-xl">

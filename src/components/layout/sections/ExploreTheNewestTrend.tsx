@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 const ExploreTheNewestTrend = () => {
   return (
     <div className="bg-card text-center py-12 px-4 sm:px-8 md:px-16 space-y-2 sm:space-y-6">
-      <p className="text-base">
-        Discover the latest trends
-      </p>
+      <p className="text-base">Discover the latest trends</p>
 
       <p className="mx-auto max-w-7xl px-0 sm:px-0 md:px-0 lg:px-4 text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-normal tracking-wide leading-tight break-words">
         elegant invitations
@@ -37,7 +35,8 @@ const ExploreTheNewestTrend = () => {
       <div className="pt-1">
         <Link
           to="/products"
-          className="relative text-sm border-b transition-all duration-300 group hover:border-primary">
+          className="relative text-sm border-b transition-all duration-300 group hover:border-primary"
+        >
           VIEW ALL COLLECTIONS
           <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-primary transition-all duration-300 group-hover:w-full"></span>
         </Link>

@@ -6,10 +6,10 @@ const InstagramFollow = () => {
       <div className="container">
         <div className="text-center max-w-xl mx-auto">
           <h2 className="text-foreground text-2xl uppercase tracking-wider font-normal mb-3">
-            Follow Us on Instagram
+            Ikuti Kami di Instagram
           </h2>
           <p className="font-normal text-muted-foreground mb-6">
-            Stay updated with our latest collections and behind-the-scenes content.
+            Tetap update dengan koleksi terbaru dan konten di balik layar kami.
           </p>
 
           <a
@@ -28,4 +28,3 @@ const InstagramFollow = () => {
 };
 
 export default InstagramFollow;
-

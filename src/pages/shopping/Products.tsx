@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   fetchProducts,
   fetchCategories,
@@ -57,11 +57,14 @@ const Products = () => {
   });
 
   const {
-    data: paginatedProducts,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading,
     isError,
     error,
-  } = useQuery({
+  } = useInfiniteQuery({
     queryKey: [
       "products",
       {
@@ -70,11 +73,12 @@ const Products = () => {
         search: debouncedSearchTerm,
         min_price: debouncedPriceRange[0],
         max_price:
-          debouncedPriceRange[1] === MAX_PRICE ? "" : debouncedPriceRange[1], // Don't send max price if it's the default max
+          debouncedPriceRange[1] === MAX_PRICE ? "" : debouncedPriceRange[1],
       },
     ],
-    queryFn: () =>
+    queryFn: ({ pageParam = 1 }) =>
       fetchProducts({
+        page: pageParam,
         category: categorySlugFromUrl,
         sort: sortOption,
         search: debouncedSearchTerm,
@@ -84,10 +88,19 @@ const Products = () => {
             ? undefined
             : debouncedPriceRange[1].toString(),
       }),
-    placeholderData: (previousData) => previousData,
+    getNextPageParam: (lastPage) => {
+      return lastPage.meta.current_page < lastPage.meta.last_page
+        ? lastPage.meta.current_page + 1
+        : undefined;
+    },
+    initialPageParam: 1,
   });
 
-  const products = paginatedProducts?.data || [];
+  const products = useMemo(
+    () => data?.pages.flatMap((page) => page.data) || [],
+    [data]
+  );
+  const totalProducts = data?.pages[0]?.meta.total || 0;
 
   // --- EFFECTS ---
   // Debounce search term
@@ -229,12 +242,12 @@ const Products = () => {
 
               <div className="flex justify-between items-center mb-6">
                 <p className="text-muted-foreground">
-                  Menampilkan {paginatedProducts?.meta?.total || 0} produk
+                  Menampilkan {products.length} dari {totalProducts} produk
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {isLoading ? (
+                {isLoading && !isFetchingNextPage ? (
                   Array.from({ length: 9 }).map((_, index) => (
                     <ProductCardSkeleton key={index} />
                   ))
@@ -250,6 +263,19 @@ const Products = () => {
                       Produk tidak ditemukan. Coba ubah filter Anda.
                     </p>
                   </div>
+                )}
+              </div>
+              {/* --- LOAD MORE BUTTON --- */}
+              <div className="text-center mt-8">
+                {hasNextPage && (
+                  <Button
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                  >
+                    {isFetchingNextPage
+                      ? "Memuat..."
+                      : "Lihat lebih banyak"}
+                  </Button>
                 )}
               </div>
             </div>

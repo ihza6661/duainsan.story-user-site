@@ -96,6 +96,7 @@ export interface ProductDetailResponse {
 }
 
 interface FetchProductsParams {
+  page?: number;
   category?: string;
   search?: string;
   sort?: string;

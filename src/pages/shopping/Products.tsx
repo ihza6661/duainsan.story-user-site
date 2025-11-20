@@ -140,10 +140,12 @@ const Products = () => {
   return (
     <div className="min-h-screen flex flex-col pt-16">
       <main className="flex-grow py-8">
-        <div className="container pb-44">
-          <h1 className="text-3xl font-medium mb-8 text-foreground">
+        <div className="container">
+          <div className="bg-card border rounded-md p-2 inline-block my-8">
+          <h1 className="text-3xl font-medium  text-foreground">
             {activeCategory ? activeCategory.name : "Semua Produk"}
           </h1>
+          </div>
           <div className="flex flex-col lg:flex-row gap-8">
             {/* --- SIDEBAR FILTERS --- */}
             <div className="lg:w-1/4">

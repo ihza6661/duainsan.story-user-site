@@ -122,7 +122,7 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
         productName={product.name}
       />
 
-      <div className="py-4 px-4 sm:px-44 sm:py-6 sticky top-20 self-start">
+      <div className="py-4 px-4 sm:px-44 sm:py-32 sticky top-20 self-start">
         <h1 className="text-xl tracking-wide my-4 uppercase text-foreground">
           {product.name}
         </h1>

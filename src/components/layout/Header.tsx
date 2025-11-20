@@ -2,17 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 // --- Impor Aset & Komponen Anak ---
-import ShoppingBag from "@/svg/shopping-bag.svg?react";
-import UserIcon from "@/svg/user.svg?react";
-import MenuIcon from "@/svg/menu.svg?react";
 import Sidebar from "@/components/layout/Sidebar";
+import { Menu, User, ShoppingBag } from "lucide-react";
+
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 
 // --- Impor Hook Kustom & Konteks ---
 import { useCart } from "@/features/cart/hooks/cart/use-cart";
 import { useScrollDirection } from "@/hooks/navigation/useScrollDirection";
-import { useAuth } from "../../features/auth/hooks/useAuth";
-import { Button } from "../ui/buttons/button";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Button } from "@/components/ui/buttons/button";
 
 const Header = () => {
   // --- State Lokal untuk UI ---
@@ -85,7 +84,10 @@ const Header = () => {
               className="md:hidden"
               onClick={() => setSidebarOpen(true)}
             >
-              <MenuIcon className="w-6 h-6 text-foreground" />
+              <Menu className="w-6 h-6 text-foreground" />
+
+
+              {/* <MenuIcon className="text-foreground" /> */}
             </Button>
             <div className="hidden md:flex items-center space-x-8">
               <Button
@@ -93,20 +95,24 @@ const Header = () => {
                 className=""
                 onClick={() => setSidebarOpen(true)}
               >
-                <MenuIcon className="w-6 h-6 text-foreground" />
+                <Menu className="w-6 h-6 text-foreground" />
+
+
+                {/* <MenuIcon className="text-foreground" /> */}
+                
               </Button>
               <nav className="hidden tablet-custom:flex items-center space-x-6 tracking-normal">
                 <Link
                   to="/products"
                   className="text-sm uppercase link-underline-animation"
                 >
-                  Semua Produk
+                  Produk
                 </Link>
                 <Link
                   to="/gallery"
                   className="text-sm uppercase link-underline-animation"
                 >
-                  Galleri
+                  Galeri
                 </Link>
               </nav>
             </div>
@@ -131,7 +137,7 @@ const Header = () => {
               {/* Ikon User */}
               {isAuthLoading ? (
                 <div className="relative flex items-center justify-center w-8 h-10">
-                  <div className="w-5 h-5 bg-gray-200 rounded-full animate-pulse"></div>
+                  <div className="w-5 h-5 rounded-full animate-pulse"></div>
                 </div>
               ) : user ? (
                 <div className="relative" ref={dropdownRef}>
@@ -140,7 +146,8 @@ const Header = () => {
                     onClick={() => setShowUserDropdown(!showUserDropdown)}
                     className="relative flex items-center justify-center w-8 h-10"
                   >
-                    <UserIcon className="w-6 h-6 text-foreground" />
+                    <User className="w-6 h-6 text-foreground" />
+
                   </Button>
                   {showUserDropdown && (
                     <div className="bg-popover absolute right-0 mt-2 w-48 border rounded-lg shadow-xl z-50 py-2 text-sm">
@@ -182,14 +189,16 @@ const Header = () => {
 
               {/* Ikon Keranjang Belanja */}
               <Link to="/cart">
-                <button className="relative flex items-center justify-center w-8 h-10">
-                  <ShoppingBag className="w-6 h-6 text-foreground" />
+                <Button 
+                variant="ghost"
+                className="relative flex items-center justify-center">
+                  <ShoppingBag className="text-foreground" />
                   {totalItems > 0 && (
                     <span className="absolute -top-2 sm:-top-3 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
                       {totalItems > 99 ? "99+" : totalItems}
                     </span>
                   )}
-                </button>
+                </Button>
               </Link>
             </div>
           </div>

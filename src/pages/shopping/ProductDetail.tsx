@@ -69,11 +69,9 @@ const ProductDetail = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
         <main className="flex-grow">
           <ProductDetailSkeleton />
         </main>
-        <Footer />
       </div>
     );
   }
@@ -82,7 +80,6 @@ const ProductDetail = () => {
   if (isError || !product) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
         <main className="flex-grow py-16">
           <div className="container text-center">
             <h1 className="text-3xl font-medium mb-6 text-foreground">
@@ -101,7 +98,6 @@ const ProductDetail = () => {
             </Button>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -109,7 +105,6 @@ const ProductDetail = () => {
   // 3. Display the main content if data is loaded successfully
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
       <main className="flex-grow">
         <ProductHero product={product} onAddToCart={handleAddToCart} />
         <ProductServices />
@@ -153,7 +148,6 @@ const ProductDetail = () => {
 
         <ActualBrandSlider />
       </main>
-      <Footer />
     </div>
   );
 };

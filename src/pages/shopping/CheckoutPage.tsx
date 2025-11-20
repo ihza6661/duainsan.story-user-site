@@ -715,7 +715,8 @@ const CheckoutPage = () => {
                   isCalculatingCost ||
                   !user ||
                   !user.phone_number ||
-                  !user.postal_code
+                  !user.postal_code ||
+                  (shippingCost === 0 && cart && cart.total_weight > 0)
                 }
               >
                 {isSubmitting && (

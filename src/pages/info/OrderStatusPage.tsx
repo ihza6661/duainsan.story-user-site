@@ -246,7 +246,7 @@ const OrderStatusPage = () => {
   // --- Error State ---
   if (isOrderError || isOrdersError) {
     return (
-      <div className="container mt-20 mx-auto text-center py-20">
+      <div className="bg-card container mt-20 mx-auto text-center py-20">
         <h1 className="text-2xl font-bold text-destructive">
           Gagal Memuat Pesanan
         </h1>

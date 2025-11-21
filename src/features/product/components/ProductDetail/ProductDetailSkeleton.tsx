@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/utils/skeleton";
 
 const ProductDetailSkeleton = () => {
   return (
-    <div className="container mx-auto px-4 sm:px-8 py-8">
+    <div className="container mx-auto px-4 sm:px-8 pt-32 pb-8">
       <div className="grid md:grid-cols-2 gap-8">
         {/* Image Skeleton */}
         <div>

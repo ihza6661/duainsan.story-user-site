@@ -189,7 +189,7 @@ const ProfilePage: FC = () => {
   // --- Render Logic ---
   if (isLoading) {
     return (
-      <div className="container mx-auto py-10 text-center bg-background">
+      <div className="container mx-auto pt-48 text-center">
         <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
         <p className="mt-4 text-muted-foreground">Memuat profil...</p>
       </div>
@@ -198,7 +198,7 @@ const ProfilePage: FC = () => {
 
   if (isError || !user) {
     return (
-      <div className="container mx-auto py-10 text-center bg-background">
+      <div className="container mx-auto pt-40 text-center">
         <p className="text-destructive">
           Gagal memuat profil. Silakan{" "}
           <Link to="/login" className="underline">

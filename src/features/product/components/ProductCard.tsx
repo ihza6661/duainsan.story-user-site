@@ -44,14 +44,14 @@ const ProductCard = ({ product, loading = false }: ProductCardProps) => {
 
       <div className="p-4">
         <h3
-          className="text-base font-semibold text-foreground line-clamp-2 min-h-[3rem]"
+          className="text-base text-foreground line-clamp-2 min-h-[3rem]"
           // title={product.name}
         >
           {product.name}
         </h3>
 
         <div className="flex items-baseline justify-between">
-          <p className="text-lg font-bold text-foreground">
+          <p className="text-lg text-foreground">
             {new Intl.NumberFormat("id-ID", {
               style: "currency",
               currency: "IDR",

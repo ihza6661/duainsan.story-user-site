@@ -34,7 +34,7 @@ export default function GalleryPage() {
   return (
     <div className="pt-28 w-full bg-background">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl0v font-normal tracking-wide">Galeri</h1>
+        <h1 className="pb-24 font-normal tracking-wide">Galeri</h1>
       </div>
 
       {isLoading && (
@@ -96,7 +96,7 @@ export default function GalleryPage() {
 
       {!isLoading && !isError && galleryItems.length === 0 && (
         <div className="text-center py-20">
-          <p className="text-lg text-gray-500">
+          <p className="text-lg text-muted-foreground">
             Tidak ada gambar di galeri saat ini.
           </p>
         </div>

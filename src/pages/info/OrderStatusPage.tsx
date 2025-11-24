@@ -20,73 +20,12 @@ import {
 } from "@/features/order/services/orderService";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  getOrderStatusInfo,
+  getPaymentStatusInfo,
+  getPaymentOptionLabel,
+} from "@/features/order/utils/statusLabels";
 
-type StatusVariant = "default" | "secondary" | "destructive";
-type StatusInfo = { text: string; variant: StatusVariant; textColor?: string };
-type PaymentStatusInfo = { text: string; variant: StatusVariant };
-
-const statusMap: Record<string, StatusInfo> = {
-  pending: { text: "Menunggu Pembayaran", variant: "secondary" },
-  pending_payment: { text: "Menunggu Pembayaran", variant: "secondary" },
-  partially_paid: { text: "Dibayar Sebagian", variant: "secondary" },
-  paid: { text: "Lunas", variant: "default" },
-  processing: { text: "Sedang Diproses", variant: "default" },
-  shipped: { text: "Telah Dikirim", variant: "default" },
-  delivered: { text: "Telah Diterima", variant: "default" },
-  cancelled: { text: "Dibatalkan", variant: "destructive" },
-};
-
-const paymentStatusMap: Record<string, PaymentStatusInfo> = {
-  pending: { text: "Menunggu Pembayaran", variant: "secondary" },
-  pending_payment: { text: "Menunggu Pembayaran", variant: "secondary" },
-  partially_paid: { text: "Dibayar Sebagian", variant: "secondary" },
-  paid: { text: "Lunas", variant: "default" },
-  expired: { text: "Kedaluwarsa", variant: "destructive" },
-  failed: { text: "Gagal", variant: "destructive" },
-  cancelled: { text: "Dibatalkan", variant: "destructive" },
-};
-
-const statusFallback: StatusInfo = {
-  text: "Status Tidak Diketahui",
-  variant: "secondary",
-};
-
-const paymentStatusFallback: PaymentStatusInfo = {
-  text: "Status Tidak Diketahui",
-  variant: "secondary",
-};
-
-const paymentOptionLabels: Record<string, string> = {
-  dp: "Down Payment (DP)",
-  full: "Pembayaran Penuh",
-  final: "Pelunasan Akhir",
-};
-
-const getPaymentOptionLabel = (option?: string | null) =>
-  option ? (paymentOptionLabels[option] ?? option) : "-";
-
-const getStatusInfo = <T extends { text: string; variant: StatusVariant }>(
-  status: string | undefined,
-  map: Record<string, T>,
-  fallback: T,
-): T => {
-  if (!status) {
-    return fallback;
-  }
-
-  const direct = map[status];
-  if (direct) {
-    return direct;
-  }
-
-  const lower = status.toLowerCase();
-  if (map[lower]) {
-    return map[lower];
-  }
-
-  const normalized = lower.replace(/\s+/g, "_");
-  return map[normalized] ?? fallback;
-};
 
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
@@ -274,17 +213,9 @@ const OrderStatusPage = () => {
       );
     }
 
-    const statusInfo = getStatusInfo(
-      order.order_status,
-      statusMap,
-      statusFallback,
-    );
+    const statusInfo = getOrderStatusInfo(order.order_status);
 
-    const paymentStatusInfo = getStatusInfo(
-      order.payment_status,
-      paymentStatusMap,
-      paymentStatusFallback,
-    );
+    const paymentStatusInfo = getPaymentStatusInfo(order.payment_status);
 
     const amountPaid = Number(order.amount_paid ?? 0);
     const remainingBalance = Number(
@@ -520,16 +451,8 @@ const OrderStatusPage = () => {
       </h1>
       <div className="space-y-4">
         {orders.map((order) => {
-          const statusInfo = getStatusInfo(
-            order.order_status,
-            statusMap,
-            statusFallback,
-          );
-          const paymentStatusInfo = getStatusInfo(
-            order.payment_status,
-            paymentStatusMap,
-            paymentStatusFallback,
-          );
+          const statusInfo = getOrderStatusInfo(order.order_status);
+          const paymentStatusInfo = getPaymentStatusInfo(order.payment_status);
           const listAmountPaid = Number(order.amount_paid ?? 0);
           const listRemainingBalance = Number(
             order.remaining_balance ??

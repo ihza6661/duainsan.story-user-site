@@ -26,7 +26,6 @@ import {
   getPaymentOptionLabel,
 } from "@/features/order/utils/statusLabels";
 
-
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
   const queryClient = useQueryClient();
@@ -261,7 +260,7 @@ const OrderStatusPage = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
                   <p className="text-foreground">Tanggal Pesanan</p>
-                  <p className="font-medium">
+                  <p className="text-muted-foreground font-medium">
                     {new Date(order.created_at).toLocaleDateString("id-ID", {
                       day: "numeric",
                       month: "long",
@@ -351,12 +350,16 @@ const OrderStatusPage = () => {
                   </h4>
                   <div className="space-y-2 text-sm">
                     <p>
-                      <span className="text-muted-foreground">Mempelai:</span>{" "}
+                      <span className="text-foreground font-semibold">
+                        Mempelai:
+                      </span>{" "}
                       {order.custom_data?.bride_full_name} &{" "}
                       {order.custom_data?.groom_full_name}
                     </p>
                     <p>
-                      <span className="text-muted-foreground">Akad:</span>{" "}
+                      <span className="text-foreground font-semibold">
+                        Akad:
+                      </span>{" "}
                       {order.custom_data?.akad_date &&
                         new Date(
                           order.custom_data.akad_date,
@@ -364,7 +367,9 @@ const OrderStatusPage = () => {
                       di {order.custom_data?.akad_location}
                     </p>
                     <p>
-                      <span className="text-muted-foreground">Resepsi:</span>{" "}
+                      <span className="text-foreground font-semibold">
+                        Resepsi:
+                      </span>{" "}
                       {order.custom_data?.reception_date &&
                         new Date(
                           order.custom_data.reception_date,
@@ -382,11 +387,11 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
               </div>
-              {order.payment_status === "pending" && (
+              {order.payment_status === "pending" && order.order_status !== "cancelled" && (
                 <div className="mt-6 text-center">
                   <Button
                     size="default"
-                    variant="outline"
+                    variant="secondary"
                     onClick={() => handleRetryPayment(order.id.toString())}
                     disabled={isRetryingThisOrder}
                   >
@@ -399,7 +404,8 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
               )}
-              {order.payment_status === "partially_paid" && (
+              {order.payment_status === "partially_paid" &&
+                order.order_status !== "cancelled" && (
                 <div className="mt-6 text-center">
                   <Button
                     onClick={handlePayFinal}
@@ -497,7 +503,8 @@ const OrderStatusPage = () => {
                   >
                     {paymentStatusInfo.text}
                   </Badge> */}
-                  {order.payment_status === "pending" && (
+                  {order.payment_status === "pending" &&
+                    order.order_status !== "cancelled" && (
                     <Button
                       size="default"
                       variant="default"

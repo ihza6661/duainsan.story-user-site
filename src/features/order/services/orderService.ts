@@ -12,6 +12,7 @@ export interface OrderItem {
     id: number;
     name: string;
     featured_image?: {
+      image_url: string;
       image: string;
     };
   };

@@ -44,6 +44,7 @@ const CheckoutPage = () => {
 
   // Shipping State
   const [shippingServices, setShippingServices] = useState<ShippingService[]>([]);
+  const [shippingMethod, setShippingMethod] = useState<"rajaongkir" | "pickup" | "gosend">("rajaongkir");
   const [selectedCourier, setSelectedCourier] = useState<string>("jne");
   const [shippingCost, setShippingCost] = useState<number>(0);
   const [shippingService, setShippingService] = useState<string>("");
@@ -232,7 +233,18 @@ const CheckoutPage = () => {
     formData.append("postal_code", String(user?.postal_code));
     formData.append("courier", selectedCourier);
     formData.append("shipping_cost", String(shippingCost));
-    formData.append("shipping_service", shippingService);
+    // formData.append("shipping_address", fullAddress);
+    formData.append("postal_code", String(user?.postal_code));
+    formData.append("shipping_method", shippingMethod);
+    formData.append("shipping_cost", String(shippingCost));
+    
+    if (shippingMethod === 'rajaongkir') {
+        formData.append("courier", selectedCourier);
+        formData.append("shipping_service", shippingService);
+    } else {
+        // For pickup and gosend, we don't need courier/service from rajaongkir
+        // But the backend might expect them to be nullable, which we handled.
+    }
     formData.append("payment_option", paymentOption);
 
     try {
@@ -639,65 +651,119 @@ const CheckoutPage = () => {
                   );
                 })}
               </div>
+              {/* Shipping Method Selection */}
               <div className="border-t border-border pt-4 space-y-2">
-                <Label htmlFor="courier">Kurir</Label>
+                <Label htmlFor="shipping-method">Metode Pengiriman</Label>
                 <Select
-                  onValueChange={setSelectedCourier}
-                  value={selectedCourier}
+                  value={shippingMethod}
+                  onValueChange={(value: "rajaongkir" | "pickup" | "gosend") => {
+                    setShippingMethod(value);
+                    setShippingCost(0);
+                    setShippingService("");
+                    setShippingSelection("");
+                    if (value === "pickup") {
+                        setShippingCost(0);
+                    }
+                  }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Pilih kurir" />
+                    <SelectValue placeholder="Pilih metode pengiriman" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="jne">JNE</SelectItem>
-                    <SelectItem value="pos">POS Indonesia</SelectItem>
-                    <SelectItem value="jnt">J&T</SelectItem>
+                    <SelectItem value="rajaongkir">Ekspedisi (JNE, POS, J&T)</SelectItem>
+                    <SelectItem value="pickup">Ambil Sendiri di Toko</SelectItem>
+                    <SelectItem value="gosend">Diantar via GoSend (Manual)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <div className="border-t border-border pt-4 space-y-2">
-                <Label htmlFor="shipping-service">Layanan Pengiriman</Label>
-                <Select
-                  onValueChange={handleServiceSelection}
-                  value={shippingSelection}
-                  disabled={isCalculatingCost || shippingServices.length === 0}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        isCalculatingCost ? "Menghitung..." : "Pilih layanan"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {shippingServices.map((service) => {
-                      const primaryCost = service.cost[0];
-                      if (!primaryCost) {
-                        return null;
-                      }
 
-                      const costValue = Number(primaryCost.value);
-                      if (!Number.isFinite(costValue)) {
-                        return null;
-                      }
+              {shippingMethod === "gosend" && (
+                 <div className="border-t border-border pt-4 space-y-2">
+                    <Label htmlFor="gosend-cost">Tarif GoSend (Manual)</Label>
+                    <div className="relative">
+                        <span className="absolute left-3 top-2.5 text-muted-foreground">Rp</span>
+                        <Input
+                            id="gosend-cost"
+                            type="number"
+                            min="5000"
+                            placeholder="0"
+                            className="pl-10"
+                            value={shippingCost || ""}
+                            onChange={(e) => {
+                                const val = Number(e.target.value);
+                                setShippingCost(val);
+                            }}
+                        />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                        Masukkan tarif GoSend dari aplikasi Gojek. Minimal Rp 5.000.
+                    </p>
+                 </div>
+              )}
 
-                      return (
-                        <SelectItem
-                          key={service.service}
-                          value={`${service.service}|${costValue}`}
-                        >
-                          <div className="flex justify-between w-full">
-                            <span>
-                              {service.description} ({service.service})
-                            </span>
-                            <span>{formatRupiah(costValue)}</span>
-                          </div>
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
-              </div>
+              {shippingMethod === "rajaongkir" && (
+                <>
+                  <div className="border-t border-border pt-4 space-y-2">
+                    <Label htmlFor="courier">Kurir</Label>
+                    <Select
+                      onValueChange={setSelectedCourier}
+                      value={selectedCourier}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih kurir" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="jne">JNE</SelectItem>
+                        <SelectItem value="pos">POS Indonesia</SelectItem>
+                        <SelectItem value="jnt">J&T</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="border-t border-border pt-4 space-y-2">
+                    <Label htmlFor="shipping-service">Layanan Pengiriman</Label>
+                    <Select
+                      onValueChange={handleServiceSelection}
+                      value={shippingSelection}
+                      disabled={isCalculatingCost || shippingServices.length === 0}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            isCalculatingCost ? "Menghitung..." : "Pilih layanan"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {shippingServices.map((service) => {
+                          const primaryCost = service.cost[0];
+                          if (!primaryCost) {
+                            return null;
+                          }
+    
+                          const costValue = Number(primaryCost.value);
+                          if (!Number.isFinite(costValue)) {
+                            return null;
+                          }
+    
+                          return (
+                            <SelectItem
+                              key={service.service}
+                              value={`${service.service}|${costValue}`}
+                            >
+                              <div className="flex justify-between w-full">
+                                <span>
+                                  {service.description} ({service.service})
+                                </span>
+                                <span>{formatRupiah(costValue)}</span>
+                              </div>
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
               {calculatedWeight !== null && (
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>Berat Dihitung</span>

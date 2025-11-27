@@ -653,8 +653,8 @@ const CheckoutPage = () => {
               </div>
               {/* Shipping Method Selection */}
               <div className="border-t border-border pt-4 space-y-2">
-                <Label htmlFor="shipping-method">Metode Pengiriman</Label>
-                <Select
+                <Label>Metode Pengiriman</Label>
+                <RadioGroup
                   value={shippingMethod}
                   onValueChange={(value: "rajaongkir" | "pickup" | "gosend") => {
                     setShippingMethod(value);
@@ -665,16 +665,27 @@ const CheckoutPage = () => {
                         setShippingCost(0);
                     }
                   }}
+                  className="grid grid-cols-1 gap-2"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih metode pengiriman" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="rajaongkir">Ekspedisi (JNE, POS, J&T)</SelectItem>
-                    <SelectItem value="pickup">Ambil Sendiri di Toko</SelectItem>
-                    <SelectItem value="gosend">Diantar via GoSend (Manual)</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <div className="flex items-center space-x-2 border border-input p-3 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <RadioGroupItem value="rajaongkir" id="rajaongkir" />
+                    <Label htmlFor="rajaongkir" className="cursor-pointer flex-1 font-normal">
+                        Ekspedisi (JNE, POS, J&T)
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border border-input p-3 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <RadioGroupItem value="pickup" id="pickup" />
+                    <Label htmlFor="pickup" className="cursor-pointer flex-1 font-normal">
+                        Ambil Sendiri di Toko
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 border border-input p-3 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
+                    <RadioGroupItem value="gosend" id="gosend" />
+                    <Label htmlFor="gosend" className="cursor-pointer flex-1 font-normal">
+                        Diantar via GoSend (Manual)
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
 
               {shippingMethod === "gosend" && (

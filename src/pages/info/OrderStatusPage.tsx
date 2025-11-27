@@ -39,18 +39,38 @@ const OrderStatusPage = () => {
   };
 
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
-    script.setAttribute(
-      "data-client-key",
-      import.meta.env.VITE_MIDTRANS_CLIENT_KEY,
-    );
-    script.async = true;
-    document.body.appendChild(script);
+    const loadMidtransScript = async () => {
+      try {
+        // Fetch config from backend
+        // We use fetch directly here to avoid circular dependency or complex service setup for this simple call
+        // Adjust the base URL as needed, assuming api is configured with base URL
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
+        const url = baseUrl.endsWith('/v1') ? `${baseUrl}/config/payment` : `${baseUrl}/v1/config/payment`;
+        const response = await fetch(url);
+        const config = await response.json();
 
-    return () => {
-      document.body.removeChild(script);
+        const scriptUrl = config.snap_url;
+        const clientKey = config.client_key;
+
+        // Check if script is already loaded
+        if (document.querySelector(`script[src="${scriptUrl}"]`)) return;
+
+        const script = document.createElement("script");
+        script.src = scriptUrl;
+        script.setAttribute("data-client-key", clientKey);
+        script.async = true;
+        document.body.appendChild(script);
+
+        return () => {
+          document.body.removeChild(script);
+        };
+      } catch (error) {
+        console.error("Failed to load payment config", error);
+        toast.error("Gagal memuat konfigurasi pembayaran.");
+      }
     };
+
+    loadMidtransScript();
   }, []);
 
   const payFinalMutation = useMutation<
@@ -214,8 +234,6 @@ const OrderStatusPage = () => {
 
     const statusInfo = getOrderStatusInfo(order.order_status);
 
-    const paymentStatusInfo = getPaymentStatusInfo(order.payment_status);
-
     const amountPaid = Number(order.amount_paid ?? 0);
     const remainingBalance = Number(
       order.remaining_balance ?? Math.max(order.total_amount - amountPaid, 0),
@@ -237,9 +255,7 @@ const OrderStatusPage = () => {
               <div className="flex flex-col md:flex-row justify-between md:items-center gap-2">
                 <div>
                   <CardTitle>
-                    <h1 className="text-2xl font-bold text-foreground">
-                      Detail Pesanan
-                    </h1>
+                    <h1 className="text-2xl text-foreground">Detail Pesanan</h1>
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
                     Pesanan #{order.order_number}
@@ -248,11 +264,6 @@ const OrderStatusPage = () => {
                 <Badge variant={statusInfo.variant} className="text-base">
                   {statusInfo.text}
                 </Badge>
-                {/* <Badge
-                  variant={paymentStatusInfo.variant}
-                  className="text-base">
-                  {paymentStatusInfo.text}
-                </Badge> */}
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
@@ -292,9 +303,7 @@ const OrderStatusPage = () => {
 
               {/* Item yang Dipesan */}
               <div>
-                <h4 className="font-semibold mb-4 text-foreground">
-                  Item yang Dipesan
-                </h4>
+                <h4 className="mb-4 text-foreground">Item yang Dipesan</h4>
                 <div className="space-y-4">
                   {(order.items || []).map((item) => {
                     // Build image src using the utility function
@@ -310,9 +319,7 @@ const OrderStatusPage = () => {
                           className="w-20 h-20 object-cover rounded-md border"
                         />
                         <div className="flex-grow">
-                          <p className="font-semibold text-foreground">
-                            {item.product.name}
-                          </p>
+                          <p className="text-foreground">{item.product.name}</p>
                           <p className="text-sm text-muted-foreground">
                             Jumlah: {item.quantity}
                           </p>
@@ -323,7 +330,7 @@ const OrderStatusPage = () => {
                               .join(", ") || "-"}
                           </p>
                         </div>
-                        <p className="text-sm font-medium text-foreground">
+                        <p className="text-sm text-foreground">
                           {formatRupiah(item.sub_total)}
                           <div>
                             <p className="text-muted-foreground">
@@ -345,21 +352,15 @@ const OrderStatusPage = () => {
               {/* Detail Pernikahan & Pengiriman */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold mb-4 text-foreground">
-                    Informasi Pernikahan
-                  </h4>
-                  <div className="space-y-2 text-sm">
+                  <h4 className="mb-4 text-foreground">Informasi Pernikahan</h4>
+                  <div className="space-y-2 text-sm text-muted-foreground">
                     <p>
-                      <span className="text-foreground font-semibold">
-                        Mempelai:
-                      </span>{" "}
+                      <span>Mempelai:</span>{" "}
                       {order.custom_data?.bride_full_name} &{" "}
                       {order.custom_data?.groom_full_name}
                     </p>
                     <p>
-                      <span className="text-foreground font-semibold">
-                        Akad:
-                      </span>{" "}
+                      <span>Akad:</span>{" "}
                       {order.custom_data?.akad_date &&
                         new Date(
                           order.custom_data.akad_date,
@@ -367,9 +368,7 @@ const OrderStatusPage = () => {
                       di {order.custom_data?.akad_location}
                     </p>
                     <p>
-                      <span className="text-foreground font-semibold">
-                        Resepsi:
-                      </span>{" "}
+                      <span>Resepsi:</span>{" "}
                       {order.custom_data?.reception_date &&
                         new Date(
                           order.custom_data.reception_date,
@@ -379,49 +378,48 @@ const OrderStatusPage = () => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-4 text-foreground">
-                    Alamat Pengiriman
-                  </h4>
+                  <h4 className="mb-4 text-foreground">Alamat Pengiriman</h4>
                   <p className="text-sm whitespace-pre-line text-muted-foreground">
                     {order.shipping_address}
                   </p>
                 </div>
               </div>
-              {order.payment_status === "pending" && order.order_status !== "cancelled" && (
-                <div className="mt-6 text-center">
-                  <Button
-                    size="default"
-                    variant="secondary"
-                    onClick={() => handleRetryPayment(order.id.toString())}
-                    disabled={isRetryingThisOrder}
-                  >
-                    {isRetryingThisOrder
-                      ? "Membuka Pembayaran..."
-                      : "Bayar Sekarang"}
-                  </Button>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Lanjutkan pembayaran untuk memproses pesanan Anda.
-                  </p>
-                </div>
-              )}
+              {order.payment_status === "pending" &&
+                order.order_status !== "cancelled" && (
+                  <div className="mt-6 text-center">
+                    <Button
+                      size="default"
+                      variant="secondary"
+                      onClick={() => handleRetryPayment(order.id.toString())}
+                      disabled={isRetryingThisOrder}
+                    >
+                      {isRetryingThisOrder
+                        ? "Membuka Pembayaran..."
+                        : "Bayar Sekarang"}
+                    </Button>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Lanjutkan pembayaran untuk memproses pesanan Anda.
+                    </p>
+                  </div>
+                )}
               {order.payment_status === "partially_paid" &&
                 order.order_status !== "cancelled" && (
-                <div className="mt-6 text-center">
-                  <Button
-                    onClick={handlePayFinal}
-                    disabled={
-                      payFinalMutation.isPending || remainingBalance <= 0
-                    }
-                  >
-                    {payFinalMutation.isPending
-                      ? "Membuka Pembayaran..."
-                      : "Lakukan Pelunasan"}
-                  </Button>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Selesaikan pembayaran untuk melanjutkan pesanan Anda.
-                  </p>
-                </div>
-              )}
+                  <div className="mt-6 text-center">
+                    <Button
+                      onClick={handlePayFinal}
+                      disabled={
+                        payFinalMutation.isPending || remainingBalance <= 0
+                      }
+                    >
+                      {payFinalMutation.isPending
+                        ? "Membuka Pembayaran..."
+                        : "Lakukan Pelunasan"}
+                    </Button>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Selesaikan pembayaran untuk melanjutkan pesanan Anda.
+                    </p>
+                  </div>
+                )}
             </CardContent>
           </Card>
         </div>
@@ -505,22 +503,22 @@ const OrderStatusPage = () => {
                   </Badge> */}
                   {order.payment_status === "pending" &&
                     order.order_status !== "cancelled" && (
-                    <Button
-                      size="default"
-                      variant="default"
-                      className="rounded-full"
-                      onClick={() => handleRetryPayment(order.id.toString())}
-                      disabled={
-                        retryPaymentMutation.isPending &&
+                      <Button
+                        size="default"
+                        variant="default"
+                        className="rounded-full"
+                        onClick={() => handleRetryPayment(order.id.toString())}
+                        disabled={
+                          retryPaymentMutation.isPending &&
+                          retryingOrderId === order.id.toString()
+                        }
+                      >
+                        {retryPaymentMutation.isPending &&
                         retryingOrderId === order.id.toString()
-                      }
-                    >
-                      {retryPaymentMutation.isPending &&
-                      retryingOrderId === order.id.toString()
-                        ? "Membuka Pembayaran..."
-                        : "Bayar Sekarang"}
-                    </Button>
-                  )}
+                          ? "Membuka Pembayaran..."
+                          : "Bayar Sekarang"}
+                      </Button>
+                    )}
                 </div>
               </CardContent>
             </Card>

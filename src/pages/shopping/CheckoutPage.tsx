@@ -160,6 +160,42 @@ const CheckoutPage = () => {
     user,
   ]);
 
+  // Load Midtrans Script Dynamically
+  useEffect(() => {
+    const loadMidtransScript = async () => {
+      try {
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
+        const url = baseUrl.endsWith('/v1') ? `${baseUrl}/config/payment` : `${baseUrl}/v1/config/payment`;
+        const response = await fetch(url);
+        const config = await response.json();
+
+        const scriptUrl = config.snap_url;
+        const clientKey = config.client_key;
+
+        if (document.querySelector(`script[src="${scriptUrl}"]`)) return;
+
+        const script = document.createElement("script");
+        script.src = scriptUrl;
+        script.setAttribute("data-client-key", clientKey);
+        script.async = true;
+        document.body.appendChild(script);
+
+        return () => {
+          document.body.removeChild(script);
+        };
+      } catch (error) {
+        console.error("Failed to load payment config", error);
+        toast({
+          title: "Gagal Memuat Konfigurasi Pembayaran",
+          description: "Silakan refresh halaman.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    loadMidtransScript();
+  }, [toast]);
+
   const handleServiceSelection = (value: string) => {
     setShippingSelection(value);
 

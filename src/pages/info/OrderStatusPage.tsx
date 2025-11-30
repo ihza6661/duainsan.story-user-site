@@ -25,6 +25,7 @@ import {
   getPaymentStatusInfo,
   getPaymentOptionLabel,
 } from "@/features/order/utils/statusLabels";
+import { DesignProofViewer } from "@/features/order/components/DesignProofViewer";
 
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
@@ -384,6 +385,14 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
               </div>
+
+              <Separator />
+
+              {/* Design Proof Section */}
+              <div>
+                <DesignProofViewer orderId={order.id} />
+              </div>
+
               {order.payment_status === "pending" &&
                 order.order_status !== "cancelled" && (
                   <div className="mt-6 text-center">

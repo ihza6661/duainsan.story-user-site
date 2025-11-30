@@ -13,20 +13,22 @@ const normalizeStatusKey = (status: string) =>
   status.toLowerCase().trim().replace(/\s+/g, "_");
 
 const orderStatusMap: Record<string, StatusInfo> = {
-  pending: { text: "Menunggu Pembayaran", variant: "secondary" },
+  // Backend returns Title Case with spaces, normalized to snake_case keys
   pending_payment: { text: "Menunggu Pembayaran", variant: "secondary" },
   partially_paid: { text: "Dibayar Sebagian", variant: "secondary" },
   paid: { text: "Lunas", variant: "default" },
   processing: { text: "Sedang Diproses", variant: "default" },
-  processing_order: { text: "Sedang Diproses", variant: "default" },
+  design_approval: { text: "Persetujuan Desain", variant: "default" },
+  in_production: { text: "Dalam Produksi", variant: "default" },
   shipped: { text: "Telah Dikirim", variant: "default" },
   delivered: { text: "Telah Diterima", variant: "default" },
   completed: { text: "Selesai", variant: "default" },
   cancelled: { text: "Dibatalkan", variant: "destructive" },
-  cancelled_by_user: { text: "Dibatalkan", variant: "destructive" },
   failed: { text: "Gagal", variant: "destructive" },
+  refunded: { text: "Dikembalikan", variant: "destructive" },
+  // Fallback aliases for backwards compatibility
+  pending: { text: "Menunggu Pembayaran", variant: "secondary" },
   expired: { text: "Kedaluwarsa", variant: "destructive" },
-  unpaid: { text: "Belum Dibayar", variant: "secondary" },
 };
 
 const paymentStatusMap: Record<string, StatusInfo> = {

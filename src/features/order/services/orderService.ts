@@ -42,7 +42,7 @@ export interface Order {
   order_number: string;
   total_amount: number;
   shipping_address: string;
-  order_status: 'pending' | 'partially_paid' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  order_status: 'Pending Payment' | 'Partially Paid' | 'Paid' | 'Processing' | 'Design Approval' | 'In Production' | 'Shipped' | 'Delivered' | 'Completed' | 'Cancelled' | 'Failed' | 'Refunded';
   payment_status: 'pending' | 'partially_paid' | 'paid' | 'expired' | 'failed';
   payment_option?: 'dp' | 'full' | 'final' | null;
   amount_paid: number;

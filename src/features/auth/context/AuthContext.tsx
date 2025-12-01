@@ -11,7 +11,6 @@ import { AuthContext, AuthContextType } from './AuthContext-definition';
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem('user');
-    // console.log("AuthProvider init: Stored User found?", !!storedUser);
     try {
       return storedUser ? JSON.parse(storedUser) : null;
     } catch {
@@ -20,7 +19,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   });
   const [token, setToken] = useState<string | null>(() => {
     const storedToken = localStorage.getItem("authToken");
-    // console.log("AuthProvider init: Stored Token found?", !!storedToken);
     return storedToken;
   });
   

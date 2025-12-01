@@ -57,12 +57,6 @@ export const DesignProofViewer = ({ orderId }: DesignProofViewerProps) => {
     queryFn: () => getDesignProofsByOrderId(orderId),
   });
 
-  // Debug logging
-  if (designProofs) {
-    console.log("Design Proofs Data:", designProofs);
-    console.log("First proof:", designProofs[0]);
-  }
-
   // Mutation for all actions
   const actionMutation = useMutation({
     mutationFn: async ({
@@ -96,11 +90,12 @@ export const DesignProofViewer = ({ orderId }: DesignProofViewerProps) => {
       });
       setDialogState({ isOpen: false, actionType: "approve", proofId: null });
     },
-    onError: (error: any) => {
-      toast.error(
-        error?.response?.data?.message ||
-          "Terjadi kesalahan. Silakan coba lagi.",
-      );
+    onError: (error: unknown) => {
+      const errorMessage =
+        error && typeof error === "object" && "response" in error
+          ? (error.response as { data?: { message?: string } })?.data?.message
+          : undefined;
+      toast.error(errorMessage || "Terjadi kesalahan. Silakan coba lagi.");
     },
   });
 
@@ -263,7 +258,6 @@ export const DesignProofViewer = ({ orderId }: DesignProofViewerProps) => {
 
             // Safety check
             if (!latestProof) {
-              console.warn("No latest proof found for order item", orderItemId);
               return null;
             }
 

@@ -255,24 +255,21 @@ const CheckoutPage = () => {
 
       if (order.snap_token) {
         window.snap.pay(order.snap_token, {
-          onSuccess: function (result) {
-            console.log("success", result);
+          onSuccess: function () {
             toast({
               title: "Pembayaran Berhasil!",
               description: "Anda akan diarahkan ke halaman konfirmasi pesanan.",
             });
             navigate(`/order-confirmation/${order.data.id}`);
           },
-          onPending: function (result) {
-            console.log("pending", result);
+          onPending: function () {
             toast({
               title: "Pembayaran Tertunda",
               description: "Selesaikan pembayaran Anda sebelum batas waktu.",
             });
             navigate(`/order-confirmation/${order.data.id}`);
           },
-          onError: function (result) {
-            console.log("error", result);
+          onError: function () {
             toast({
               title: "Pembayaran Gagal",
               description: "Silakan coba lagi.",

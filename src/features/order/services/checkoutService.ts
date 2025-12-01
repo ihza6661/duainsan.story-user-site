@@ -9,26 +9,19 @@ export const fetchProvinces = async () => {
 export const fetchCities = async (provinceId: string) => {
   try {
     const response = await api.get(`/rajaongkir/cities?province_id=${provinceId}`);
-    console.log("RajaOngkir Cities API Response:", response.data); // Add this line
 
     // Check if the response contains an error from RajaOngkir
     if (response.data && response.data.rajaongkir && response.data.rajaongkir.status && response.data.rajaongkir.status.code !== 200) {
-      console.warn("RajaOngkir API returned an error status:", response.data.rajaongkir.status.description);
       return []; // Return an empty array if RajaOngkir API indicates an error
     }
 
     if (response.data && response.data.rajaongkir && Array.isArray(response.data.rajaongkir.results)) {
       return response.data.rajaongkir.results;
     } else {
-      // If the format is unexpected but not an explicit RajaOngkir error, log and return empty array
-      console.error("Unexpected response format from RajaOngkir API:", response.data);
+      // If the format is unexpected but not an explicit RajaOngkir error, return empty array
       return [];
     }
   } catch (error) {
-    const axiosError = error as AxiosError<{
-      message: string;
-    }>;
-    console.error("API call failed:", axiosError.response?.data || axiosError.message);
     // If there's a network error or other exception, return an empty array
     return [];
   }

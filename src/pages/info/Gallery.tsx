@@ -23,11 +23,7 @@ export default function GalleryPage() {
     getNextPageParam: (lastPage) => lastPage.links.next, // Gunakan URL dari link 'next' untuk halaman berikutnya
   });
 
-  React.useEffect(() => {
-    if (data) {
-      console.log("API Response Data:", JSON.stringify(data, null, 2));
-    }
-  }, [data]);
+
 
   const galleryItems = data?.pages.flatMap((page) => page.data) || [];
 

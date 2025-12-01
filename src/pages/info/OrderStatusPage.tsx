@@ -45,8 +45,11 @@ const OrderStatusPage = () => {
         // Fetch config from backend
         // We use fetch directly here to avoid circular dependency or complex service setup for this simple call
         // Adjust the base URL as needed, assuming api is configured with base URL
-        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
-        const url = baseUrl.endsWith('/v1') ? `${baseUrl}/config/payment` : `${baseUrl}/v1/config/payment`;
+        const baseUrl =
+          import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api/v1";
+        const url = baseUrl.endsWith("/v1")
+          ? `${baseUrl}/config/payment`
+          : `${baseUrl}/v1/config/payment`;
         const response = await fetch(url);
         const config = await response.json();
 
@@ -234,6 +237,7 @@ const OrderStatusPage = () => {
     }
 
     const statusInfo = getOrderStatusInfo(order.order_status);
+    const paymentStatusInfo = getPaymentStatusInfo(order.payment_status);
 
     const amountPaid = Number(order.amount_paid ?? 0);
     const remainingBalance = Number(
@@ -262,9 +266,14 @@ const OrderStatusPage = () => {
                     Pesanan #{order.order_number}
                   </p>
                 </div>
-                <Badge variant={statusInfo.variant} className="text-base">
-                  {statusInfo.text}
-                </Badge>
+                <div className="flex flex-col space-y-2">
+                  <Badge variant={statusInfo.variant} className="text-base text-center">
+                    {statusInfo.text}
+                  </Badge>
+                  <Badge variant={paymentStatusInfo.variant} className="text-base text-center">
+                    {paymentStatusInfo.text}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
@@ -504,12 +513,12 @@ const OrderStatusPage = () => {
                   >
                     {statusInfo.text}
                   </Badge>
-                  {/* <Badge
+                  <Badge
                     variant={paymentStatusInfo.variant}
                     className="text-base text-center"
                   >
                     {paymentStatusInfo.text}
-                  </Badge> */}
+                  </Badge>
                   {order.payment_status === "pending" &&
                     order.order_status !== "cancelled" && (
                       <Button

@@ -403,7 +403,7 @@ const OrderStatusPage = () => {
               </div>
 
               {order.payment_status === "pending" &&
-                order.order_status !== "cancelled" && (
+                order.order_status !== "Cancelled" && (
                   <div className="mt-6 text-center">
                     <Button
                       size="default"
@@ -421,7 +421,7 @@ const OrderStatusPage = () => {
                   </div>
                 )}
               {order.payment_status === "partially_paid" &&
-                order.order_status !== "cancelled" && (
+                order.order_status !== "Cancelled" && (
                   <div className="mt-6 text-center">
                     <Button
                       onClick={handlePayFinal}
@@ -520,7 +520,7 @@ const OrderStatusPage = () => {
                     {paymentStatusInfo.text}
                   </Badge>
                   {order.payment_status === "pending" &&
-                    order.order_status !== "cancelled" && (
+                    order.order_status !== "Cancelled" && (
                       <Button
                         size="default"
                         variant="default"

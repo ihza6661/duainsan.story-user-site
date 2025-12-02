@@ -26,6 +26,7 @@ import ProductHero from "@/features/product/components/ProductDetail/ProductHero
 import ProductServices from "@/features/product/components/ProductDetail/ProductServices";
 import RelatedProducts from "@/features/product/components/ProductDetail/RelatedProducts";
 import ProductDetailSkeleton from "@/features/product/components/ProductDetail/ProductDetailSkeleton";
+import { ProductReviewsSection } from "@/features/reviews/components/ProductReviewsSection";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -108,6 +109,10 @@ const ProductDetail = () => {
       <main className="flex-grow">
         <ProductHero product={product} onAddToCart={handleAddToCart} />
         <ProductServices />
+        <ProductReviewsSection 
+          productId={product.id} 
+          productName={product.name} 
+        />
         <RelatedProducts
           categorySlug={product.category.slug}
           currentProductId={product.id}

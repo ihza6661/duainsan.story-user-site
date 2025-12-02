@@ -37,6 +37,19 @@ export interface CustomData {
   prewedding_photo?: string;
 }
 
+export interface CancellationRequest {
+  id: number;
+  order_id: number;
+  cancellation_reason: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewed_at?: string;
+  admin_notes?: string;
+  refund_initiated: boolean;
+  refund_amount?: number;
+  refund_status?: 'pending' | 'processing' | 'completed' | 'failed';
+  created_at: string;
+}
+
 export interface Order {
   id: number;
   order_number: string;
@@ -49,8 +62,8 @@ export interface Order {
   remaining_balance: number;
   created_at: string;
   items: OrderItem[];
-  // Add other fields as needed from your backend Order structure
-  custom_data?: CustomData; // Add custom_data as it's used in OrderStatusPage
+  custom_data?: CustomData;
+  active_cancellation_request?: CancellationRequest;
 }
 
 interface OrderResponse {
@@ -81,5 +94,28 @@ export const getFinalPaymentSnapToken = async (
 
 export const retryPayment = async (orderId: string): Promise<{ snap_token: string; message: string }> => {
   const response = await api.post(`/orders/${orderId}/retry-payment`);
+  return response.data;
+};
+
+export interface CancelOrderRequest {
+  reason: string;
+}
+
+export interface CancelOrderResponse {
+  message: string;
+  data: {
+    id: number;
+    order_id: number;
+    status: string;
+    cancellation_reason: string;
+    created_at: string;
+  };
+}
+
+export const cancelOrder = async (
+  orderId: string,
+  data: CancelOrderRequest
+): Promise<CancelOrderResponse> => {
+  const response = await api.post(`/orders/${orderId}/cancel`, data);
   return response.data;
 };

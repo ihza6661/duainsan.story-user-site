@@ -17,6 +17,8 @@ import {
   fetchOrders,
   getFinalPaymentSnapToken,
   retryPayment,
+  cancelOrder,
+  type Order,
 } from "@/features/order/services/orderService";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,11 +28,14 @@ import {
   getPaymentOptionLabel,
 } from "@/features/order/utils/statusLabels";
 import { DesignProofViewer } from "@/features/order/components/DesignProofViewer";
+import { CancelOrderDialog } from "@/features/order/components/CancelOrderDialog";
 
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
   const queryClient = useQueryClient();
   const [retryingOrderId, setRetryingOrderId] = useState<string | null>(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
 
   const invalidateOrderQueries = () => {
     if (orderId) {
@@ -169,6 +174,69 @@ const OrderStatusPage = () => {
 
   const handleRetryPayment = (id: string) => {
     retryPaymentMutation.mutate(id);
+  };
+
+  // Helper function to check if order can be cancelled
+  const canCancelOrder = (order: Order): boolean => {
+    // Terminal statuses that cannot be cancelled
+    const terminalStatuses = ['Cancelled', 'Refunded', 'Failed', 'Completed'];
+    if (terminalStatuses.includes(order.order_status)) {
+      return false;
+    }
+
+    // Has active cancellation request
+    if (order.active_cancellation_request) {
+      return false;
+    }
+
+    // Only these statuses can be cancelled
+    const cancellableStatuses = ['Pending Payment', 'Partially Paid', 'Paid'];
+    if (!cancellableStatuses.includes(order.order_status)) {
+      return false;
+    }
+
+    // For paid orders, check 24-hour window
+    if (order.order_status === 'Paid' || order.order_status === 'Partially Paid') {
+      const hoursSinceCreation = Math.floor(
+        (Date.now() - new Date(order.created_at).getTime()) / (1000 * 60 * 60)
+      );
+      if (hoursSinceCreation > 24) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // Cancel order mutation
+  const cancelOrderMutation = useMutation({
+    mutationFn: ({ orderId, reason }: { orderId: string; reason: string }) =>
+      cancelOrder(orderId, { reason }),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      setShowCancelDialog(false);
+      setOrderToCancel(null);
+      invalidateOrderQueries();
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message || 'Gagal membatalkan pesanan'
+      );
+    },
+  });
+
+  const handleCancelClick = (order: Order) => {
+    setOrderToCancel(order);
+    setShowCancelDialog(true);
+  };
+
+  const handleConfirmCancel = (reason: string) => {
+    if (orderToCancel) {
+      cancelOrderMutation.mutate({
+        orderId: orderToCancel.id.toString(),
+        reason,
+      });
+    }
   };
 
   // Fetch single order if orderId is present
@@ -402,9 +470,10 @@ const OrderStatusPage = () => {
                 <DesignProofViewer orderId={order.id} />
               </div>
 
-              {order.payment_status === "pending" &&
-                order.order_status !== "Cancelled" && (
-                  <div className="mt-6 text-center">
+              {/* Action Buttons */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                {order.payment_status === "pending" &&
+                  order.order_status !== "Cancelled" && (
                     <Button
                       size="default"
                       variant="secondary"
@@ -415,14 +484,9 @@ const OrderStatusPage = () => {
                         ? "Membuka Pembayaran..."
                         : "Bayar Sekarang"}
                     </Button>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Lanjutkan pembayaran untuk memproses pesanan Anda.
-                    </p>
-                  </div>
-                )}
-              {order.payment_status === "partially_paid" &&
-                order.order_status !== "Cancelled" && (
-                  <div className="mt-6 text-center">
+                  )}
+                {order.payment_status === "partially_paid" &&
+                  order.order_status !== "Cancelled" && (
                     <Button
                       onClick={handlePayFinal}
                       disabled={
@@ -433,13 +497,60 @@ const OrderStatusPage = () => {
                         ? "Membuka Pembayaran..."
                         : "Lakukan Pelunasan"}
                     </Button>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Selesaikan pembayaran untuk melanjutkan pesanan Anda.
+                  )}
+                {canCancelOrder(order) && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleCancelClick(order)}
+                    disabled={cancelOrderMutation.isPending}
+                  >
+                    Batalkan Pesanan
+                  </Button>
+                )}
+              </div>
+
+              {/* Cancellation Request Status */}
+              {order.active_cancellation_request && (
+                <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <h4 className="font-semibold text-yellow-800 mb-2">
+                    Permintaan Pembatalan Sedang Diproses
+                  </h4>
+                  <p className="text-sm text-yellow-700">
+                    Status: <strong>{order.active_cancellation_request.status === 'pending' ? 'Menunggu Persetujuan' : order.active_cancellation_request.status}</strong>
+                  </p>
+                  <p className="text-sm text-yellow-700 mt-1">
+                    Alasan: {order.active_cancellation_request.cancellation_reason}
+                  </p>
+                  {order.active_cancellation_request.admin_notes && (
+                    <p className="text-sm text-yellow-700 mt-1">
+                      Catatan Admin: {order.active_cancellation_request.admin_notes}
                     </p>
-                  </div>
+                  )}
+                </div>
+              )}
+
+              {(order.payment_status === "pending" || order.payment_status === "partially_paid") &&
+                order.order_status !== "Cancelled" &&
+                !order.active_cancellation_request && (
+                  <p className="text-sm text-muted-foreground mt-4 text-center">
+                    {order.payment_status === "pending"
+                      ? "Lanjutkan pembayaran untuk memproses pesanan Anda."
+                      : "Selesaikan pembayaran untuk melanjutkan pesanan Anda."}
+                  </p>
                 )}
             </CardContent>
           </Card>
+
+          {/* Cancel Order Dialog */}
+          {orderToCancel && (
+            <CancelOrderDialog
+              open={showCancelDialog}
+              onOpenChange={setShowCancelDialog}
+              onConfirm={handleConfirmCancel}
+              isLoading={cancelOrderMutation.isPending}
+              orderNumber={orderToCancel.order_number}
+            />
+          )}
         </div>
       </div>
     );

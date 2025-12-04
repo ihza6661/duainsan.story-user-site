@@ -119,3 +119,34 @@ export const cancelOrder = async (
   const response = await api.post(`/orders/${orderId}/cancel`, data);
   return response.data;
 };
+
+/**
+ * Download invoice PDF for an order
+ */
+export const downloadInvoice = async (orderId: string | number): Promise<void> => {
+  try {
+    const response = await api.get(`/orders/${orderId}/invoice`, {
+      responseType: 'blob',
+    });
+    
+    // Create a blob from the PDF data
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    
+    // Create download link
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Invoice-${orderId}.pdf`);
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading invoice:', error);
+    throw error;
+  }
+};

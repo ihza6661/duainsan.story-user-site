@@ -18,9 +18,10 @@ import {
   getFinalPaymentSnapToken,
   retryPayment,
   cancelOrder,
+  downloadInvoice,
   type Order,
 } from "@/features/order/services/orderService";
-import { Loader2 } from "lucide-react";
+import { Loader2, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import {
   getOrderStatusInfo,
@@ -36,6 +37,7 @@ const OrderStatusPage = () => {
   const [retryingOrderId, setRetryingOrderId] = useState<string | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
+  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
 
   const invalidateOrderQueries = () => {
     if (orderId) {
@@ -236,6 +238,25 @@ const OrderStatusPage = () => {
         orderId: orderToCancel.id.toString(),
         reason,
       });
+    }
+  };
+
+  // Helper function to check if invoice can be downloaded
+  const canDownloadInvoice = (order: Order): boolean => {
+    return order.payment_status === 'paid' || order.payment_status === 'partially_paid';
+  };
+
+  // Handle invoice download
+  const handleDownloadInvoice = async (orderId: string | number) => {
+    try {
+      setDownloadingInvoice(orderId.toString());
+      await downloadInvoice(orderId);
+      toast.success("Invoice berhasil diunduh!");
+    } catch (error) {
+      console.error("Failed to download invoice:", error);
+      toast.error("Gagal mengunduh invoice. Silakan coba lagi.");
+    } finally {
+      setDownloadingInvoice(null);
     }
   };
 
@@ -498,6 +519,25 @@ const OrderStatusPage = () => {
                         : "Lakukan Pelunasan"}
                     </Button>
                   )}
+                {canDownloadInvoice(order) && (
+                  <Button
+                    variant="outline"
+                    onClick={() => handleDownloadInvoice(order.id)}
+                    disabled={downloadingInvoice === order.id.toString()}
+                  >
+                    {downloadingInvoice === order.id.toString() ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Mengunduh...
+                      </>
+                    ) : (
+                      <>
+                        <FileDown className="mr-2 h-4 w-4" />
+                        Unduh Invoice
+                      </>
+                    )}
+                  </Button>
+                )}
                 {canCancelOrder(order) && (
                   <Button
                     variant="destructive"
@@ -648,6 +688,26 @@ const OrderStatusPage = () => {
                           : "Bayar Sekarang"}
                       </Button>
                     )}
+                  {canDownloadInvoice(order) && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDownloadInvoice(order.id)}
+                      disabled={downloadingInvoice === order.id.toString()}
+                    >
+                      {downloadingInvoice === order.id.toString() ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Mengunduh...
+                        </>
+                      ) : (
+                        <>
+                          <FileDown className="mr-2 h-4 w-4" />
+                          Invoice
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>

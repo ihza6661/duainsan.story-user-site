@@ -26,17 +26,38 @@ import {
 import { AxiosError } from "axios";
 
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { getMyProfile } from "@/features/auth/services/auth/authService";
+import { useQuery } from "@tanstack/react-query";
 
 import { useToast } from "@/hooks/ui/use-toast";
 import { Textarea } from "@/components/ui/forms/textarea";
 
 import { useNavigate } from "react-router-dom";
+import { PromoCodeInput } from "@/features/promo/components/PromoCodeInput";
 
 const CheckoutPage = () => {
   const { cart, isLoading } = useCart();
-  const { user } = useAuth();
+  const { user: authUser, token, updateUser } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Fetch fresh user data from API to ensure we have latest info
+  const { data: freshUser, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ["profile", "checkout"],
+    queryFn: getMyProfile,
+    enabled: !!token,
+    staleTime: 0, // Always fetch fresh data
+  });
+
+  // Use fresh user data if available, otherwise fall back to auth context
+  const user = freshUser || authUser;
+
+  // Update auth context with fresh user data when available
+  useEffect(() => {
+    if (freshUser && updateUser) {
+      updateUser(freshUser);
+    }
+  }, [freshUser, updateUser]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [snapToken, setSnapToken] = useState<string | null>(null);
@@ -51,6 +72,10 @@ const CheckoutPage = () => {
   const [shippingSelection, setShippingSelection] = useState<string>("");
   const [isCalculatingCost, setIsCalculatingCost] = useState(false);
   const [calculatedWeight, setCalculatedWeight] = useState<number | null>(null);
+
+  // Promo Code State
+  const [promoCode, setPromoCode] = useState<string>("");
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
 
   useEffect(() => {
     if (!user) {
@@ -231,21 +256,20 @@ const CheckoutPage = () => {
 
     formData.append("shipping_address", fullAddress);
     formData.append("postal_code", String(user?.postal_code));
-    formData.append("courier", selectedCourier);
-    formData.append("shipping_cost", String(shippingCost));
-    // formData.append("shipping_address", fullAddress);
-    formData.append("postal_code", String(user?.postal_code));
     formData.append("shipping_method", shippingMethod);
     formData.append("shipping_cost", String(shippingCost));
     
     if (shippingMethod === 'rajaongkir') {
         formData.append("courier", selectedCourier);
         formData.append("shipping_service", shippingService);
-    } else {
-        // For pickup and gosend, we don't need courier/service from rajaongkir
-        // But the backend might expect them to be nullable, which we handled.
     }
+    
     formData.append("payment_option", paymentOption);
+    
+    // Add promo code if applied
+    if (promoCode) {
+      formData.append("promo_code", promoCode);
+    }
 
     try {
       const order = user
@@ -304,11 +328,13 @@ const CheckoutPage = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingProfile) {
     return (
       <div className="container mt-20 mx-auto text-center py-20">
         <Loader2 className="h-20 w-20 mx-auto text-muted-foreground animate-spin" />
-        <h1 className="text-3xl font-semibold mt-4">Memuat Keranjang...</h1>
+        <h1 className="text-3xl font-semibold mt-4">
+          {isLoadingProfile ? "Memuat Data Profil..." : "Memuat Keranjang..."}
+        </h1>
       </div>
     );
   }
@@ -778,10 +804,33 @@ const CheckoutPage = () => {
                   <span>{calculatedWeight.toLocaleString("id-ID")} gr</span>
                 </div>
               )}
+              
+              {/* Promo Code Input */}
+              <div className="border-t border-border pt-4">
+                <Label className="mb-2 block">Kode Promo</Label>
+                <PromoCodeInput
+                  subtotal={cart.subtotal}
+                  onPromoApplied={(data) => {
+                    setPromoCode(data.code);
+                    setDiscountAmount(data.discountAmount);
+                  }}
+                  onPromoRemoved={() => {
+                    setPromoCode("");
+                    setDiscountAmount(0);
+                  }}
+                />
+              </div>
+
               <div className="border-t border-border pt-4 flex justify-between">
                 <span>Subtotal</span>
                 <span>{formatRupiah(cart.subtotal)}</span>
               </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Diskon ({promoCode})</span>
+                  <span>- {formatRupiah(discountAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>
                   Biaya Pengiriman
@@ -811,8 +860,8 @@ const CheckoutPage = () => {
                 <span>
                   {formatRupiah(
                     paymentOption === "dp"
-                      ? (cart.subtotal + shippingCost) * 0.5
-                      : cart.subtotal + shippingCost
+                      ? (cart.subtotal - discountAmount + shippingCost) * 0.5
+                      : cart.subtotal - discountAmount + shippingCost
                   )}
                 </span>
               </div>

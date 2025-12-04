@@ -1,7 +1,9 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getOrderById } from "@/features/order/services/orderService";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { useState } from "react";
+import { getOrderById, downloadInvoice } from "@/features/order/services/orderService";
+import { Loader2, CheckCircle, XCircle, FileDown } from "lucide-react";
+import { useToast } from "@/hooks/ui/use-toast";
 import {
   Card,
   CardContent,
@@ -23,6 +25,8 @@ type VariantWithImages = {
 
 const OrderConfirmationPage = () => {
   const { orderId } = useParams<{ orderId: string }>();
+  const { toast } = useToast();
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const {
     data: order,
@@ -34,6 +38,27 @@ const OrderConfirmationPage = () => {
     queryFn: () => getOrderById(orderId!),
     enabled: !!orderId, // Only run query if orderId is available
   });
+
+  const handleDownloadInvoice = async () => {
+    if (!orderId) return;
+
+    setIsDownloading(true);
+    try {
+      await downloadInvoice(orderId);
+      toast({
+        title: "Invoice Downloaded",
+        description: "Invoice berhasil diunduh",
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Gagal mengunduh invoice. Pastikan pembayaran telah lunas.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -253,8 +278,28 @@ const OrderConfirmationPage = () => {
             </div>
           </div>
 
-          <div className="text-center">
-            <Button asChild className="w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {(order.payment_status === 'paid' || order.payment_status === 'partially_paid') && (
+              <Button
+                variant="outline"
+                onClick={handleDownloadInvoice}
+                disabled={isDownloading}
+                className="w-full sm:w-auto"
+              >
+                {isDownloading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Mengunduh...
+                  </>
+                ) : (
+                  <>
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Download Invoice
+                  </>
+                )}
+              </Button>
+            )}
+            <Button asChild className="w-full sm:w-auto">
               <Link to="/status-pesanan">Lihat Semua Pesanan Anda</Link>
             </Button>
           </div>

@@ -37,7 +37,7 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
     try {
       // Capture item data in closure before component unmounts
       const itemToRemove = {
-        product_id: item.product_id,
+        product_id: item.product.id,
         product_name: item.product.name,
       };
       

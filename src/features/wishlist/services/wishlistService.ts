@@ -3,11 +3,9 @@ import type { Product } from '@/features/product/services/productService';
 
 export interface WishlistItem {
   id: number;
-  user_id: number;
-  product_id: number;
   share_token: string;
-  created_at: string;
-  updated_at: string;
+  shareable_link: string;
+  added_at: string;
   product: Product;
 }
 

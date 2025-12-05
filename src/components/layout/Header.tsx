@@ -172,12 +172,19 @@ const Header = () => {
                       >
                         Status Pesanan
                       </Link>
-                      <Link
+                       <Link
                         to="/wishlist"
                         onClick={() => setShowUserDropdown(false)}
                         className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
                       >
                         Wishlist Saya
+                      </Link>
+                      <Link
+                        to="/my-reviews"
+                        onClick={() => setShowUserDropdown(false)}
+                        className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
+                      >
+                        Ulasan Saya
                       </Link>
                       <Button
                         variant="ghost"

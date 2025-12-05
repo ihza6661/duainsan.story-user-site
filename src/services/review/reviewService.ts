@@ -27,7 +27,7 @@ export const getProductReviews = async (
   if (filters?.page) params.append("page", filters.page.toString());
 
   const response = await apiClient.get<ReviewListResponse>(
-    `/v1/customer/products/${productId}/reviews?${params.toString()}`
+    `/customer/products/${productId}/reviews?${params.toString()}`
   );
 
   return response.data;
@@ -40,7 +40,7 @@ export const getProductRatingSummary = async (
   productId: number
 ): Promise<RatingSummaryResponse> => {
   const response = await apiClient.get<RatingSummaryResponse>(
-    `/v1/customer/products/${productId}/reviews/summary`
+    `/customer/products/${productId}/reviews/summary`
   );
 
   return response.data;
@@ -51,7 +51,7 @@ export const getProductRatingSummary = async (
  */
 export const getReviewById = async (reviewId: number): Promise<ReviewResponse> => {
   const response = await apiClient.get<ReviewResponse>(
-    `/v1/customer/reviews/${reviewId}`
+    `/customer/reviews/${reviewId}`
   );
 
   return response.data;
@@ -62,7 +62,7 @@ export const getReviewById = async (reviewId: number): Promise<ReviewResponse> =
  */
 export const markReviewAsHelpful = async (reviewId: number): Promise<ReviewResponse> => {
   const response = await apiClient.post<ReviewResponse>(
-    `/v1/customer/reviews/${reviewId}/helpful`
+    `/customer/reviews/${reviewId}/helpful`
   );
 
   return response.data;
@@ -75,7 +75,7 @@ export const markReviewAsHelpful = async (reviewId: number): Promise<ReviewRespo
 export const getMyReviews = async (page?: number): Promise<ReviewListResponse> => {
   const params = page ? `?page=${page}` : "";
   const response = await apiClient.get<ReviewListResponse>(
-    `/v1/reviews/my${params}`
+    `/reviews/my${params}`
   );
 
   return response.data;
@@ -104,7 +104,7 @@ export const createReview = async (
     });
   }
 
-  const response = await apiClient.post<ReviewResponse>("/v1/reviews", formData, {
+  const response = await apiClient.post<ReviewResponse>("/reviews", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -139,7 +139,7 @@ export const updateReview = async (
   formData.append("_method", "PUT");
 
   const response = await apiClient.post<ReviewResponse>(
-    `/v1/reviews/${reviewId}`,
+    `/reviews/${reviewId}`,
     formData,
     {
       headers: {
@@ -157,7 +157,35 @@ export const updateReview = async (
  */
 export const deleteReview = async (reviewId: number): Promise<{ message: string }> => {
   const response = await apiClient.delete<{ message: string }>(
-    `/v1/reviews/${reviewId}`
+    `/reviews/${reviewId}`
+  );
+
+  return response.data;
+};
+
+/**
+ * Get products that can be reviewed from completed orders.
+ * Requires authentication.
+ */
+export interface ReviewableProduct {
+  order_item_id: number;
+  order_number: string;
+  product: {
+    id: number;
+    name: string;
+    image: string | null;
+  };
+  purchased_at: string;
+}
+
+export interface ReviewableProductsResponse {
+  message: string;
+  data: ReviewableProduct[];
+}
+
+export const getReviewableProducts = async (): Promise<ReviewableProductsResponse> => {
+  const response = await apiClient.get<ReviewableProductsResponse>(
+    "/reviews/reviewable"
   );
 
   return response.data;

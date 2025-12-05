@@ -38,6 +38,7 @@ import KebijakanPrivasi from "@/pages/info/KebijakanPrivasi";
 import PengembalianRefund from "@/pages/info/PengembalianRefund";
 import { WishlistPage } from "@/pages/wishlist/WishlistPage";
 import { SharedWishlistPage } from "@/pages/wishlist/SharedWishlistPage";
+import { MyReviewsPage } from "@/pages/reviews/MyReviewsPage";
 
 // Inisialisasi Query Client
 const queryClient = new QueryClient();
@@ -87,6 +88,8 @@ const App = () => (
                     <Route path="checkout" element={<CheckoutPage />} />
 
                     <Route path="wishlist" element={<WishlistPage />} />
+
+                    <Route path="my-reviews" element={<MyReviewsPage />} />
 
                     <Route
                       path="status-pesanan"

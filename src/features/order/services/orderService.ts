@@ -17,7 +17,14 @@ export interface OrderItem {
     };
   };
   variant: ProductVariant;
-  // Add other fields as needed from your backend OrderItem structure
+  can_review?: boolean;
+  review?: {
+    id: number;
+    rating: number;
+    comment: string | null;
+    is_approved: boolean;
+    created_at: string;
+  } | null;
 }
 
 export interface CustomData {

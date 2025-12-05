@@ -20,8 +20,9 @@ import {
   cancelOrder,
   downloadInvoice,
   type Order,
+  type OrderItem,
 } from "@/features/order/services/orderService";
-import { Loader2, FileDown } from "lucide-react";
+import { Loader2, FileDown, Star } from "lucide-react";
 import { toast } from "sonner";
 import {
   getOrderStatusInfo,
@@ -30,6 +31,7 @@ import {
 } from "@/features/order/utils/statusLabels";
 import { DesignProofViewer } from "@/features/order/components/DesignProofViewer";
 import { CancelOrderDialog } from "@/features/order/components/CancelOrderDialog";
+import { ReviewDialog } from "@/features/reviews/components/ReviewDialog";
 
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
@@ -38,6 +40,8 @@ const OrderStatusPage = () => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
   const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedOrderItem, setSelectedOrderItem] = useState<OrderItem | null>(null);
 
   const invalidateOrderQueries = () => {
     if (orderId) {
@@ -260,6 +264,18 @@ const OrderStatusPage = () => {
     }
   };
 
+  // Handle opening write review dialog
+  const handleWriteReview = (item: OrderItem) => {
+    setSelectedOrderItem(item);
+    setReviewDialogOpen(true);
+  };
+
+  // Handle opening edit review dialog
+  const handleEditReview = (item: OrderItem) => {
+    setSelectedOrderItem(item);
+    setReviewDialogOpen(true);
+  };
+
   // Fetch single order if orderId is present
   const {
     data: orderData,
@@ -411,14 +427,14 @@ const OrderStatusPage = () => {
                     );
 
                     return (
-                      <div key={item.id} className="flex items-start space-x-4">
+                      <div key={item.id} className="flex items-start space-x-4 border-b pb-4 last:border-b-0">
                         <img
                           src={imageUrl}
                           alt={item.product.name}
                           className="w-20 h-20 object-cover rounded-md border"
                         />
                         <div className="flex-grow">
-                          <p className="text-foreground">{item.product.name}</p>
+                          <p className="text-foreground font-medium">{item.product.name}</p>
                           <p className="text-sm text-muted-foreground">
                             Jumlah: {item.quantity}
                           </p>
@@ -428,18 +444,52 @@ const OrderStatusPage = () => {
                               ?.map((o) => o.value)
                               .join(", ") || "-"}
                           </p>
+                          
+                          {/* Review Status/Button */}
+                          {item.review ? (
+                            <div className="mt-2 flex items-center gap-2">
+                              <Badge variant={item.review.is_approved ? "default" : "secondary"} className="text-xs">
+                                {item.review.is_approved ? (
+                                  <>
+                                    <Star className="h-3 w-3 mr-1 fill-current" />
+                                    Sudah Diulas ({item.review.rating}/5)
+                                  </>
+                                ) : (
+                                  "⏳ Ulasan Menunggu Persetujuan"
+                                )}
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditReview(item)}
+                                className="h-7 text-xs"
+                              >
+                                Edit Ulasan
+                              </Button>
+                            </div>
+                          ) : item.can_review ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleWriteReview(item)}
+                              className="mt-2 h-8 text-xs"
+                            >
+                              <Star className="h-3 w-3 mr-1" />
+                              Tulis Ulasan
+                            </Button>
+                          ) : null}
                         </div>
-                        <p className="text-sm text-foreground">
-                          {formatRupiah(item.sub_total)}
-                          <div>
-                            <p className="text-muted-foreground">
-                              Opsi Pembayaran:
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {paymentOptionLabel}
-                            </p>
-                          </div>
-                        </p>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-foreground">
+                            {formatRupiah(item.sub_total)}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Opsi Pembayaran:
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {paymentOptionLabel}
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
@@ -589,6 +639,38 @@ const OrderStatusPage = () => {
               onConfirm={handleConfirmCancel}
               isLoading={cancelOrderMutation.isPending}
               orderNumber={orderToCancel.order_number}
+            />
+          )}
+
+          {/* Review Dialog */}
+          {selectedOrderItem && (
+            <ReviewDialog
+              open={reviewDialogOpen}
+              onOpenChange={setReviewDialogOpen}
+              orderItemId={selectedOrderItem.id}
+              productId={selectedOrderItem.product.id}
+              productName={selectedOrderItem.product.name}
+              existingReview={selectedOrderItem.review ? {
+                id: selectedOrderItem.review.id,
+                rating: selectedOrderItem.review.rating,
+                comment: selectedOrderItem.review.comment,
+                is_approved: selectedOrderItem.review.is_approved,
+                created_at: selectedOrderItem.review.created_at,
+                is_verified: false,
+                is_featured: false,
+                helpful_count: 0,
+                admin_response: null,
+                admin_responded_at: null,
+                updated_at: selectedOrderItem.review.created_at,
+                customer: { id: 0, full_name: "" },
+                product: { id: selectedOrderItem.product.id, name: selectedOrderItem.product.name },
+                images: [],
+              } : null}
+              onSuccess={() => {
+                toast.success("Ulasan berhasil dikirim!");
+                invalidateOrderQueries();
+                setReviewDialogOpen(false);
+              }}
             />
           )}
         </div>

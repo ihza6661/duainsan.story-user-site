@@ -30,25 +30,44 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
   const [isRemoving, setIsRemoving] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Store removed item for undo functionality
-  const [removedItem, setRemovedItem] = useState<WishlistItemType | null>(null);
-
   const handleRemove = async () => {
     setIsRemoving(true);
     setShowDeleteDialog(false);
     
     try {
-      // Store the item for undo
-      setRemovedItem(item);
+      // Capture item data in closure before component unmounts
+      const itemToRemove = {
+        product_id: item.product_id,
+        product_name: item.product.name,
+      };
       
       await removeMutation.mutateAsync(item.id);
       
       // Show success toast with undo action
+      // The handleUndo function is defined inline so it captures itemToRemove in its closure
       toast({
         title: 'Dihapus dari Wishlist',
-        description: `"${item.product.name}" telah dihapus dari wishlist Anda.`,
+        description: `"${itemToRemove.product_name}" telah dihapus dari wishlist Anda.`,
         action: (
-          <ToastAction altText="Urungkan penghapusan" onClick={handleUndo}>
+          <ToastAction 
+            altText="Urungkan penghapusan" 
+            onClick={async () => {
+              try {
+                await addToWishlistMutation.mutateAsync(itemToRemove.product_id);
+                toast({
+                  title: 'Berhasil Dikembalikan',
+                  description: `"${itemToRemove.product_name}" telah dikembalikan ke wishlist Anda.`,
+                });
+              } catch (error) {
+                console.error('Failed to undo removal:', error);
+                toast({
+                  title: 'Gagal Mengembalikan',
+                  description: 'Terjadi kesalahan saat mengembalikan item ke wishlist.',
+                  variant: 'destructive',
+                });
+              }
+            }}
+          >
             Urungkan
           </ToastAction>
         ),
@@ -62,26 +81,6 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
       });
     } finally {
       setIsRemoving(false);
-    }
-  };
-
-  const handleUndo = async () => {
-    if (!removedItem) return;
-
-    try {
-      await addToWishlistMutation.mutateAsync(removedItem.product_id);
-      toast({
-        title: 'Berhasil Dikembalikan',
-        description: `"${removedItem.product.name}" telah dikembalikan ke wishlist Anda.`,
-      });
-      setRemovedItem(null);
-    } catch (error) {
-      console.error('Failed to undo removal:', error);
-      toast({
-        title: 'Gagal Mengembalikan',
-        description: 'Terjadi kesalahan saat mengembalikan item ke wishlist.',
-        variant: 'destructive',
-      });
     }
   };
 

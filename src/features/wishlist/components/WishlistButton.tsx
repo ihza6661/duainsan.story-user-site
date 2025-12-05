@@ -3,6 +3,7 @@ import { Heart } from 'lucide-react';
 import { useAddToWishlist, useRemoveFromWishlist, useCheckWishlist } from '../hooks/useWishlist';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/ui/use-toast';
 
 interface WishlistButtonProps {
   productId: number;
@@ -19,6 +20,7 @@ export const WishlistButton = ({
 }: WishlistButtonProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [isAnimating, setIsAnimating] = useState(false);
 
   const { data: checkData, isLoading: isChecking } = useCheckWishlist(productId);
@@ -47,11 +49,24 @@ export const WishlistButton = ({
     try {
       if (isInWishlist && wishlistId) {
         await removeMutation.mutateAsync(wishlistId);
+        toast({
+          title: "Dihapus dari wishlist",
+          description: "Produk telah dihapus dari wishlist Anda",
+        });
       } else {
         await addMutation.mutateAsync(productId);
+        toast({
+          title: "Ditambahkan ke wishlist",
+          description: "Produk telah ditambahkan ke wishlist Anda",
+        });
       }
     } catch (error) {
       console.error('Wishlist action failed:', error);
+      toast({
+        title: "Aksi gagal",
+        description: "Tidak dapat memperbarui wishlist. Silakan coba lagi.",
+        variant: "destructive",
+      });
     }
   };
 

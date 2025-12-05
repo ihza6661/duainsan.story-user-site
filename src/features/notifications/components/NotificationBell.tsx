@@ -1,14 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
-import { Bell, Check, CheckCheck } from 'lucide-react';
-import { useUnreadCount, useNotifications, useMarkAsRead, useMarkAllAsRead } from '../hooks/useNotifications';
-import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useState, useRef, useEffect } from "react";
+import { Bell, Check, CheckCheck } from "lucide-react";
+import {
+  useUnreadCount,
+  useNotifications,
+  useMarkAsRead,
+  useMarkAllAsRead,
+} from "../hooks/useNotifications";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import {
   formatNotificationTime,
   getNotificationIcon,
   getNotificationColor,
   type Notification,
-} from '../services/notificationService';
-import { Button } from '@/components/ui/buttons/button';
+} from "../services/notificationService";
+import { Button } from "@/components/ui/buttons/button";
 
 export const NotificationBell = () => {
   const { user } = useAuth();
@@ -22,20 +27,29 @@ export const NotificationBell = () => {
 
   const notifications = notificationsData?.data?.data || [];
 
+  const NotificationBadge = unreadCount && unreadCount > 0 && (
+    <span className="">
+      {unreadCount > 99 ? "99+" : unreadCount}
+    </span>
+  );
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -43,7 +57,7 @@ export const NotificationBell = () => {
     try {
       await markAsReadMutation.mutateAsync(notificationId);
     } catch (error) {
-      console.error('Failed to mark notification as read:', error);
+      console.error("Failed to mark notification as read:", error);
     }
   };
 
@@ -51,7 +65,7 @@ export const NotificationBell = () => {
     try {
       await markAllAsReadMutation.mutateAsync();
     } catch (error) {
-      console.error('Failed to mark all notifications as read:', error);
+      console.error("Failed to mark all notifications as read:", error);
     }
   };
 
@@ -81,15 +95,13 @@ export const NotificationBell = () => {
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center justify-center w-10 h-10"
+        className="relative flex items-center justify-center w-8 h-10"
         aria-label="Notifications"
       >
-        <Bell className="w-6 h-6 text-foreground" />
-        {unreadCount && unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] md:text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center min-w-[16px] md:min-w-[20px]">
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
-        )}
+        <Bell className="text-foreground te" />
+        <span className="absolute -top-1 sm:-top-2 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
+          {NotificationBadge}
+        </span>
       </Button>
 
       {/* Dropdown */}
@@ -115,12 +127,16 @@ export const NotificationBell = () => {
             {isLoading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto"></div>
-                <p className="text-sm text-muted-foreground mt-2">Memuat notifikasi...</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Memuat notifikasi...
+                </p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-2 opacity-50" />
-                <p className="text-sm text-muted-foreground">Tidak ada notifikasi</p>
+                <p className="text-sm text-muted-foreground">
+                  Tidak ada notifikasi
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-border">
@@ -130,7 +146,11 @@ export const NotificationBell = () => {
                     onClick={() => handleNotificationClick(notification)}
                     className={`
                       w-full text-left p-4 hover:bg-muted/50 transition-colors
-                      ${!notification.is_read ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''}
+                      ${
+                        !notification.is_read
+                          ? "bg-primary-50/50 dark:bg-primary-900/10"
+                          : ""
+                      }
                     `}
                   >
                     <div className="flex gap-3">
@@ -141,7 +161,11 @@ export const NotificationBell = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
-                          <h4 className={`font-medium text-sm ${getNotificationColor(notification.type)}`}>
+                          <h4
+                            className={`font-medium text-sm ${getNotificationColor(
+                              notification.type
+                            )}`}
+                          >
                             {notification.title}
                           </h4>
                           {!notification.is_read && (

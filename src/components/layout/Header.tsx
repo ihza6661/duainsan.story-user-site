@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 // --- Impor Aset & Komponen Anak ---
 import Sidebar from "@/components/layout/Sidebar";
-import { Menu, User, ShoppingBag, Heart } from "lucide-react";
+import { Menu, User, ShoppingBag, Heart, Package, MessageSquare, LogOut } from "lucide-react";
 
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
@@ -87,9 +87,12 @@ const Header = () => {
             >
               <Menu className="w-6 h-6 text-foreground" />
 
-
               {/* <MenuIcon className="text-foreground" /> */}
             </Button>
+            {/* Theme Switcher beside Menu on Mobile */}
+            <div className="md:hidden">
+              <ThemeSwitcher />
+            </div>
             <div className="hidden md:flex items-center space-x-8">
               <Button
                 variant="ghost"
@@ -98,9 +101,7 @@ const Header = () => {
               >
                 <Menu className="w-6 h-6 text-foreground" />
 
-
                 {/* <MenuIcon className="text-foreground" /> */}
-                
               </Button>
               <nav className="hidden tablet-custom:flex items-center space-x-6 tracking-normal">
                 <Link
@@ -132,12 +133,10 @@ const Header = () => {
           {/* ================== Sisi Kanan (Aksi Pengguna) ================== */}
           <div className="flex items-center">
             <div className="flex items-center justify-center pr-2 gap-0 sm:gap-1">
-              {/* Theme Switcher */}
-              <ThemeSwitcher />
-
-              {/* Notification Bell (only for logged in users) */}
-              {user && <NotificationBell />}
-
+              {/* Theme Switcher - Hidden on mobile, visible on desktop */}
+              <div className="hidden md:block">
+                <ThemeSwitcher />
+              </div>
               {/* Ikon User */}
               {isAuthLoading ? (
                 <div className="relative flex items-center justify-center w-8 h-10">
@@ -151,7 +150,6 @@ const Header = () => {
                     className="relative flex items-center justify-center w-8 h-10"
                   >
                     <User className="w-6 h-6 text-foreground" />
-
                   </Button>
                   {showUserDropdown && (
                     <div className="bg-popover absolute right-0 mt-2 w-48 border rounded-lg shadow-xl z-50 py-2 text-sm">
@@ -161,36 +159,41 @@ const Header = () => {
                       <Link
                         to="/profile"
                         onClick={() => setShowUserDropdown(false)}
-                        className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-foreground flex items-center gap-2"
                       >
+                        <User className="w-4 h-4" />
                         Profil Saya
                       </Link>
-                       <Link
+                      <Link
                         to="/status-pesanan"
                         onClick={() => setShowUserDropdown(false)}
-                        className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-foreground flex items-center gap-2"
                       >
+                        <Package className="w-4 h-4" />
                         Status Pesanan
                       </Link>
-                       <Link
+                      <Link
                         to="/wishlist"
                         onClick={() => setShowUserDropdown(false)}
-                        className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-foreground flex items-center gap-2"
                       >
+                        <Heart className="w-4 h-4" />
                         Wishlist Saya
                       </Link>
                       <Link
                         to="/my-reviews"
                         onClick={() => setShowUserDropdown(false)}
-                        className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-foreground flex items-center gap-2"
                       >
+                        <MessageSquare className="w-4 h-4" />
                         Ulasan Saya
                       </Link>
                       <Button
                         variant="ghost"
                         onClick={handleLogout}
-                        className="block w-full text-left hover:bg-accent/30 text-destructive font-medium"
+                        className="w-full text-left hover:bg-accent/30 text-destructive font-medium flex items-center gap-2"
                       >
+                        <LogOut className="w-4 h-4" />
                         Keluar
                       </Button>
                     </div>
@@ -205,14 +208,18 @@ const Header = () => {
                 </Link>
               )}
 
+              {/* Notification Bell (only for logged in users) */}
+              {user && <NotificationBell />}
+
               {/* Ikon Keranjang Belanja */}
               <Link to="/cart">
-                <Button 
-                variant="ghost"
-                className="relative flex items-center justify-center">
+                <Button
+                  variant="ghost"
+                  className="relative flex items-center justify-center"
+                >
                   <ShoppingBag className="text-foreground" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-2 sm:-top-3 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
+                    <span className="absolute -top-1 sm:-top-2 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
                       {totalItems > 99 ? "99+" : totalItems}
                     </span>
                   )}

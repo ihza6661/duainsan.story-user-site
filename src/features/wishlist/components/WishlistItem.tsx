@@ -1,8 +1,22 @@
 import { X, ShoppingCart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import type { WishlistItem as WishlistItemType } from '../services/wishlistService';
-import { useRemoveFromWishlist } from '../hooks/useWishlist';
+import { useRemoveFromWishlist, useAddToWishlist } from '../hooks/useWishlist';
 import { useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/dialogs/alert-dialog';
+import { useToast } from '@/hooks/ui/use-toast';
+import { ToastAction } from '@/components/ui/feedback/toast';
+import { Button } from '@/components/ui/buttons/button';
 
 interface WishlistItemProps {
   item: WishlistItemType;
@@ -11,22 +25,71 @@ interface WishlistItemProps {
 
 export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProps) => {
   const removeMutation = useRemoveFromWishlist();
+  const addToWishlistMutation = useAddToWishlist();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleRemove = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // Store removed item for undo functionality
+  const [removedItem, setRemovedItem] = useState<WishlistItemType | null>(null);
 
-    if (confirm('Remove this item from your wishlist?')) {
-      setIsRemoving(true);
-      try {
-        await removeMutation.mutateAsync(item.id);
-      } catch (error) {
-        console.error('Failed to remove item:', error);
-      } finally {
-        setIsRemoving(false);
-      }
+  const handleRemove = async () => {
+    setIsRemoving(true);
+    setShowDeleteDialog(false);
+    
+    try {
+      // Store the item for undo
+      setRemovedItem(item);
+      
+      await removeMutation.mutateAsync(item.id);
+      
+      // Show success toast with undo action
+      toast({
+        title: 'Dihapus dari Wishlist',
+        description: `"${item.product.name}" telah dihapus dari wishlist Anda.`,
+        action: (
+          <ToastAction altText="Urungkan penghapusan" onClick={handleUndo}>
+            Urungkan
+          </ToastAction>
+        ),
+      });
+    } catch (error) {
+      console.error('Failed to remove item:', error);
+      toast({
+        title: 'Gagal Menghapus',
+        description: 'Terjadi kesalahan saat menghapus item dari wishlist.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsRemoving(false);
     }
+  };
+
+  const handleUndo = async () => {
+    if (!removedItem) return;
+
+    try {
+      await addToWishlistMutation.mutateAsync(removedItem.product_id);
+      toast({
+        title: 'Berhasil Dikembalikan',
+        description: `"${removedItem.product.name}" telah dikembalikan ke wishlist Anda.`,
+      });
+      setRemovedItem(null);
+    } catch (error) {
+      console.error('Failed to undo removal:', error);
+      toast({
+        title: 'Gagal Mengembalikan',
+        description: 'Terjadi kesalahan saat mengembalikan item ke wishlist.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleMoveToCart = () => {
+    setShowDeleteDialog(false);
+    // Navigate to product page where user can select variant and add to cart
+    navigate(`/products/${item.product.slug}`);
   };
 
   const product = item.product;
@@ -56,24 +119,56 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
           
           {/* Remove Button */}
           {showRemoveButton && (
-            <button
-              onClick={handleRemove}
-              disabled={isRemoving}
-              className="
-                absolute top-2 right-2
-                w-8 h-8 flex items-center justify-center
-                bg-white dark:bg-gray-800 rounded-full
-                shadow-md hover:shadow-lg
-                opacity-0 group-hover:opacity-100
-                transition-all duration-200
-                hover:bg-red-50 dark:hover:bg-red-900/20
-                hover:text-red-500
-                disabled:opacity-50
-              "
-              aria-label="Remove from wishlist"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <AlertDialogTrigger asChild>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  disabled={isRemoving}
+                  className="
+                    absolute top-2 right-2
+                    w-8 h-8 flex items-center justify-center
+                    bg-white dark:bg-gray-800 rounded-full
+                    shadow-md hover:shadow-lg
+                    opacity-0 group-hover:opacity-100
+                    transition-all duration-200
+                    hover:bg-red-50 dark:hover:bg-red-900/20
+                    hover:text-red-500
+                    disabled:opacity-50
+                  "
+                  aria-label="Hapus dari wishlist"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </AlertDialogTrigger>
+              
+              <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Hapus dari Wishlist?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Apakah Anda yakin ingin menghapus <strong>"{product.name}"</strong> dari wishlist Anda?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <Button
+                    variant="outline"
+                    onClick={handleMoveToCart}
+                    className="w-full sm:w-auto"
+                  >
+                    Lihat & Tambah ke Keranjang
+                  </Button>
+                  <AlertDialogAction
+                    onClick={handleRemove}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
+                  >
+                    Hapus
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
         </div>
 
@@ -96,10 +191,10 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
                 hover:text-primary-700 dark:hover:text-primary-300
                 transition-colors
               "
-              aria-label="View product details"
+              aria-label="Lihat detail produk"
             >
               <ShoppingCart className="w-4 h-4" />
-              <span>View</span>
+              <span>Lihat</span>
             </Link>
           </div>
         </div>

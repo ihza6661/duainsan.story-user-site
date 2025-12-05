@@ -14,7 +14,7 @@ export const SharedWishlistPage = () => {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-              <p className="text-gray-600 dark:text-gray-400">Loading wishlist...</p>
+              <p className="text-gray-600 dark:text-gray-400">Memuat wishlist...</p>
             </div>
           </div>
         </div>
@@ -30,17 +30,17 @@ export const SharedWishlistPage = () => {
             <div className="text-center">
               <Heart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Wishlist Not Found
+                Wishlist Tidak Ditemukan
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                This wishlist link is invalid or has expired.
+                Link wishlist ini tidak valid atau sudah kadaluarsa.
               </p>
               <Link
                 to="/products"
                 className="inline-flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
               >
                 <ShoppingBag className="w-5 h-5" />
-                <span>Browse Products</span>
+                <span>Jelajahi Produk</span>
               </Link>
             </div>
           </div>
@@ -62,12 +62,12 @@ export const SharedWishlistPage = () => {
             <Heart className="w-8 h-8 text-red-500 fill-current" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {userName ? `${userName}'s Wishlist` : 'Shared Wishlist'}
+                {userName ? `Wishlist ${userName}` : 'Wishlist Bersama'}
               </h1>
               {userName && (
                 <div className="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
                   <User className="w-4 h-4" />
-                  <span className="text-sm">Shared by {userName}</span>
+                  <span className="text-sm">Dibagikan oleh {userName}</span>
                 </div>
               )}
             </div>
@@ -75,7 +75,7 @@ export const SharedWishlistPage = () => {
           
           {!isEmpty && (
             <p className="text-gray-600 dark:text-gray-400">
-              {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'items'} in this wishlist
+              {wishlistItems.length} {wishlistItems.length === 1 ? 'item' : 'item'} dalam wishlist ini
             </p>
           )}
         </div>
@@ -83,7 +83,7 @@ export const SharedWishlistPage = () => {
         {/* Info Banner */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            You're viewing a shared wishlist. Click on any item to view details and make a purchase!
+            Anda melihat wishlist bersama. Klik item untuk melihat detail dan melakukan pembelian!
           </p>
         </div>
 
@@ -92,17 +92,17 @@ export const SharedWishlistPage = () => {
           <div className="flex flex-col items-center justify-center min-h-[400px] bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
             <Heart className="w-24 h-24 text-gray-300 dark:text-gray-600 mb-6" />
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              This wishlist is empty
+              Wishlist Ini Kosong
             </h2>
             <p className="text-gray-600 dark:text-gray-400 text-center mb-6 max-w-md">
-              The owner hasn't added any items yet. Check back later!
+              Pemilik belum menambahkan item apapun. Silakan cek kembali nanti!
             </p>
             <Link
               to="/products"
               className="flex items-center gap-2 px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
               <ShoppingBag className="w-5 h-5" />
-              <span>Browse Our Products</span>
+              <span>Jelajahi Produk Kami</span>
             </Link>
           </div>
         ) : (

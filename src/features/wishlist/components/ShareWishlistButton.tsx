@@ -27,7 +27,7 @@ export const ShareWishlistButton = ({
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error('Failed to copy link:', error);
-      alert('Failed to copy link. Please try again.');
+      alert('Gagal menyalin link. Silakan coba lagi.');
     }
   };
 
@@ -89,7 +89,7 @@ export const ShareWishlistButton = ({
       )}
       {showText && (
         <span>
-          {copied ? 'Link Copied!' : 'Share Wishlist'}
+          {copied ? 'Link Disalin!' : 'Bagikan Wishlist'}
         </span>
       )}
     </button>

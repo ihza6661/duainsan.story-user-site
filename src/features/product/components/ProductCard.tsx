@@ -40,7 +40,7 @@ const ProductCard = ({ product, loading = false }: ProductCardProps) => {
           }}
           loading="lazy"
         />
-        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+        <div className="absolute top-6 right-6 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 z-10">
           <WishlistButton productId={product.id} variant="default" />
         </div>
       </div>

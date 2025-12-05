@@ -78,9 +78,9 @@ export const RecommendedProducts = ({
   }
 
   return (
-    <section className="py-8 md:py-12">
+    <section className="py-8 md:py-12 text-center">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 md:mb-8">
+        <h2 className="inline-block text-lg sm:text-xl font-medium mb-4 sm:mb-6 uppercase tracking-widest mt-6 bg-background text-muted-foreground px-6 py-2 rounded-full shadow-sm">
           {displayTitle}
         </h2>
 

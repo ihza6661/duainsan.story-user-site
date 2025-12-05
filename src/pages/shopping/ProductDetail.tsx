@@ -40,9 +40,9 @@ const ProductDetail = () => {
     isError,
     error,
   } = useQuery<ProductDetailType>({
-    queryKey: ["product", id],
+    queryKey: ["product", slug],
     queryFn: () => fetchProductBySlug(slug!),
-    enabled: !!id,
+    enabled: !!slug,
     retry: false,
   });
 

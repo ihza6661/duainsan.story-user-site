@@ -122,17 +122,13 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
             <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
               <AlertDialogTrigger asChild>
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
                   disabled={isRemoving}
                   className="
                     absolute top-2 right-2
                     w-8 h-8 flex items-center justify-center
                     bg-white dark:bg-gray-800 rounded-full
                     shadow-md hover:shadow-lg
-                    opacity-0 group-hover:opacity-100
+                    md:opacity-0 md:group-hover:opacity-100
                     transition-all duration-200
                     hover:bg-red-50 dark:hover:bg-red-900/20
                     hover:text-red-500

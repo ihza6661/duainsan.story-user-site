@@ -3,9 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 
 // --- Impor Aset & Komponen Anak ---
 import Sidebar from "@/components/layout/Sidebar";
-import { Menu, User, ShoppingBag } from "lucide-react";
+import { Menu, User, ShoppingBag, Heart } from "lucide-react";
 
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
+import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 
 // --- Impor Hook Kustom & Konteks ---
 import { useCart } from "@/features/cart/hooks/cart/use-cart";
@@ -134,6 +135,9 @@ const Header = () => {
               {/* Theme Switcher */}
               <ThemeSwitcher />
 
+              {/* Notification Bell (only for logged in users) */}
+              {user && <NotificationBell />}
+
               {/* Ikon User */}
               {isAuthLoading ? (
                 <div className="relative flex items-center justify-center w-8 h-10">
@@ -161,12 +165,19 @@ const Header = () => {
                       >
                         Profil Saya
                       </Link>
-                      <Link
+                       <Link
                         to="/status-pesanan"
                         onClick={() => setShowUserDropdown(false)}
                         className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
                       >
                         Status Pesanan
+                      </Link>
+                      <Link
+                        to="/wishlist"
+                        onClick={() => setShowUserDropdown(false)}
+                        className="block w-full text-left px-4 py-2 hover:bg-muted text-foreground"
+                      >
+                        Wishlist Saya
                       </Link>
                       <Button
                         variant="ghost"

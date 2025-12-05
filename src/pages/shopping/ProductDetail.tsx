@@ -27,6 +27,7 @@ import ProductServices from "@/features/product/components/ProductDetail/Product
 import RelatedProducts from "@/features/product/components/ProductDetail/RelatedProducts";
 import ProductDetailSkeleton from "@/features/product/components/ProductDetail/ProductDetailSkeleton";
 import { ProductReviewsSection } from "@/features/reviews/components/ProductReviewsSection";
+import { RecommendedProducts } from "@/features/recommendations";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -112,6 +113,12 @@ const ProductDetail = () => {
         <ProductReviewsSection 
           productId={product.id} 
           productName={product.name} 
+        />
+        <RecommendedProducts 
+          type="similar" 
+          productId={product.id} 
+          title="Produk Serupa" 
+          limit={4} 
         />
         <RelatedProducts
           categorySlug={product.category.slug}

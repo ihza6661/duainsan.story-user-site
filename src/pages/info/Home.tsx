@@ -8,6 +8,7 @@ import { Hero } from "@/features/home/components/Hero";
 import FaqSection from "@/features/info/components/FaqSection";
 import MetodePembayaran from "@/features/info/components/MetodePembayaran";
 import BestSeller from "@/features/product/components/categories/BestSeller";
+import { RecommendedProducts } from "@/features/recommendations";
 import OrderSteps from "@/pages/info/CaraMemesan";
 
 const Home = () => {
@@ -16,8 +17,10 @@ const Home = () => {
       <Hero />
       <CategoryGrid />
       <BestSeller />
+      <RecommendedProducts type="personalized" limit={8} />
       <WhyDuaInsan />
       <ExploreTheNewestTrend />
+      <RecommendedProducts type="trending" limit={8} />
       <OrderSteps />
       <DuaInsanQuotes />
       <MetodePembayaran />

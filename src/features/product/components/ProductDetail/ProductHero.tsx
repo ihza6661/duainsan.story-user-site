@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/buttons/button";
 import { toast } from "@/hooks/ui/use-toast";
 import { Plus, Minus, ShoppingCart } from "lucide-react";
 import { SocialShare } from "@/components/ui/SocialShare";
+import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 import ProductGallery from "./ProductGallery";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import AddOnSelector from "../selectors/AddOnSelector";
@@ -123,9 +124,12 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
       />
 
       <div className="py-4 px-4 sm:px-44 sm:py-32 sticky top-20 self-start">
-        <h1 className="text-xl tracking-wide my-4 uppercase text-foreground">
-          {product.name}
-        </h1>
+        <div className="flex items-start justify-between gap-4 my-4">
+          <h1 className="text-xl tracking-wide uppercase text-foreground flex-1">
+            {product.name}
+          </h1>
+          <WishlistButton productId={product.id} variant="large" />
+        </div>
 
         <div className="mb-4">
           <div className="text-lg text-muted-foreground">

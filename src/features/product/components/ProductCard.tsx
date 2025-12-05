@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Product } from "@/features/product/services/productService";
 import { getImageUrl } from "@/lib/utils";
+import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
 
 interface ProductCardProps {
   product: Product;
@@ -39,7 +40,9 @@ const ProductCard = ({ product, loading = false }: ProductCardProps) => {
           }}
           loading="lazy"
         />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"></div>
+        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+          <WishlistButton productId={product.id} variant="default" />
+        </div>
       </div>
 
       <div className="p-4">

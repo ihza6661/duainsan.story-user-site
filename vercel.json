@@ -11,7 +11,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://dua-insan-story-g8bpeagbdec3evd2.indonesiacentral-01.azurewebsites.net/api/:path*"
+      "destination": "https://dua-insan-story-app-5548c3de441b.herokuapp.com/api/:path*"
     },
     {
       "source": "/:path((?!api/).*)",

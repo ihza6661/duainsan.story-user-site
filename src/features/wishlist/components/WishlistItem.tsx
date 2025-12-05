@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/dialogs/alert-dialog';
 import { useToast } from '@/hooks/ui/use-toast';
 import { ToastAction } from '@/components/ui/feedback/toast';
-import { Button } from '@/components/ui/buttons/button';
 
 interface WishlistItemProps {
   item: WishlistItemType;
@@ -87,7 +86,7 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
   };
 
   const handleMoveToCart = () => {
-    setShowDeleteDialog(false);
+    // AlertDialogAction automatically closes the dialog
     // Navigate to product page where user can select variant and add to cart
     navigate(`/product/${item.product.slug}`);
   };
@@ -140,13 +139,12 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
             </AlertDialogHeader>
             <AlertDialogFooter className="flex-col sm:flex-row gap-2">
               <AlertDialogCancel>Batal</AlertDialogCancel>
-              <Button
-                variant="outline"
+              <AlertDialogAction
                 onClick={handleMoveToCart}
-                className="w-full sm:w-auto"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
               >
                 Lihat & Tambah ke Keranjang
-              </Button>
+              </AlertDialogAction>
               <AlertDialogAction
                 onClick={handleRemove}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"

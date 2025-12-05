@@ -124,8 +124,17 @@ export const fetchProducts = async (params: FetchProductsParams): Promise<Pagina
 
 /**
  * Mengambil data detail lengkap untuk satu produk berdasarkan ID-nya.
+ * @deprecated Use fetchProductBySlug instead
  */
 export const fetchProductById = async (productId: string): Promise<ProductDetail> => {
   const response = await apiClient.get<ProductDetailResponse>(`/customer/products/${productId}`);
+  return response.data.data;
+};
+
+/**
+ * Mengambil data detail lengkap untuk satu produk berdasarkan slug-nya.
+ */
+export const fetchProductBySlug = async (productSlug: string): Promise<ProductDetail> => {
+  const response = await apiClient.get<ProductDetailResponse>(`/customer/products/${productSlug}`);
   return response.data.data;
 };

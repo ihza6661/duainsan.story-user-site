@@ -25,7 +25,7 @@ const ProductCard = ({ product, loading = false }: ProductCardProps) => {
 
   return (
     <Link
-      to={`/product/${product.id}`}
+      to={`/product/${product.slug}`}
       className="group product-card block bg-popover overflow-hidden transition-all duration-300 h-full border border-border rounded-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       aria-label={`View details for ${product.name}`}
     >

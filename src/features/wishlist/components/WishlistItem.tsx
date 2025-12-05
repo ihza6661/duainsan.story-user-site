@@ -89,12 +89,12 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
   const handleMoveToCart = () => {
     setShowDeleteDialog(false);
     // Navigate to product page where user can select variant and add to cart
-    navigate(`/products/${item.product.slug}`);
+    navigate(`/product/${item.product.slug}`);
   };
 
   const product = item.product;
   const imageUrl = product.featured_image?.image_url || '/placeholder.svg';
-  const productLink = `/products/${product.slug}`;
+  const productLink = `/product/${product.slug}`;
 
   return (
     <div

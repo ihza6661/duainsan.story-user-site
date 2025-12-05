@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 // --- Imports from Service Layer & Contexts ---
-import { fetchProductById } from "@/features/product/services/productService";
+import { fetchProductBySlug } from "@/features/product/services/productService";
 import type { ProductDetail as ProductDetailType } from "@/features/product/services/productService";
 import { useCart } from "@/features/cart/hooks/cart/use-cart";
 import type { AddToCartPayload } from "@/features/cart/services/cartService";
@@ -30,7 +30,7 @@ import { ProductReviewsSection } from "@/features/reviews/components/ProductRevi
 import { RecommendedProducts } from "@/features/recommendations";
 
 const ProductDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
 
   // Fetch product data from the API using React Query
@@ -41,7 +41,7 @@ const ProductDetail = () => {
     error,
   } = useQuery<ProductDetailType>({
     queryKey: ["product", id],
-    queryFn: () => fetchProductById(id!),
+    queryFn: () => fetchProductBySlug(slug!),
     enabled: !!id,
     retry: false,
   });

@@ -108,6 +108,57 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
         ${isRemoving ? 'opacity-50 pointer-events-none' : ''}
       `}
     >
+      {/* Remove Button - Positioned outside Link */}
+      {showRemoveButton && (
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <AlertDialogTrigger asChild>
+            <button
+              disabled={isRemoving}
+              className="
+                absolute top-2 right-2 z-10
+                w-8 h-8 flex items-center justify-center
+                bg-white dark:bg-gray-800 rounded-full
+                shadow-md hover:shadow-lg
+                md:opacity-0 md:group-hover:opacity-100
+                transition-all duration-200
+                hover:bg-red-50 dark:hover:bg-red-900/20
+                hover:text-red-500
+                disabled:opacity-50
+              "
+              aria-label="Hapus dari wishlist"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </AlertDialogTrigger>
+          
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Hapus dari Wishlist?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Apakah Anda yakin ingin menghapus <strong>"{product.name}"</strong> dari wishlist Anda?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+              <AlertDialogCancel>Batal</AlertDialogCancel>
+              <Button
+                variant="outline"
+                onClick={handleMoveToCart}
+                className="w-full sm:w-auto"
+              >
+                Lihat & Tambah ke Keranjang
+              </Button>
+              <AlertDialogAction
+                onClick={handleRemove}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
+              >
+                Hapus
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
+
+      {/* Product Link - Clickable card */}
       <Link to={productLink} className="block">
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-100 dark:bg-gray-700">
@@ -116,56 +167,6 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          
-          {/* Remove Button */}
-          {showRemoveButton && (
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-              <AlertDialogTrigger asChild>
-                <button
-                  disabled={isRemoving}
-                  className="
-                    absolute top-2 right-2
-                    w-8 h-8 flex items-center justify-center
-                    bg-white dark:bg-gray-800 rounded-full
-                    shadow-md hover:shadow-lg
-                    md:opacity-0 md:group-hover:opacity-100
-                    transition-all duration-200
-                    hover:bg-red-50 dark:hover:bg-red-900/20
-                    hover:text-red-500
-                    disabled:opacity-50
-                  "
-                  aria-label="Hapus dari wishlist"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </AlertDialogTrigger>
-              
-              <AlertDialogContent onClick={(e) => e.stopPropagation()}>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Hapus dari Wishlist?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Apakah Anda yakin ingin menghapus <strong>"{product.name}"</strong> dari wishlist Anda?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                  <AlertDialogCancel>Batal</AlertDialogCancel>
-                  <Button
-                    variant="outline"
-                    onClick={handleMoveToCart}
-                    className="w-full sm:w-auto"
-                  >
-                    Lihat & Tambah ke Keranjang
-                  </Button>
-                  <AlertDialogAction
-                    onClick={handleRemove}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto"
-                  >
-                    Hapus
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
         </div>
 
         {/* Product Info */}
@@ -179,19 +180,15 @@ export const WishlistItem = ({ item, showRemoveButton = true }: WishlistItemProp
               Rp {product.base_price.toLocaleString('id-ID')}
             </div>
             
-            <Link
-              to={productLink}
-              className="
-                flex items-center gap-1
-                text-xs text-primary-600 dark:text-primary-400
-                hover:text-primary-700 dark:hover:text-primary-300
-                transition-colors
-              "
-              aria-label="Lihat detail produk"
-            >
+            <div className="
+              flex items-center gap-1
+              text-xs text-primary-600 dark:text-primary-400
+              group-hover:text-primary-700 dark:group-hover:text-primary-300
+              transition-colors
+            ">
               <ShoppingCart className="w-4 h-4" />
               <span>Lihat</span>
-            </Link>
+            </div>
           </div>
         </div>
       </Link>

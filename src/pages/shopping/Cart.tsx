@@ -12,6 +12,7 @@ import { Trash2, Loader2, ShoppingCart } from "lucide-react";
 import { useDebouncedCallback } from "use-debounce";
 import { formatRupiah } from "@/lib/utils";
 import { CartItem } from "@/features/cart/components/CartItem";
+import { MobileCartSummaryBar } from "@/features/cart/components/MobileCartSummaryBar";
 
 export default function CartPage() {
   const { cart, isLoading, updateQuantity, removeItem, clearCart, isMutating } =
@@ -51,84 +52,94 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container mt-20 mx-auto px-4 py-8">
-      <div className="flex flex-col w-full mb-6">
-        <h1 className="text-2xl font-semibold text-foreground">
-          Keranjang Belanja Anda
-        </h1>
-        <Button
-          variant="outline"
-          onClick={clearCart}
-          disabled={isMutating}
-          className="mt-4 w-fit rounded-lg"
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Kosongkan Keranjang
-        </Button>
-      </div>
-
-      <div
-        className={`grid grid-cols-1 md:grid-cols-3 gap-8 relative ${isMutating ? "opacity-50 pointer-events-none" : ""}`}
-      >
-        {/* Kolom Kiri: Daftar Item */}
-
-        <div className="col-span-1 md:col-span-2 rounded-xl shadow-sm">
-          <Card className="h-full shadow-none bg-background">
-            <CardContent className="p-0 sm:p-2 md:p-4">
-              <div className="divide-y divide-border">
-                {cart.items.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    item={item}
-                    onUpdateQuantity={debouncedUpdateQuantity}
-                    onRemoveItem={removeItem}
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+    <>
+      <div className="container mt-20 mx-auto px-4 py-8 pb-28 md:pb-8">
+        <div className="flex flex-col w-full mb-6">
+          <h1 className="text-2xl font-semibold text-foreground">
+            Keranjang Belanja Anda
+          </h1>
+          <Button
+            variant="outline"
+            onClick={clearCart}
+            disabled={isMutating}
+            className="mt-4 w-fit rounded-lg"
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Kosongkan Keranjang
+          </Button>
         </div>
 
-        {/* Kolom Kanan: Ringkasan Belanja */}
-        <div className="md:col-span-1">
-          <Card className="sticky top-24 shadow-sm rounded-xl">
-            <CardHeader className="bg-muted/50 rounded-t-xl py-4">
-              <CardTitle className="text-lg font-semibold text-center">
-                Ringkasan Belanja
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>{formatRupiah(cart.subtotal)}</span>
+        <div
+          className={`grid grid-cols-1 md:grid-cols-3 gap-8 relative ${isMutating ? "opacity-50 pointer-events-none" : ""}`}
+        >
+          {/* Kolom Kiri: Daftar Item */}
+
+          <div className="col-span-1 md:col-span-2 rounded-xl shadow-sm">
+            <Card className="h-full shadow-none bg-background">
+              <CardContent className="p-0 sm:p-2 md:p-4">
+                <div className="divide-y divide-border">
+                  {cart.items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      item={item}
+                      onUpdateQuantity={debouncedUpdateQuantity}
+                      onRemoveItem={removeItem}
+                    />
+                  ))}
                 </div>
-                <div className="flex justify-between">
-                  <span>Pengiriman</span>
-                  <span className="text-right">
-                    Akan dihitung saat checkout
-                  </span>
-                </div>
-                <div className="border-t pt-4 mt-4">
-                  <div className="flex justify-between font-bold text-lg">
-                    <span>Total</span>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Kolom Kanan: Ringkasan Belanja */}
+          <div className="md:col-span-1">
+            <Card className="sticky top-24 shadow-sm rounded-xl">
+              <CardHeader className="bg-muted/50 rounded-t-xl py-4">
+                <CardTitle className="text-lg font-semibold text-center">
+                  Ringkasan Belanja
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
                     <span>{formatRupiah(cart.subtotal)}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span>Pengiriman</span>
+                    <span className="text-right">
+                      Akan dihitung saat checkout
+                    </span>
+                  </div>
+                  <div className="border-t pt-4 mt-4">
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>Total</span>
+                      <span>{formatRupiah(cart.subtotal)}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="rounded-b-xl py-4">
-              <Button
-                onClick={() => navigate("/checkout")}
-                className="w-full"
-                disabled={isMutating}
-              >
-                Lanjut ke Checkout
-              </Button>
-            </CardFooter>
-          </Card>
+              </CardContent>
+              <CardFooter className="rounded-b-xl py-4">
+                <Button
+                  onClick={() => navigate("/checkout")}
+                  className="w-full"
+                  disabled={isMutating}
+                >
+                  Lanjut ke Checkout
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile Fixed Bottom Summary Bar */}
+      <MobileCartSummaryBar
+        itemCount={cart.items.length}
+        subtotal={cart.subtotal}
+        isMutating={isMutating}
+        onCheckoutClick={() => navigate("/checkout")}
+      />
+    </>
   );
 }

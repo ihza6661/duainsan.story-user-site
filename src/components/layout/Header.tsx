@@ -7,6 +7,7 @@ import { Menu, User, ShoppingBag, Heart, Package, MessageSquare, LogOut } from "
 
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
+import { MobileCartDrawer } from "@/features/cart/components/MobileCartDrawer";
 
 // --- Impor Hook Kustom & Konteks ---
 import { useCart } from "@/features/cart/hooks/cart/use-cart";
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/buttons/button";
 const Header = () => {
   // --- State Lokal untuk UI ---
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -75,6 +77,7 @@ const Header = () => {
   return (
     <>
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <MobileCartDrawer open={cartDrawerOpen} onOpenChange={setCartDrawerOpen} />
 
       <header className={`${baseHeaderClasses} ${showHideClass} ${pageStyle}`}>
         <div className="px-0 sm:px-8 flex items-center justify-between h-16 md:h-20">
@@ -211,15 +214,29 @@ const Header = () => {
               {/* Notification Bell (only for logged in users) */}
               {user && <NotificationBell />}
 
-              {/* Ikon Keranjang Belanja */}
-              <Link to="/cart">
+              {/* Ikon Keranjang Belanja - Drawer on mobile, Link on desktop */}
+              <div className="md:hidden">
+                <Button
+                  variant="ghost"
+                  className="relative flex items-center justify-center"
+                  onClick={() => setCartDrawerOpen(true)}
+                >
+                  <ShoppingBag className="text-foreground" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-secondary text-[10px] rounded-full h-4 w-3 flex items-center justify-center min-w-[30px] px-[2px]">
+                      {totalItems > 99 ? "99+" : totalItems}
+                    </span>
+                  )}
+                </Button>
+              </div>
+              <Link to="/cart" className="hidden md:block">
                 <Button
                   variant="ghost"
                   className="relative flex items-center justify-center"
                 >
                   <ShoppingBag className="text-foreground" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1 sm:-top-2 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
+                    <span className="absolute -top-2 -right-1 bg-secondary text-xs rounded-full h-5 w-4 flex items-center justify-center min-w-[30px] px-[2px]">
                       {totalItems > 99 ? "99+" : totalItems}
                     </span>
                   )}

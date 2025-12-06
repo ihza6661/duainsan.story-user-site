@@ -45,6 +45,21 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Auto-logout on 401 Unauthorized (invalid/expired token)
+    if (error.response?.status === 401) {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        // Clear auth data
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        
+        // Redirect to login page with return URL
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/login' && currentPath !== '/register') {
+          window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+        }
+      }
+    }
     return Promise.reject(error);
   }
 );

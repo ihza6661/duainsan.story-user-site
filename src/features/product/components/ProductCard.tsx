@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Product } from "@/features/product/services/productService";
 import { getImageUrl } from "@/lib/utils";
 import { WishlistButton } from "@/features/wishlist/components/WishlistButton";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 
 interface ProductCardProps {
   product: Product;
@@ -30,14 +31,10 @@ const ProductCard = ({ product, loading = false }: ProductCardProps) => {
       aria-label={`View details for ${product.name}`}
     >
       <div className="relative w-full overflow-hidden aspect-square p-4 pb-0">
-        <img
+        <OptimizedImage
           src={imageUrl}
           alt={product.featured_image?.alt_text ?? product.name}
           className="rounded-md product-card-image w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          onError={(e) => {
-            e.currentTarget.src = "/placeholder.svg";
-            e.currentTarget.alt = "Product image unavailable";
-          }}
           loading="lazy"
         />
         <div className="absolute top-6 right-6 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 z-10">

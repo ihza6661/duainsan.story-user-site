@@ -1,4 +1,5 @@
 // --- Imports dari library ---
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
@@ -16,29 +17,45 @@ import ScrollToTop from "@/components/layout/ScrollToTop";
 import FloatingIcons from "@/components/ui/WhatsAppFloat";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import PublicOnlyRoute from "@/features/auth/components/PublicOnlyRoute";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
-// --- Imports Halaman (Pages) ---
+// --- Lazy-loaded Pages (Code Splitting) ---
+// Critical pages loaded immediately
 import Home from "@/pages/info/Home";
-import ShippingForm from "@/features/auth/components/ShippingForm";
-import Products from "@/pages/shopping/Products";
-import ProductDetail from "@/pages/shopping/ProductDetail";
 import NotFound from "@/pages/error/NotFound";
-import Cart from "@/pages/shopping/Cart";
-import Gallery from "@/pages/info/Gallery";
-import LoginPage from "@/pages/auth/LoginPage";
-import RegisterPage from "@/pages/auth/RegisterPage";
-import CaraMemesan from "@/pages/info/CaraMemesan";
-import InfoPemesananCetak from "@/pages/info/InfoPemesananCetak";
-import ProfilePage from "@/pages/auth/ProfilePage";
-import CheckoutPage from "@/pages/shopping/CheckoutPage";
-import OrderStatusPage from "@/pages/info/OrderStatusPage";
-import OrderConfirmationPage from "@/pages/shopping/OrderConfirmationPage";
-import SyaratKetentuan from "@/pages/info/SyaratKetentuan";
-import KebijakanPrivasi from "@/pages/info/KebijakanPrivasi";
-import PengembalianRefund from "@/pages/info/PengembalianRefund";
-import { WishlistPage } from "@/pages/wishlist/WishlistPage";
-import { SharedWishlistPage } from "@/pages/wishlist/SharedWishlistPage";
-import { MyReviewsPage } from "@/pages/reviews/MyReviewsPage";
+
+// Auth pages - lazy loaded
+const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
+const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
+const ProfilePage = lazy(() => import("@/pages/auth/ProfilePage"));
+
+// Shopping pages - lazy loaded
+const Products = lazy(() => import("@/pages/shopping/Products"));
+const ProductDetail = lazy(() => import("@/pages/shopping/ProductDetail"));
+const Cart = lazy(() => import("@/pages/shopping/Cart"));
+const CheckoutPage = lazy(() => import("@/pages/shopping/CheckoutPage"));
+const OrderConfirmationPage = lazy(() => import("@/pages/shopping/OrderConfirmationPage"));
+
+// Info pages - lazy loaded
+const Gallery = lazy(() => import("@/pages/info/Gallery"));
+const CaraMemesan = lazy(() => import("@/pages/info/CaraMemesan"));
+const InfoPemesananCetak = lazy(() => import("@/pages/info/InfoPemesananCetak"));
+const OrderStatusPage = lazy(() => import("@/pages/info/OrderStatusPage"));
+const SyaratKetentuan = lazy(() => import("@/pages/info/SyaratKetentuan"));
+const KebijakanPrivasi = lazy(() => import("@/pages/info/KebijakanPrivasi"));
+const PengembalianRefund = lazy(() => import("@/pages/info/PengembalianRefund"));
+
+// Wishlist & Reviews - lazy loaded
+const WishlistPage = lazy(() => import("@/pages/wishlist/WishlistPage").then(module => ({ default: module.WishlistPage })));
+const SharedWishlistPage = lazy(() => import("@/pages/wishlist/SharedWishlistPage").then(module => ({ default: module.SharedWishlistPage })));
+const MyReviewsPage = lazy(() => import("@/pages/reviews/MyReviewsPage").then(module => ({ default: module.MyReviewsPage })));
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
 
 // Inisialisasi Query Client
 const queryClient = new QueryClient();
@@ -58,107 +75,111 @@ const Layout = () => {
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <TooltipProvider>
-        <CartProvider>
-          <Toaster />
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <TooltipProvider>
+          <CartProvider>
+            <Toaster />
 
-          <Sonner />
+            <Sonner />
 
-          <BrowserRouter>
-            <AuthProvider>
-              <ScrollToTop />
+            <BrowserRouter>
+              <AuthProvider>
+                <ScrollToTop />
 
-              <Routes>
-                <Route path="/" element={<Layout />}>
-                  {/* Routes only for guests (not logged in) */}
+                <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Layout />}>
+                    {/* Routes only for guests (not logged in) */}
 
-                  <Route element={<PublicOnlyRoute />}>
-                    <Route path="login" element={<LoginPage />} />
+                    <Route element={<PublicOnlyRoute />}>
+                      <Route path="login" element={<LoginPage />} />
 
-                    <Route path="register" element={<RegisterPage />} />
+                      <Route path="register" element={<RegisterPage />} />
+                    </Route>
+
+                    {/* Routes only for authenticated users */}
+
+                    <Route element={<ProtectedRoute />}>
+                      <Route path="profile" element={<ProfilePage />} />
+
+                      <Route path="checkout" element={<CheckoutPage />} />
+
+                      <Route path="wishlist" element={<WishlistPage />} />
+
+                      <Route path="my-reviews" element={<MyReviewsPage />} />
+
+                      <Route
+                        path="status-pesanan"
+                        element={<OrderStatusPage />}
+                      />
+
+                      <Route
+                        path="status-pesanan/:orderId"
+                        element={<OrderStatusPage />}
+                      />
+
+                      <Route
+                        path="order-confirmation/:orderId"
+                        element={<OrderConfirmationPage />}
+                      />
+                    </Route>
+
+                    {/* Public routes */}
+
+                    <Route index element={<Home />} />
+
+                    <Route path="products" element={<Products />} />
+
+                    <Route
+                      path="products/category/:category"
+                      element={<Products />}
+                    />
+
+                    <Route path="product/:slug" element={<ProductDetail />} />
+
+                    <Route path="cart" element={<Cart />} />
+
+                    <Route path="wishlist/shared/:token" element={<SharedWishlistPage />} />
+
+                    <Route path="gallery" element={<Gallery />} />
+
+                    <Route path="CaraPesan" element={<CaraMemesan />} />
+
+                    <Route
+                      path="info-pemesanan-cetak"
+                      element={<InfoPemesananCetak />}
+                    />
+
+                    <Route
+                      path="syarat-ketentuan"
+                      element={<SyaratKetentuan />}
+                    />
+
+                    <Route
+                      path="kebijakan-privasi"
+                      element={<KebijakanPrivasi />}
+                    />
+
+                    <Route
+                      path="pengembalian-refund"
+                      element={<PengembalianRefund />}
+                    />
+
+                    <Route path="*" element={<NotFound />} />
                   </Route>
+                </Routes>
+              </Suspense>
 
-                  {/* Routes only for authenticated users */}
-
-                  <Route element={<ProtectedRoute />}>
-                    <Route path="profile" element={<ProfilePage />} />
-
-                    <Route path="checkout" element={<CheckoutPage />} />
-
-                    <Route path="wishlist" element={<WishlistPage />} />
-
-                    <Route path="my-reviews" element={<MyReviewsPage />} />
-
-                    <Route
-                      path="status-pesanan"
-                      element={<OrderStatusPage />}
-                    />
-
-                    <Route
-                      path="status-pesanan/:orderId"
-                      element={<OrderStatusPage />}
-                    />
-
-                    <Route
-                      path="order-confirmation/:orderId"
-                      element={<OrderConfirmationPage />}
-                    />
-                  </Route>
-
-                  {/* Public routes */}
-
-                  <Route index element={<Home />} />
-
-                  <Route path="products" element={<Products />} />
-
-                  <Route
-                    path="products/category/:category"
-                    element={<Products />}
-                  />
-
-                  <Route path="product/:slug" element={<ProductDetail />} />
-
-                  <Route path="cart" element={<Cart />} />
-
-                  <Route path="wishlist/shared/:token" element={<SharedWishlistPage />} />
-
-                  <Route path="gallery" element={<Gallery />} />
-
-                  <Route path="CaraPesan" element={<CaraMemesan />} />
-
-                  <Route
-                    path="info-pemesanan-cetak"
-                    element={<InfoPemesananCetak />}
-                  />
-
-                  <Route
-                    path="syarat-ketentuan"
-                    element={<SyaratKetentuan />}
-                  />
-
-                  <Route
-                    path="kebijakan-privasi"
-                    element={<KebijakanPrivasi />}
-                  />
-
-                  <Route
-                    path="pengembalian-refund"
-                    element={<PengembalianRefund />}
-                  />
-
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-              </Routes>
-
-              <FloatingIcons />
-            </AuthProvider>
-          </BrowserRouter>
-        </CartProvider>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+                <FloatingIcons />
+              </AuthProvider>
+            </BrowserRouter>
+          </CartProvider>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

@@ -110,8 +110,7 @@ export function BackgroundImage({
     <div
       className={cn('relative bg-cover bg-center bg-no-repeat', className)}
       style={{
-        backgroundImage: `url('${src}')`,
-        // Modern browsers will use WebP if available
+        // Modern browsers will use WebP if available via image-set
         backgroundImage: `image-set(
           url('${webpSource}') type('image/webp'),
           url('${src}')

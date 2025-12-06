@@ -27,12 +27,6 @@ export const NotificationBell = () => {
 
   const notifications = notificationsData?.data?.data || [];
 
-  const NotificationBadge = unreadCount && unreadCount > 0 && (
-    <span className="">
-      {unreadCount > 99 ? "99+" : unreadCount}
-    </span>
-  );
-
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -99,9 +93,11 @@ export const NotificationBell = () => {
         aria-label="Notifications"
       >
         <Bell className="text-foreground te" />
-        <span className="absolute -top-1 sm:-top-2 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
-          {NotificationBadge}
-        </span>
+        {unreadCount && unreadCount > 0 && (
+          <span className="absolute -top-1 sm:-top-2 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
       </Button>
 
       {/* Dropdown */}

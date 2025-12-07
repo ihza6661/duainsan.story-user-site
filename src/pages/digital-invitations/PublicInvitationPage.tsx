@@ -10,7 +10,7 @@ const PublicInvitationPage = () => {
 
   const { data: invitation, isLoading, error } = useQuery({
     queryKey: ["public-invitation", slug],
-    queryFn: () => digitalInvitationService.getPublicInvitation(slug!),
+    queryFn: () => digitalInvitationService.viewPublicInvitation(slug!),
     enabled: !!slug,
   });
 
@@ -47,86 +47,59 @@ const PublicInvitationPage = () => {
     );
   }
 
-  // Check if invitation is expired
-  const isExpired = new Date(invitation.expires_at) < new Date();
-  if (isExpired) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-        <div className="text-center max-w-md">
-          <AlertCircle className="w-16 h-16 text-orange-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            Undangan Sudah Berakhir
-          </h1>
-          <p className="text-gray-600 mb-4">
-            Masa aktif undangan ini telah berakhir pada{" "}
-            {new Date(invitation.expires_at).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Extract first names for nicknames
+  const brideNickname = invitation.customization.bride_name?.split(" ")[0] || "";
+  const groomNickname = invitation.customization.groom_name?.split(" ")[0] || "";
 
-  // Extract first names for nicknames (if not provided in data)
-  const brideNickname = invitation.data.bride_name?.split(" ")[0] || "";
-  const groomNickname = invitation.data.groom_name?.split(" ")[0] || "";
-
-  // Render appropriate template based on template slug
+  // Render appropriate template based on template name
   const renderTemplate = () => {
-    const templateSlug = invitation.template?.slug || "sakeenah";
+    const templateName = invitation.template?.name || "";
+    const customization = invitation.customization;
+    
+    // Parse photo_paths if it's a JSON string
+    let photos: string[] = [];
+    if (customization.photo_paths) {
+      photos = typeof customization.photo_paths === 'string' 
+        ? JSON.parse(customization.photo_paths) 
+        : customization.photo_paths;
+    }
 
-    switch (templateSlug) {
-      case "sakeenah":
-        return (
-          <SakeenaTemplate
-            brideNickname={brideNickname}
-            groomNickname={groomNickname}
-            brideName={invitation.data.bride_name || ""}
-            groomName={invitation.data.groom_name || ""}
-            eventDate={invitation.data.event_date || ""}
-            eventTime={invitation.data.event_time}
-            venueName={invitation.data.venue_name || ""}
-            venueAddress={invitation.data.venue_address}
-            venueMapUrl={invitation.data.venue_map_url}
-            additionalInfo={invitation.data.additional_info}
-            photos={invitation.data.photo_paths || []}
-          />
-        );
-      case "classic":
-        return (
-          <ClassicTemplate
-            brideNickname={brideNickname}
-            groomNickname={groomNickname}
-            brideName={invitation.data.bride_name || ""}
-            groomName={invitation.data.groom_name || ""}
-            eventDate={invitation.data.event_date || ""}
-            eventTime={invitation.data.event_time}
-            venueName={invitation.data.venue_name || ""}
-            venueAddress={invitation.data.venue_address}
-            venueMapUrl={invitation.data.venue_map_url}
-            additionalInfo={invitation.data.additional_info}
-            photos={invitation.data.photo_paths || []}
-          />
-        );
-      default:
-        return (
-          <SakeenaTemplate
-            brideNickname={brideNickname}
-            groomNickname={groomNickname}
-            brideName={invitation.data.bride_name || ""}
-            groomName={invitation.data.groom_name || ""}
-            eventDate={invitation.data.event_date || ""}
-            eventTime={invitation.data.event_time}
-            venueName={invitation.data.venue_name || ""}
-            venueAddress={invitation.data.venue_address}
-            venueMapUrl={invitation.data.venue_map_url}
-            additionalInfo={invitation.data.additional_info}
-            photos={invitation.data.photo_paths || []}
-          />
-        );
+    // Check which template based on name
+    const isSakeenah = templateName.toLowerCase().includes('sakeenah');
+    
+    if (isSakeenah) {
+      return (
+        <SakeenaTemplate
+          brideNickname={brideNickname}
+          groomNickname={groomNickname}
+          brideName={customization.bride_name || ""}
+          groomName={customization.groom_name || ""}
+          eventDate={customization.event_date || ""}
+          eventTime={customization.event_time || ""}
+          venueName={customization.venue_name || ""}
+          venueAddress={customization.venue_address || ""}
+          venueMapUrl={customization.venue_map_url || ""}
+          additionalInfo={customization.additional_info || ""}
+          photos={photos}
+        />
+      );
+    } else {
+      // Default to Classic template
+      return (
+        <ClassicTemplate
+          brideNickname={brideNickname}
+          groomNickname={groomNickname}
+          brideName={customization.bride_name || ""}
+          groomName={customization.groom_name || ""}
+          eventDate={customization.event_date || ""}
+          eventTime={customization.event_time || ""}
+          venueName={customization.venue_name || ""}
+          venueAddress={customization.venue_address || ""}
+          venueMapUrl={customization.venue_map_url || ""}
+          additionalInfo={customization.additional_info || ""}
+          photos={photos}
+        />
+      );
     }
   };
 

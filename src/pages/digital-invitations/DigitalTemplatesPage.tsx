@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/utils/card";
+import { Button } from "@/components/ui/buttons/button";
+import { Badge } from "@/components/ui/utils/badge";
+import { Skeleton } from "@/components/ui/utils/skeleton";
 import { Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { digitalInvitationService } from "@/features/digital-invitations/services/digitalInvitationService";
-import { useCart } from "@/features/cart/hooks/cart/CartProvider";
+import { useCart } from "@/features/cart/hooks/cart/use-cart";
 import { toast } from "@/hooks/ui/use-toast";
 
 const DigitalTemplatesPage = () => {

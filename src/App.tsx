@@ -50,6 +50,10 @@ const WishlistPage = lazy(() => import("@/pages/wishlist/WishlistPage").then(mod
 const SharedWishlistPage = lazy(() => import("@/pages/wishlist/SharedWishlistPage").then(module => ({ default: module.SharedWishlistPage })));
 const MyReviewsPage = lazy(() => import("@/pages/reviews/MyReviewsPage").then(module => ({ default: module.MyReviewsPage })));
 
+// Digital Invitations - lazy loaded
+const DigitalTemplatesPage = lazy(() => import("@/pages/digital-invitations/DigitalTemplatesPage"));
+const MyInvitationsPage = lazy(() => import("@/pages/digital-invitations/MyInvitationsPage"));
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -110,6 +114,8 @@ const App = () => (
 
                       <Route path="my-reviews" element={<MyReviewsPage />} />
 
+                      <Route path="my-invitations" element={<MyInvitationsPage />} />
+
                       <Route
                         path="status-pesanan"
                         element={<OrderStatusPage />}
@@ -138,6 +144,8 @@ const App = () => (
                     />
 
                     <Route path="product/:slug" element={<ProductDetail />} />
+
+                    <Route path="digital-templates" element={<DigitalTemplatesPage />} />
 
                     <Route path="cart" element={<Cart />} />
 

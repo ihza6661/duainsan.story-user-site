@@ -1,0 +1,437 @@
+/* Sakeenah Template - Islamic Modern Style */
+
+.sakeena-template {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #1a1a1a;
+  background: #fafaf8;
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.sakeena-hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
+}
+
+.sakeena-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0 300 Q300 200 600 300 T1200 300 V600 H0 Z" fill="rgba(255,255,255,0.05)"/></svg>') no-repeat bottom;
+  background-size: cover;
+}
+
+.sakeena-hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  animation: fadeInUp 1s ease-out;
+}
+
+.sakeena-bismillah {
+  font-size: 1.5rem;
+  font-family: 'Amiri', serif;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+  letter-spacing: 2px;
+}
+
+.sakeena-couple-names {
+  font-size: 4rem;
+  font-weight: 300;
+  margin: 1rem 0;
+  letter-spacing: 4px;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sakeena-date-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  margin-top: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sakeena-scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.sakeena-scroll-arrow {
+  width: 24px;
+  height: 24px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg);
+  animation: bounce 2s infinite;
+}
+
+/* Sections */
+.sakeena-section {
+  padding: 5rem 1rem;
+}
+
+.sakeena-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sakeena-section-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+.sakeena-section-subtitle {
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4a5568;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Intro Section with Ayat */
+.sakeena-intro {
+  background: white;
+}
+
+.sakeena-ayat {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f7f4ff 0%, #fff 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.sakeena-ayat-arabic {
+  font-family: 'Amiri', serif;
+  font-size: 1.5rem;
+  line-height: 2.5;
+  color: #4c1d95;
+  margin-bottom: 1.5rem;
+  direction: rtl;
+}
+
+.sakeena-ayat-translation {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #4a5568;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.sakeena-ayat-reference {
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 600;
+}
+
+/* Couple Section */
+.sakeena-couple {
+  background: white;
+}
+
+.sakeena-couple-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.sakeena-couple-card {
+  text-align: center;
+}
+
+.sakeena-couple-photo-wrapper {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #e9d5ff;
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.2);
+}
+
+.sakeena-couple-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sakeena-couple-name {
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.sakeena-couple-title {
+  font-size: 1rem;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+}
+
+.sakeena-ampersand {
+  font-size: 3rem;
+  font-weight: 300;
+  color: #a78bfa;
+  font-family: 'Georgia', serif;
+}
+
+/* Event Section */
+.sakeena-event {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.sakeena-event .sakeena-section-title {
+  color: white;
+}
+
+.sakeena-event-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 1rem;
+}
+
+.sakeena-event-icon-wrapper {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.sakeena-event-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.sakeena-event-details {
+  flex: 1;
+}
+
+.sakeena-event-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+  opacity: 0.9;
+}
+
+.sakeena-event-value {
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.sakeena-event-address {
+  font-size: 0.95rem;
+  opacity: 0.9;
+  margin-top: 0.5rem;
+}
+
+.sakeena-map-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  color: #667eea;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sakeena-map-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sakeena-map-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Gallery Section */
+.sakeena-gallery {
+  background: white;
+}
+
+.sakeena-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.sakeena-gallery-item {
+  aspect-ratio: 1;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.sakeena-gallery-item:hover {
+  transform: scale(1.05);
+}
+
+.sakeena-gallery-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Info Section */
+.sakeena-info {
+  background: #f7fafc;
+}
+
+.sakeena-info-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #a78bfa;
+}
+
+.sakeena-info-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4a5568;
+}
+
+/* Closing Section */
+.sakeena-closing {
+  background: linear-gradient(135deg, #f7f4ff 0%, #fff 100%);
+}
+
+.sakeena-closing-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.sakeena-closing-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #4a5568;
+  margin-bottom: 2rem;
+}
+
+.sakeena-closing-signature {
+  font-size: 1.2rem;
+  color: #2d3748;
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.sakeena-closing-names {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: #4c1d95;
+  line-height: 1.8;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) rotate(-45deg);
+  }
+  40% {
+    transform: translateY(-10px) rotate(-45deg);
+  }
+  60% {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sakeena-couple-names {
+    font-size: 2.5rem;
+  }
+
+  .sakeena-bismillah {
+    font-size: 1.2rem;
+  }
+
+  .sakeena-section {
+    padding: 3rem 1rem;
+  }
+
+  .sakeena-section-title {
+    font-size: 2rem;
+  }
+
+  .sakeena-couple-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .sakeena-ampersand {
+    display: none;
+  }
+
+  .sakeena-couple-photo-wrapper {
+    width: 180px;
+    height: 180px;
+  }
+
+  .sakeena-ayat-arabic {
+    font-size: 1.2rem;
+    line-height: 2.2;
+  }
+
+  .sakeena-gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .sakeena-event-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}

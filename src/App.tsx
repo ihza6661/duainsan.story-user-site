@@ -54,6 +54,7 @@ const MyReviewsPage = lazy(() => import("@/pages/reviews/MyReviewsPage").then(mo
 const DigitalTemplatesPage = lazy(() => import("@/pages/digital-invitations/DigitalTemplatesPage"));
 const MyInvitationsPage = lazy(() => import("@/pages/digital-invitations/MyInvitationsPage"));
 const EditInvitationPage = lazy(() => import("@/pages/digital-invitations/EditInvitationPage"));
+const PublicInvitationPage = lazy(() => import("@/pages/digital-invitations/PublicInvitationPage"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -149,6 +150,8 @@ const App = () => (
                     <Route path="product/:slug" element={<ProductDetail />} />
 
                     <Route path="digital-templates" element={<DigitalTemplatesPage />} />
+
+                    <Route path="invitation/:slug" element={<PublicInvitationPage />} />
 
                     <Route path="cart" element={<Cart />} />
 

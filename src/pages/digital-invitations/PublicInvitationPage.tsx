@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2, AlertCircle } from "lucide-react";
 import { digitalInvitationService } from "@/features/digital-invitations/services/digitalInvitationService";
 import { SakeenaTemplate } from "@/features/digital-invitations/templates/sakeenah/SakeenaTemplate";
+import { ClassicTemplate } from "@/features/digital-invitations/templates/classic/ClassicTemplate";
 
 const PublicInvitationPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -94,9 +95,22 @@ const PublicInvitationPage = () => {
             photos={invitation.data.photo_paths || []}
           />
         );
-      // Future templates can be added here
-      // case "classic":
-      //   return <ClassicTemplate {...props} />;
+      case "classic":
+        return (
+          <ClassicTemplate
+            brideNickname={brideNickname}
+            groomNickname={groomNickname}
+            brideName={invitation.data.bride_name || ""}
+            groomName={invitation.data.groom_name || ""}
+            eventDate={invitation.data.event_date || ""}
+            eventTime={invitation.data.event_time}
+            venueName={invitation.data.venue_name || ""}
+            venueAddress={invitation.data.venue_address}
+            venueMapUrl={invitation.data.venue_map_url}
+            additionalInfo={invitation.data.additional_info}
+            photos={invitation.data.photo_paths || []}
+          />
+        );
       default:
         return (
           <SakeenaTemplate

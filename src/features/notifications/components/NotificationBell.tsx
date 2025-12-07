@@ -93,7 +93,7 @@ export const NotificationBell = () => {
         aria-label="Notifications"
       >
         <Bell className="text-foreground te" />
-        {unreadCount && unreadCount > 0 && (
+        {(unreadCount ?? 0) > 0 && (
           <span className="absolute -top-1 sm:-top-2 -right-1 bg-secondary text-[10px] md:text-xs rounded-full h-4 w-3 md:h-5 md:w-4 flex items-center justify-center min-w-[30px] px-[2px]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
@@ -106,7 +106,7 @@ export const NotificationBell = () => {
           {/* Header */}
           <div className="sticky top-0 bg-popover border-b border-border p-4 flex items-center justify-between">
             <h3 className="font-semibold text-foreground">Notifikasi</h3>
-            {unreadCount && unreadCount > 0 && (
+            {(unreadCount ?? 0) > 0 && (
               <button
                 onClick={handleMarkAllAsRead}
                 disabled={markAllAsReadMutation.isPending}

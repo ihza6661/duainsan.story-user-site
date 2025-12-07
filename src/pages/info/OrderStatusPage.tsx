@@ -39,9 +39,13 @@ const OrderStatusPage = () => {
   const [retryingOrderId, setRetryingOrderId] = useState<string | null>(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
-  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
+  const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(
+    null,
+  );
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
-  const [selectedOrderItem, setSelectedOrderItem] = useState<OrderItem | null>(null);
+  const [selectedOrderItem, setSelectedOrderItem] = useState<OrderItem | null>(
+    null,
+  );
 
   const invalidateOrderQueries = () => {
     if (orderId) {
@@ -185,7 +189,7 @@ const OrderStatusPage = () => {
   // Helper function to check if order can be cancelled
   const canCancelOrder = (order: Order): boolean => {
     // Terminal statuses that cannot be cancelled
-    const terminalStatuses = ['Cancelled', 'Refunded', 'Failed', 'Completed'];
+    const terminalStatuses = ["Cancelled", "Refunded", "Failed", "Completed"];
     if (terminalStatuses.includes(order.order_status)) {
       return false;
     }
@@ -196,15 +200,18 @@ const OrderStatusPage = () => {
     }
 
     // Only these statuses can be cancelled
-    const cancellableStatuses = ['Pending Payment', 'Partially Paid', 'Paid'];
+    const cancellableStatuses = ["Pending Payment", "Partially Paid", "Paid"];
     if (!cancellableStatuses.includes(order.order_status)) {
       return false;
     }
 
     // For paid orders, check 24-hour window
-    if (order.order_status === 'Paid' || order.order_status === 'Partially Paid') {
+    if (
+      order.order_status === "Paid" ||
+      order.order_status === "Partially Paid"
+    ) {
       const hoursSinceCreation = Math.floor(
-        (Date.now() - new Date(order.created_at).getTime()) / (1000 * 60 * 60)
+        (Date.now() - new Date(order.created_at).getTime()) / (1000 * 60 * 60),
       );
       if (hoursSinceCreation > 24) {
         return false;
@@ -225,9 +232,7 @@ const OrderStatusPage = () => {
       invalidateOrderQueries();
     },
     onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || 'Gagal membatalkan pesanan'
-      );
+      toast.error(error.response?.data?.message || "Gagal membatalkan pesanan");
     },
   });
 
@@ -247,7 +252,10 @@ const OrderStatusPage = () => {
 
   // Helper function to check if invoice can be downloaded
   const canDownloadInvoice = (order: Order): boolean => {
-    return order.payment_status === 'paid' || order.payment_status === 'partially_paid';
+    return (
+      order.payment_status === "paid" ||
+      order.payment_status === "partially_paid"
+    );
   };
 
   // Handle invoice download
@@ -372,10 +380,16 @@ const OrderStatusPage = () => {
                   </p>
                 </div>
                 <div className="flex flex-col space-y-2">
-                  <Badge variant={statusInfo.variant} className="text-base text-center">
+                  <Badge
+                    variant={statusInfo.variant}
+                    className="text-base text-center"
+                  >
                     {statusInfo.text}
                   </Badge>
-                  <Badge variant={paymentStatusInfo.variant} className="text-base text-center">
+                  <Badge
+                    variant={paymentStatusInfo.variant}
+                    className="text-base text-center"
+                  >
                     {paymentStatusInfo.text}
                   </Badge>
                 </div>
@@ -427,14 +441,19 @@ const OrderStatusPage = () => {
                     );
 
                     return (
-                      <div key={item.id} className="flex items-start space-x-4 border-b pb-4 last:border-b-0">
+                      <div
+                        key={item.id}
+                        className="flex items-start space-x-4 border-b pb-4 last:border-b-0"
+                      >
                         <img
                           src={imageUrl}
                           alt={item.product.name}
                           className="w-20 h-20 object-cover rounded-md border"
                         />
                         <div className="flex-grow">
-                          <p className="text-foreground font-medium">{item.product.name}</p>
+                          <p className="text-foreground font-medium">
+                            {item.product.name}
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             Jumlah: {item.quantity}
                           </p>
@@ -444,11 +463,18 @@ const OrderStatusPage = () => {
                               ?.map((o) => o.value)
                               .join(", ") || "-"}
                           </p>
-                          
+
                           {/* Review Status/Button */}
                           {item.review ? (
                             <div className="mt-2 flex items-center gap-2">
-                              <Badge variant={item.review.is_approved ? "default" : "secondary"} className="text-xs">
+                              <Badge
+                                variant={
+                                  item.review.is_approved
+                                    ? "default"
+                                    : "secondary"
+                                }
+                                className="text-xs"
+                              >
                                 {item.review.is_approved ? (
                                   <>
                                     <Star className="h-3 w-3 mr-1 fill-current" />
@@ -606,20 +632,28 @@ const OrderStatusPage = () => {
                     Permintaan Pembatalan Sedang Diproses
                   </h4>
                   <p className="text-sm text-yellow-700">
-                    Status: <strong>{order.active_cancellation_request.status === 'pending' ? 'Menunggu Persetujuan' : order.active_cancellation_request.status}</strong>
+                    Status:{" "}
+                    <strong>
+                      {order.active_cancellation_request.status === "pending"
+                        ? "Menunggu Persetujuan"
+                        : order.active_cancellation_request.status}
+                    </strong>
                   </p>
                   <p className="text-sm text-yellow-700 mt-1">
-                    Alasan: {order.active_cancellation_request.cancellation_reason}
+                    Alasan:{" "}
+                    {order.active_cancellation_request.cancellation_reason}
                   </p>
                   {order.active_cancellation_request.admin_notes && (
                     <p className="text-sm text-yellow-700 mt-1">
-                      Catatan Admin: {order.active_cancellation_request.admin_notes}
+                      Catatan Admin:{" "}
+                      {order.active_cancellation_request.admin_notes}
                     </p>
                   )}
                 </div>
               )}
 
-              {(order.payment_status === "pending" || order.payment_status === "partially_paid") &&
+              {(order.payment_status === "pending" ||
+                order.payment_status === "partially_paid") &&
                 order.order_status !== "Cancelled" &&
                 !order.active_cancellation_request && (
                   <p className="text-sm text-muted-foreground mt-4 text-center">
@@ -650,22 +684,29 @@ const OrderStatusPage = () => {
               orderItemId={selectedOrderItem.id}
               productId={selectedOrderItem.product.id}
               productName={selectedOrderItem.product.name}
-              existingReview={selectedOrderItem.review ? {
-                id: selectedOrderItem.review.id,
-                rating: selectedOrderItem.review.rating,
-                comment: selectedOrderItem.review.comment,
-                is_approved: selectedOrderItem.review.is_approved,
-                created_at: selectedOrderItem.review.created_at,
-                is_verified: false,
-                is_featured: false,
-                helpful_count: 0,
-                admin_response: null,
-                admin_responded_at: null,
-                updated_at: selectedOrderItem.review.created_at,
-                customer: { id: 0, full_name: "" },
-                product: { id: selectedOrderItem.product.id, name: selectedOrderItem.product.name },
-                images: [],
-              } : null}
+              existingReview={
+                selectedOrderItem.review
+                  ? {
+                      id: selectedOrderItem.review.id,
+                      rating: selectedOrderItem.review.rating,
+                      comment: selectedOrderItem.review.comment,
+                      is_approved: selectedOrderItem.review.is_approved,
+                      created_at: selectedOrderItem.review.created_at,
+                      is_verified: false,
+                      is_featured: false,
+                      helpful_count: 0,
+                      admin_response: null,
+                      admin_responded_at: null,
+                      updated_at: selectedOrderItem.review.created_at,
+                      customer: { id: 0, full_name: "" },
+                      product: {
+                        id: selectedOrderItem.product.id,
+                        name: selectedOrderItem.product.name,
+                      },
+                      images: [],
+                    }
+                  : null
+              }
               onSuccess={() => {
                 toast.success("Ulasan berhasil dikirim!");
                 invalidateOrderQueries();
@@ -700,101 +741,107 @@ const OrderStatusPage = () => {
   }
 
   return (
-    <div className="container mt-20 mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">
-        Daftar Pesanan Anda
-      </h1>
-      <div className="space-y-4">
-        {orders.map((order) => {
-          const statusInfo = getOrderStatusInfo(order.order_status);
-          const paymentStatusInfo = getPaymentStatusInfo(order.payment_status);
-          const listAmountPaid = Number(order.amount_paid ?? 0);
-          const listRemainingBalance = Number(
-            order.remaining_balance ??
-              Math.max(order.total_amount - listAmountPaid, 0),
-          );
-          return (
-            <Card key={order.id}>
-              <CardContent className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div className="flex-grow mb-2 md:mb-0">
-                  <Link
-                    to={`/status-pesanan/${order.id}`}
-                    className="text-lg font-semibold hover:underline text-foreground"
-                  >
-                    Pesanan #{order.order_number}
-                  </Link>
-                  <p className="text-sm text-muted-foreground">
-                    Tanggal:{" "}
-                    {new Date(order.created_at).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
+    <div className="min-h-screen bg-background py-20 sm:py-28">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold mb-6 text-foreground">
+          Daftar Pesanan Anda
+        </h1>
+        <div className="space-y-4">
+          {orders.map((order) => {
+            const statusInfo = getOrderStatusInfo(order.order_status);
+            const paymentStatusInfo = getPaymentStatusInfo(
+              order.payment_status,
+            );
+            const listAmountPaid = Number(order.amount_paid ?? 0);
+            const listRemainingBalance = Number(
+              order.remaining_balance ??
+                Math.max(order.total_amount - listAmountPaid, 0),
+            );
+            return (
+              <Card key={order.id}>
+                <CardContent className="p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
+                  <div className="flex-grow mb-2 md:mb-0">
+                    <Link
+                      to={`/status-pesanan/${order.id}`}
+                      className="text-lg font-semibold hover:underline text-foreground"
+                    >
+                      Pesanan #{order.order_number}
+                    </Link>
+                    <p className="text-sm text-muted-foreground">
+                      Tanggal:{" "}
+                      {new Date(order.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </p>
 
-                  <p className="text-md font-bold text-foreground">
-                    Total: {formatRupiah(order.total_amount)}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Sisa Tagihan: {formatRupiah(listRemainingBalance)}
-                  </p>
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <Badge
-                    variant={statusInfo.variant}
-                    className="text-base text-center"
-                  >
-                    {statusInfo.text}
-                  </Badge>
-                  <Badge
-                    variant={paymentStatusInfo.variant}
-                    className="text-base text-center"
-                  >
-                    {paymentStatusInfo.text}
-                  </Badge>
-                  {order.payment_status === "pending" &&
-                    order.order_status !== "Cancelled" && (
-                      <Button
-                        size="default"
-                        variant="default"
-                        className="rounded-full"
-                        onClick={() => handleRetryPayment(order.id.toString())}
-                        disabled={
-                          retryPaymentMutation.isPending &&
+                    <p className="text-md font-bold text-foreground">
+                      Total: {formatRupiah(order.total_amount)}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Sisa Tagihan: {formatRupiah(listRemainingBalance)}
+                    </p>
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <Badge
+                      variant={statusInfo.variant}
+                      className="text-base text-center"
+                    >
+                      {statusInfo.text}
+                    </Badge>
+                    <Badge
+                      variant={paymentStatusInfo.variant}
+                      className="text-base text-center"
+                    >
+                      {paymentStatusInfo.text}
+                    </Badge>
+                    {order.payment_status === "pending" &&
+                      order.order_status !== "Cancelled" && (
+                        <Button
+                          size="default"
+                          variant="default"
+                          className="rounded-full"
+                          onClick={() =>
+                            handleRetryPayment(order.id.toString())
+                          }
+                          disabled={
+                            retryPaymentMutation.isPending &&
+                            retryingOrderId === order.id.toString()
+                          }
+                        >
+                          {retryPaymentMutation.isPending &&
                           retryingOrderId === order.id.toString()
-                        }
+                            ? "Membuka Pembayaran..."
+                            : "Bayar Sekarang"}
+                        </Button>
+                      )}
+                    {canDownloadInvoice(order) && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDownloadInvoice(order.id)}
+                        disabled={downloadingInvoice === order.id.toString()}
                       >
-                        {retryPaymentMutation.isPending &&
-                        retryingOrderId === order.id.toString()
-                          ? "Membuka Pembayaran..."
-                          : "Bayar Sekarang"}
+                        {downloadingInvoice === order.id.toString() ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Mengunduh...
+                          </>
+                        ) : (
+                          <>
+                            <FileDown className="mr-2 h-4 w-4" />
+                            Invoice
+                          </>
+                        )}
                       </Button>
                     )}
-                  {canDownloadInvoice(order) && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDownloadInvoice(order.id)}
-                      disabled={downloadingInvoice === order.id.toString()}
-                    >
-                      {downloadingInvoice === order.id.toString() ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Mengunduh...
-                        </>
-                      ) : (
-                        <>
-                          <FileDown className="mr-2 h-4 w-4" />
-                          Invoice
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

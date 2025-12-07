@@ -24,7 +24,10 @@ interface MobileCartDrawerProps {
  * Accessible from header on all pages
  * Shows mini cart with items, total, and quick actions
  */
-export function MobileCartDrawer({ open, onOpenChange }: MobileCartDrawerProps) {
+export function MobileCartDrawer({
+  open,
+  onOpenChange,
+}: MobileCartDrawerProps) {
   const { cart, isLoading, removeItem, isMutating } = useCart();
   const navigate = useNavigate();
 
@@ -51,16 +54,18 @@ export function MobileCartDrawer({ open, onOpenChange }: MobileCartDrawerProps) 
             <DrawerTitle>Keranjang Belanja</DrawerTitle>
             <DrawerDescription>Keranjang Anda kosong</DrawerDescription>
           </DrawerHeader>
-          
+
           <div className="flex flex-col items-center justify-center py-12 px-4">
             <ShoppingCart className="w-16 h-16 text-muted-foreground mb-4" />
             <p className="text-muted-foreground text-center mb-6">
               Belum ada produk di keranjang Anda
             </p>
-            <Button onClick={() => {
-              onOpenChange(false);
-              navigate("/products");
-            }}>
+            <Button
+              onClick={() => {
+                onOpenChange(false);
+                navigate("/products");
+              }}
+            >
               Mulai Belanja
             </Button>
           </div>
@@ -94,22 +99,29 @@ export function MobileCartDrawer({ open, onOpenChange }: MobileCartDrawerProps) 
           <div className="py-4 space-y-3">
             {cart.items.map((item) => {
               const placeholderImage = "/images/placeholder.svg";
-              let imageToDisplay = item.variant?.images?.find(img => img.is_featured);
-              
+              let imageToDisplay = item.variant?.images?.find(
+                (img) => img.is_featured,
+              );
+
               if (!imageToDisplay) {
-                imageToDisplay = { image: item.product.featured_image, is_featured: true };
+                imageToDisplay = {
+                  image: item.product.featured_image,
+                  is_featured: true,
+                };
               }
-              
+
               if (!imageToDisplay && item.variant?.images?.length > 0) {
                 imageToDisplay = item.variant.images[0];
               }
-              
+
               const imageUrl = getImageUrl(imageToDisplay?.image_url);
-              const variantDescription = item.customizations?.options?.map(opt => opt.value).join(' / ');
+              const variantDescription = item.customizations?.options
+                ?.map((opt) => opt.value)
+                .join(" / ");
 
               return (
-                <div 
-                  key={item.id} 
+                <div
+                  key={item.id}
                   className="flex gap-3 pb-3 border-b last:border-b-0"
                 >
                   {/* Product Image */}
@@ -136,16 +148,16 @@ export function MobileCartDrawer({ open, onOpenChange }: MobileCartDrawerProps) 
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
                     </div>
-                    
+
                     {variantDescription && (
                       <p className="text-xs text-muted-foreground mb-1 line-clamp-1">
                         {variantDescription}
                       </p>
                     )}
-                    
+
                     <div className="flex justify-between items-center mt-2">
                       <span className="text-xs text-muted-foreground">
-                        Qty: {item.quantity}
+                        Jumlah: {item.quantity}
                       </span>
                       <span className="font-semibold text-sm">
                         {formatRupiah(item.sub_total)}
@@ -170,16 +182,16 @@ export function MobileCartDrawer({ open, onOpenChange }: MobileCartDrawerProps) 
 
           {/* Action Buttons */}
           <div className="space-y-2">
-            <Button 
-              onClick={handleCheckout} 
+            <Button
+              onClick={handleCheckout}
               className="w-full"
               disabled={isMutating}
             >
               Checkout
             </Button>
-            <Button 
-              onClick={handleViewFullCart} 
-              variant="outline" 
+            <Button
+              onClick={handleViewFullCart}
+              variant="outline"
               className="w-full"
             >
               Lihat Keranjang Lengkap

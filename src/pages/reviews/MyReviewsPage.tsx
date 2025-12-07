@@ -9,11 +9,23 @@ import {
   type ReviewableProduct,
 } from "@/services/review/reviewService";
 import { Review } from "@/types/review";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/utils/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/utils/card";
 import { Button } from "@/components/ui/buttons/button";
 import { Badge } from "@/components/ui/utils/badge";
 import { Separator } from "@/components/ui/layout-ui/separator";
-import { Loader2, Star, Trash2, Edit, ShoppingBag, ImageIcon } from "lucide-react";
+import {
+  Loader2,
+  Star,
+  Trash2,
+  Edit,
+  ShoppingBag,
+  ImageIcon,
+} from "lucide-react";
 import { toast } from "@/hooks/ui/use-toast";
 import { ReviewDialog } from "@/features/reviews/components/ReviewDialog";
 import { getImageUrl } from "@/lib/utils";
@@ -27,31 +39,32 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/dialogs/alert-dialog";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialogs/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialogs/dialog";
 
 export function MyReviewsPage() {
   const queryClient = useQueryClient();
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<ReviewableProduct | null>(null);
+  const [selectedProduct, setSelectedProduct] =
+    useState<ReviewableProduct | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState<Review | null>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    null,
+  );
 
   // Fetch my reviews
-  const {
-    data: myReviewsData,
-    isLoading: reviewsLoading,
-  } = useQuery({
+  const { data: myReviewsData, isLoading: reviewsLoading } = useQuery({
     queryKey: ["my-reviews"],
     queryFn: () => getMyReviews(),
   });
 
   // Fetch reviewable products
-  const {
-    data: reviewableData,
-    isLoading: reviewableLoading,
-  } = useQuery({
+  const { data: reviewableData, isLoading: reviewableLoading } = useQuery({
     queryKey: ["reviewable-products"],
     queryFn: getReviewableProducts,
   });
@@ -73,7 +86,9 @@ export function MyReviewsPage() {
     onError: (error: any) => {
       toast({
         title: "Gagal Menghapus Ulasan",
-        description: error.response?.data?.message || "Terjadi kesalahan saat menghapus ulasan.",
+        description:
+          error.response?.data?.message ||
+          "Terjadi kesalahan saat menghapus ulasan.",
         variant: "destructive",
       });
     },
@@ -116,8 +131,10 @@ export function MyReviewsPage() {
   }
 
   return (
-    <div className="container mt-20 mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+    // <div className="container mt-20 mx-auto px-4 py-8">
+    // <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-background py-20 sm:py-28">
+      <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 text-foreground">Ulasan Saya</h1>
 
         {/* My Reviews Section */}
@@ -131,7 +148,9 @@ export function MyReviewsPage() {
           <CardContent>
             {myReviews.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground">Anda belum memberikan ulasan.</p>
+                <p className="text-muted-foreground">
+                  Anda belum memberikan ulasan.
+                </p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -156,10 +175,14 @@ export function MyReviewsPage() {
                             ))}
                           </div>
                           <Badge
-                            variant={review.is_approved ? "default" : "secondary"}
+                            variant={
+                              review.is_approved ? "default" : "secondary"
+                            }
                             className="text-xs"
                           >
-                            {review.is_approved ? "Disetujui" : "Menunggu Persetujuan"}
+                            {review.is_approved
+                              ? "Disetujui"
+                              : "Menunggu Persetujuan"}
                           </Badge>
                           {review.is_featured && (
                             <Badge variant="outline" className="text-xs">
@@ -214,7 +237,9 @@ export function MyReviewsPage() {
                             <DialogContent className="max-w-4xl">
                               <img
                                 src={getImageUrl(image.image_url)}
-                                alt={image.alt_text || `Review image ${index + 1}`}
+                                alt={
+                                  image.alt_text || `Review image ${index + 1}`
+                                }
                                 className="w-full rounded-lg"
                               />
                             </DialogContent>
@@ -233,10 +258,16 @@ export function MyReviewsPage() {
                             <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
                               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
                                 {review.images.map((image, index) => (
-                                  <div key={image.id} className="relative aspect-square overflow-hidden rounded-lg border">
+                                  <div
+                                    key={image.id}
+                                    className="relative aspect-square overflow-hidden rounded-lg border"
+                                  >
                                     <img
                                       src={getImageUrl(image.image_url)}
-                                      alt={image.alt_text || `Review image ${index + 1}`}
+                                      alt={
+                                        image.alt_text ||
+                                        `Review image ${index + 1}`
+                                      }
                                       className="w-full h-full object-cover"
                                     />
                                   </div>
@@ -261,14 +292,19 @@ export function MyReviewsPage() {
 
                     <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
                       <span>
-                        {new Date(review.created_at).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        {new Date(review.created_at).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          },
+                        )}
                       </span>
                       {review.helpful_count > 0 && (
-                        <span>👍 {review.helpful_count} orang merasa membantu</span>
+                        <span>
+                          👍 {review.helpful_count} orang merasa membantu
+                        </span>
                       )}
                     </div>
                   </div>
@@ -308,11 +344,14 @@ export function MyReviewsPage() {
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Dibeli pada{" "}
-                        {new Date(product.purchased_at).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        {new Date(product.purchased_at).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          },
+                        )}
                       </p>
                     </div>
                     <Button
@@ -338,7 +377,8 @@ export function MyReviewsPage() {
                 Belum Ada Ulasan
               </h3>
               <p className="text-muted-foreground mb-4">
-                Anda belum memiliki produk yang dapat diulas. Belanja sekarang dan bagikan pengalaman Anda!
+                Anda belum memiliki produk yang dapat diulas. Belanja sekarang
+                dan bagikan pengalaman Anda!
               </p>
               <Button variant="default" asChild>
                 <a href="/products">Jelajahi Produk</a>
@@ -353,9 +393,7 @@ export function MyReviewsPage() {
         <ReviewDialog
           open={reviewDialogOpen}
           onOpenChange={setReviewDialogOpen}
-          orderItemId={
-            selectedProduct?.order_item_id || 0
-          }
+          orderItemId={selectedProduct?.order_item_id || 0}
           productId={
             selectedReview?.product.id || selectedProduct?.product.id || 0
           }
@@ -371,7 +409,9 @@ export function MyReviewsPage() {
                 : "Ulasan Anda telah dikirim.",
             });
             queryClient.invalidateQueries({ queryKey: ["my-reviews"] });
-            queryClient.invalidateQueries({ queryKey: ["reviewable-products"] });
+            queryClient.invalidateQueries({
+              queryKey: ["reviewable-products"],
+            });
             queryClient.invalidateQueries({ queryKey: ["orders"] });
             setReviewDialogOpen(false);
           }}
@@ -384,7 +424,8 @@ export function MyReviewsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Hapus Ulasan?</AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah Anda yakin ingin menghapus ulasan ini? Tindakan ini tidak dapat dibatalkan.
+              Apakah Anda yakin ingin menghapus ulasan ini? Tindakan ini tidak
+              dapat dibatalkan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

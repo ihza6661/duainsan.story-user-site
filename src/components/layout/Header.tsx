@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 // --- Impor Aset & Komponen Anak ---
 import Sidebar from "@/components/layout/Sidebar";
+import DesktopNavigation from "@/components/layout/sections/DesktopNavigation";
 import { Menu, User, ShoppingBag, Heart, Package, MessageSquare, LogOut } from "lucide-react";
 
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
@@ -106,20 +107,9 @@ const Header = () => {
 
                 {/* <MenuIcon className="text-foreground" /> */}
               </Button>
-              <nav className="hidden tablet-custom:flex items-center space-x-6 tracking-normal">
-                <Link
-                  to="/products"
-                  className="text-sm uppercase link-underline-animation"
-                >
-                  Produk
-                </Link>
-                <Link
-                  to="/gallery"
-                  className="text-sm uppercase link-underline-animation"
-                >
-                  Galeri
-                </Link>
-              </nav>
+              
+              {/* Desktop Navigation Menu */}
+              <DesktopNavigation />
             </div>
           </div>
 

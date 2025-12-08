@@ -1,5 +1,6 @@
 import DuaInsanQuotes from "@/components/layout/sections/DuaInsanQuotes";
 import ExploreTheNewestTrend from "@/components/layout/sections/ExploreTheNewestTrend";
+import InvitationFeatureSection from "@/components/layout/sections/FeatureSection";
 import WhyDuaInsan from "@/components/layout/sections/WhyDuaInsan";
 import ActualBrandSlider from "@/components/ui/ActualBrandSlider";
 import CategoryGrid from "@/components/ui/CategoryGrid";
@@ -15,6 +16,7 @@ const Home = () => {
   return (
     <div className="min-h-screen w-full overflow-hidden">
       <Hero />
+      <InvitationFeatureSection />
       <CategoryGrid />
       <BestSeller />
       <RecommendedProducts type="personalized" limit={8} />

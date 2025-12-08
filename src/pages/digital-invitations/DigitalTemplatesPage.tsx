@@ -17,11 +17,10 @@ const DigitalTemplatesPage = () => {
 
   const { addItem } = useCart();
 
-  const handleAddToCart = async (templateId: number, productName: string) => {
+  const handleAddToCart = async (productId: number, productName: string) => {
     try {
-      // Note: You'll need to create digital products in your backend
-      // For now, this assumes products exist with the template_id
-      await addItem({ product_id: templateId, quantity: 1 });
+      // Add digital product to cart
+      await addItem({ product_id: productId, quantity: 1 });
       
       toast({
         title: "Ditambahkan ke keranjang",
@@ -168,7 +167,7 @@ const DigitalTemplatesPage = () => {
             <CardFooter className="gap-2">
               <Button
                 className="flex-1"
-                onClick={() => handleAddToCart(template.id, template.name)}
+                onClick={() => handleAddToCart(template.product_id, template.name)}
               >
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Beli Sekarang

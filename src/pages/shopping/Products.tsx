@@ -39,7 +39,7 @@ const Products = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Price filter state
-  const MAX_PRICE = 100000; // Define a max price for the slider
+  const MAX_PRICE = 200000; // Define a max price for the slider (covers digital invitations at Rp 150,000)
   const [priceRange, setPriceRange] = useState<[number, number]>([
     0,
     MAX_PRICE,

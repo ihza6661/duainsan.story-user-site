@@ -83,6 +83,10 @@ const CheckoutPage = () => {
   const [promoCode, setPromoCode] = useState<string>("");
   const [discountAmount, setDiscountAmount] = useState<number>(0);
 
+  // Check if cart contains only digital products
+  const isDigitalOnly = cart?.items.every(item => item.product.product_type === 'digital') ?? false;
+  const hasPhysicalProducts = cart?.items.some(item => item.product.product_type === 'physical') ?? false;
+
   useEffect(() => {
     if (!user) {
       toast({
@@ -104,11 +108,12 @@ const CheckoutPage = () => {
       return;
     }
 
-    if (!user.address || !user.postal_code) {
+    // Only require address for physical products
+    if (hasPhysicalProducts && (!user.address || !user.postal_code)) {
       toast({
         title: "Alamat Profil Tidak Lengkap",
         description:
-          "Mohon lengkapi alamat Anda di halaman profil sebelum melanjutkan checkout.",
+          "Mohon lengkapi alamat Anda di halaman profil sebelum melanjutkan checkout produk fisik.",
         variant: "destructive",
       });
       return;
@@ -120,6 +125,17 @@ const CheckoutPage = () => {
       setShippingSelection("");
       setShippingCost(0);
       setCalculatedWeight(null);
+      return;
+    }
+
+    // Skip shipping calculation for digital-only carts
+    if (isDigitalOnly) {
+      setShippingServices([]);
+      setShippingService("");
+      setShippingSelection("");
+      setShippingCost(0);
+      setCalculatedWeight(0);
+      setIsCalculatingCost(false);
       return;
     }
 
@@ -190,8 +206,10 @@ const CheckoutPage = () => {
       }
     };
 
-    fetchShippingCost();
-  }, [cart, selectedCourier, toast, user]);
+    if (!isDigitalOnly) {
+      fetchShippingCost();
+    }
+  }, [cart, selectedCourier, toast, user, isDigitalOnly, hasPhysicalProducts]);
 
   // Load Midtrans Script Dynamically
   useEffect(() => {
@@ -244,7 +262,9 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (shippingCost === 0 && cart && cart.total_weight > 0) {
+    
+    // Only require shipping for physical products
+    if (hasPhysicalProducts && shippingCost === 0 && cart && cart.total_weight > 0) {
       toast({
         title: "Pilih Layanan Pengiriman",
         description: "Anda harus memilih layanan pengiriman terlebih dahulu.",
@@ -682,9 +702,13 @@ const CheckoutPage = () => {
                     );
                   })}
                 </div>
-                {/* Shipping Method Selection */}
-                <div className="border-t border-border pt-4 space-y-2">
-                  <Label>Metode Pengiriman</Label>
+                
+                {/* Shipping Section - Only show for physical products */}
+                {hasPhysicalProducts && (
+                  <>
+                    {/* Shipping Method Selection */}
+                    <div className="border-t border-border pt-4 space-y-2">
+                      <Label>Metode Pengiriman</Label>
                   <RadioGroup
                     value={shippingMethod}
                     onValueChange={(
@@ -826,11 +850,13 @@ const CheckoutPage = () => {
                     </div>
                   </>
                 )}
-                {calculatedWeight !== null && (
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>Berat Dihitung</span>
-                    <span>{calculatedWeight.toLocaleString("id-ID")} gr</span>
-                  </div>
+                    {calculatedWeight !== null && calculatedWeight > 0 && (
+                      <div className="flex justify-between text-sm text-muted-foreground">
+                        <span>Berat Dihitung</span>
+                        <span>{calculatedWeight.toLocaleString("id-ID")} gr</span>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Promo Code Input */}
@@ -859,30 +885,42 @@ const CheckoutPage = () => {
                     <span>- {formatRupiah(discountAmount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span>
-                    Biaya Pengiriman
-                    {shippingService ? ` (${shippingService})` : ""}
-                  </span>
-                  <span>{formatRupiah(shippingCost)}</span>
-                </div>
-                <div className="border-t border-border pt-4 space-y-2">
-                  <Label>Opsi Pembayaran</Label>
-                  <RadioGroup
-                    defaultValue="full"
-                    onValueChange={setPaymentOption}
-                    className="flex space-x-4"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="full" id="full" />
-                      <Label htmlFor="full">Bayar Lunas</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="dp" id="dp" />
-                      <Label htmlFor="dp">Down Payment (50%)</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
+                {hasPhysicalProducts && (
+                  <div className="flex justify-between">
+                    <span>
+                      Biaya Pengiriman
+                      {shippingService ? ` (${shippingService})` : ""}
+                    </span>
+                    <span>{formatRupiah(shippingCost)}</span>
+                  </div>
+                )}
+                {/* Only show down payment option for physical products */}
+                {hasPhysicalProducts && (
+                  <div className="border-t border-border pt-4 space-y-2">
+                    <Label>Opsi Pembayaran</Label>
+                    <RadioGroup
+                      defaultValue="full"
+                      onValueChange={setPaymentOption}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="full" id="full" />
+                        <Label htmlFor="full">Bayar Lunas</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="dp" id="dp" />
+                        <Label htmlFor="dp">Down Payment (50%)</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+                {isDigitalOnly && (
+                  <div className="border-t border-border pt-4">
+                    <p className="text-sm text-muted-foreground">
+                      Produk digital hanya tersedia dengan pembayaran penuh
+                    </p>
+                  </div>
+                )}
                 <div className="border-t border-border pt-4 flex justify-between text-lg font-bold">
                   <span>Total Pembayaran</span>
                   <span>

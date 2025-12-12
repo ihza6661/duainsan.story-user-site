@@ -39,13 +39,6 @@ import {
 } from "@/components/ui/forms/form";
 import { Form } from "@/components/ui/forms/form-provider";
 import { Separator } from "@/components/ui/layout-ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/forms/select";
 
 // --- Form Schemas for Validation ---
 const profileFormSchema = z
@@ -211,7 +204,6 @@ const ProfilePage: FC = () => {
   }
 
   return (
-    // <div className="container mx-auto py-24 md:py-32">
     <div className="min-h-screen bg-background py-20 sm:py-28">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 text-foreground">Profil Saya</h1>

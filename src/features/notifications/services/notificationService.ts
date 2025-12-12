@@ -3,7 +3,7 @@ import api from '@/lib/api';
 export interface Notification {
   id: number;
   user_id: number;
-  type: 'order_status' | 'design_proof' | 'payment' | 'cancellation';
+  type: 'order_status' | 'design_proof' | 'payment' | 'cancellation' | 'digital_invitation_ready';
   title: string;
   message: string;
   data: Record<string, any> | null;
@@ -74,6 +74,7 @@ export const getNotificationIcon = (type: string): string => {
     design_proof: '🎨',
     payment: '💳',
     cancellation: '❌',
+    digital_invitation_ready: '💌',
   };
   return icons[type as keyof typeof icons] || '🔔';
 };
@@ -87,6 +88,7 @@ export const getNotificationColor = (type: string): string => {
     design_proof: 'text-purple-600 dark:text-purple-400',
     payment: 'text-green-600 dark:text-green-400',
     cancellation: 'text-red-600 dark:text-red-400',
+    digital_invitation_ready: 'text-pink-600 dark:text-pink-400',
   };
   return colors[type as keyof typeof colors] || 'text-gray-600 dark:text-gray-400';
 };

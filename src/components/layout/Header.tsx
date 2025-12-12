@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 // --- Impor Aset & Komponen Anak ---
 import Sidebar from "@/components/layout/Sidebar";
 import DesktopNavigation from "@/components/layout/sections/DesktopNavigation";
-import { Menu, User, ShoppingBag, Heart, Package, MessageSquare, LogOut } from "lucide-react";
+import { Menu, User, ShoppingBag, Heart, Package, MessageSquare, Mail, LogOut } from "lucide-react";
 
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { NotificationBell } from "@/features/notifications/components/NotificationBell";
@@ -180,6 +180,14 @@ const Header = () => {
                       >
                         <MessageSquare className="w-4 h-4" />
                         Ulasan Saya
+                      </Link>
+                      <Link
+                        to="/my-invitations"
+                        onClick={() => setShowUserDropdown(false)}
+                        className="w-full text-left px-4 py-2 hover:bg-muted text-foreground flex items-center gap-2"
+                      >
+                        <Mail className="w-4 h-4" />
+                        Undangan Saya
                       </Link>
                       <Button
                         variant="ghost"

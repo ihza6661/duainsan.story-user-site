@@ -6,11 +6,15 @@ import {
   ControllerProps,
   FieldPath,
   FieldValues,
+  FormProvider,
+  useFormContext,
 } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/forms/label"
 import { useFormField, FormFieldContext, FormItemContext } from "@/hooks/ui/use-form-field"
+
+const Form = FormProvider
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
@@ -120,6 +124,8 @@ const FormMessage = React.forwardRef<
 FormMessage.displayName = "FormMessage"
 
 export {
+  useFormContext,
+  Form,
   FormItem,
   FormLabel,
   FormControl,

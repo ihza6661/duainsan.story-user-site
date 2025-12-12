@@ -2,8 +2,8 @@
 
 .classic-template {
   font-family: 'Playfair Display', 'Georgia', serif;
-  color: #2d2d2d;
-  background: #fef9f3;
+  color: var(--theme-text, #2d2d2d);
+  background: var(--theme-background, #fef9f3);
   min-height: 100vh;
 }
 
@@ -15,7 +15,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to bottom, #fef9f3 0%, #fff 100%);
+  background: linear-gradient(to bottom, var(--theme-background, #fef9f3) 0%, #fff 100%);
   padding: 3rem 1rem;
 }
 
@@ -37,7 +37,7 @@
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 3px;
-  color: #8b7355;
+  color: var(--theme-text-muted, #8b7355);
   margin-bottom: 1rem;
   font-family: 'Inter', sans-serif;
 }
@@ -45,7 +45,7 @@
 .classic-couple-names {
   font-size: 4.5rem;
   font-weight: 400;
-  color: #2d2d2d;
+  color: var(--theme-text, #2d2d2d);
   margin: 1.5rem 0;
   line-height: 1.2;
   display: flex;
@@ -55,7 +55,7 @@
 
 .classic-ampersand {
   font-size: 3rem;
-  color: #c4a574;
+  color: var(--theme-primary, #c4a574);
   font-family: 'Georgia', serif;
   font-style: italic;
   margin: 0.5rem 0;
@@ -72,13 +72,13 @@
 .classic-date-ornament {
   width: 60px;
   height: 2px;
-  background: linear-gradient(to right, transparent, #c4a574, transparent);
+  background: linear-gradient(to right, transparent, var(--theme-primary, #c4a574), transparent);
 }
 
 .classic-date-box {
   text-align: center;
   padding: 1.5rem 2rem;
-  border: 2px solid #c4a574;
+  border: 2px solid var(--theme-primary, #c4a574);
   background: white;
   border-radius: 5px;
   box-shadow: 0 4px 15px rgba(196, 165, 116, 0.2);
@@ -126,7 +126,7 @@
 .classic-divider {
   width: 100px;
   height: 2px;
-  background: #c4a574;
+  background: var(--theme-primary, #c4a574);
   margin: 0 auto 3rem;
 }
 
@@ -145,7 +145,7 @@
 .classic-quote-icon {
   width: 48px;
   height: 48px;
-  color: #c4a574;
+  color: var(--theme-primary, #c4a574);
   margin-bottom: 1.5rem;
 }
 
@@ -158,7 +158,7 @@
 
 /* Couple Section */
 .classic-couple-section {
-  background: #fef9f3;
+  background: var(--theme-background, #fef9f3);
 }
 
 .classic-couple-grid {
@@ -182,7 +182,7 @@
   margin: 0 auto;
   padding: 15px;
   background: white;
-  border: 3px solid #c4a574;
+  border: 3px solid var(--theme-primary, #c4a574);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
   position: relative;
 }
@@ -214,7 +214,7 @@
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: #8b7355;
+  color: var(--theme-text-muted, #8b7355);
   font-family: 'Inter', sans-serif;
 }
 
@@ -226,8 +226,8 @@
 .classic-details-card {
   max-width: 600px;
   margin: 0 auto;
-  background: #fef9f3;
-  border: 2px solid #e5d4b8;
+  background: var(--theme-background, #fef9f3);
+  border: 2px solid var(--theme-accent, #e5d4b8);
   padding: 3rem;
   border-radius: 10px;
 }
@@ -250,7 +250,7 @@
 .classic-detail-icon {
   width: 32px;
   height: 32px;
-  color: #c4a574;
+  color: var(--theme-primary, #c4a574);
   flex-shrink: 0;
   margin-top: 0.25rem;
 }
@@ -285,7 +285,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #c4a574;
+  background: var(--theme-primary, #c4a574);
   color: white;
   padding: 1rem 2rem;
   border-radius: 5px;
@@ -297,7 +297,7 @@
 }
 
 .classic-map-link:hover {
-  background: #b39564;
+  background: var(--theme-secondary, #b39564);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(196, 165, 116, 0.3);
 }

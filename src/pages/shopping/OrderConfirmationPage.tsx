@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { getOrderById, downloadInvoice } from "@/features/order/services/orderService";
+import { getOrderById, downloadInvoice, type Order } from "@/features/order/services/orderService";
 import { Loader2, CheckCircle, XCircle, FileDown } from "lucide-react";
 import { useToast } from "@/hooks/ui/use-toast";
 import {
@@ -27,6 +27,11 @@ const OrderConfirmationPage = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // Helper function to check if order has physical products
+  const hasPhysicalProducts = (order: Order): boolean => {
+    return order.items.some((item) => item.product.product_type === "physical");
+  };
 
   const {
     data: order,
@@ -190,14 +195,16 @@ const OrderConfirmationPage = () => {
                 {paymentStatusInfo.text}
               </p>
             </div>
-            <div className="rounded-2xl border border-border/60 bg-card/60 p-4 md:col-span-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                Alamat Pengiriman
-              </p>
-              <p className="mt-3 text-base font-semibold text-foreground">
-                {order.shipping_address}
-              </p>
-            </div>
+            {hasPhysicalProducts(order) && (
+              <div className="rounded-2xl border border-border/60 bg-card/60 p-4 md:col-span-2">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                  Alamat Pengiriman
+                </p>
+                <p className="mt-3 text-base font-semibold text-foreground">
+                  {order.shipping_address}
+                </p>
+              </div>
+            )}
           </div>
 
           <div>

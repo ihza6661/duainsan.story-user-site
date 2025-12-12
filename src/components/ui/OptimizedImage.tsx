@@ -40,15 +40,17 @@ export function OptimizedImage({
   const [hasError, setHasError] = useState(false);
 
   // Auto-detect WebP version if not provided
-  const webpSource = webpSrc || src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+  // Skip webp conversion for absolute URLs (backend-served images) unless explicitly provided
+  const isAbsoluteUrl = src.startsWith('http://') || src.startsWith('https://');
+  const webpSource = webpSrc || (isAbsoluteUrl ? null : src.replace(/\.(jpg|jpeg|png)$/i, '.webp'));
   
   // Use eager loading for priority images (above fold)
   const loadingStrategy = priority ? 'eager' : loading;
 
   return (
     <picture className={cn('block', className)}>
-      {/* WebP source for modern browsers */}
-      {!hasError && (
+      {/* WebP source for modern browsers (only if webpSource is provided) */}
+      {!hasError && webpSource && (
         <source 
           srcSet={webpSource} 
           type="image/webp"

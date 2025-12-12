@@ -68,11 +68,22 @@ export const NotificationBell = () => {
       handleMarkAsRead(notification.id);
     }
 
-    // Navigate based on notification type
+    // Navigate based on notification type and data
     if (notification.data) {
-      const { order_id, order_number } = notification.data;
-      if (order_id) {
-        window.location.href = `/status-pesanan/${order_id}`;
+      // Digital invitation ready notification
+      if (notification.type === 'digital_invitation_ready' && notification.data.action_url) {
+        window.location.href = notification.data.action_url;
+      }
+      // Order-related notifications
+      else if (notification.data.order_id || notification.data.order_number) {
+        const orderId = notification.data.order_id;
+        if (orderId) {
+          window.location.href = `/status-pesanan/${orderId}`;
+        }
+      }
+      // Design proof notification
+      else if (notification.type === 'design_proof' && notification.data.design_proof_id) {
+        window.location.href = `/design-proofs/${notification.data.design_proof_id}`;
       }
     }
 

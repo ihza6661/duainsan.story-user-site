@@ -112,6 +112,18 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 productLinks
               )
             )}
+            
+            {/* Digital Templates Section */}
+            <div className="border-b border-border py-4">
+              <Link
+                to="/digital-templates"
+                className="text-foreground w-full text-left text-base uppercase tracking-widest block"
+                onClick={onClose}
+              >
+                Undangan Digital
+              </Link>
+            </div>
+            
             {renderDropdown(
               "Company",
               companyOpen,

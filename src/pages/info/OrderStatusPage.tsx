@@ -22,7 +22,7 @@ import {
   type Order,
   type OrderItem,
 } from "@/features/order/services/orderService";
-import { Loader2, FileDown, Star } from "lucide-react";
+import { Loader2, FileDown, Star, Camera } from "lucide-react";
 import { toast } from "sonner";
 import {
   getOrderStatusInfo,
@@ -32,6 +32,7 @@ import {
 import { DesignProofViewer } from "@/features/order/components/DesignProofViewer";
 import { CancelOrderDialog } from "@/features/order/components/CancelOrderDialog";
 import { ReviewDialog } from "@/features/reviews/components/ReviewDialog";
+import { UGCUploadForm } from "@/components/gallery/UGCUploadForm";
 
 const OrderStatusPage = () => {
   const { orderId } = useParams<{ orderId?: string }>();
@@ -46,6 +47,8 @@ const OrderStatusPage = () => {
   const [selectedOrderItem, setSelectedOrderItem] = useState<OrderItem | null>(
     null,
   );
+  const [ugcUploadOpen, setUgcUploadOpen] = useState(false);
+  const [selectedOrderForUgc, setSelectedOrderForUgc] = useState<Order | null>(null);
 
   const invalidateOrderQueries = () => {
     if (orderId) {
@@ -219,6 +222,21 @@ const OrderStatusPage = () => {
     }
 
     return true;
+  };
+
+  // Helper function to check if user can upload photos (completed orders)
+  const canUploadPhoto = (order: Order): boolean => {
+    return order.order_status === "Completed" && order.payment_status === "paid";
+  };
+
+  const handleUploadPhotoClick = (order: Order) => {
+    setSelectedOrderForUgc(order);
+    setUgcUploadOpen(true);
+  };
+
+  // Helper function to check if order has physical products
+  const hasPhysicalProducts = (order: Order): boolean => {
+    return order.items.some((item) => item.product.product_type === "physical");
   };
 
   // Cancel order mutation
@@ -457,12 +475,14 @@ const OrderStatusPage = () => {
                           <p className="text-sm text-muted-foreground">
                             Jumlah: {item.quantity}
                           </p>
-                          <p className="text-sm text-muted-foreground">
-                            Varian:{" "}
-                            {item.variant?.options
-                              ?.map((o) => o.value)
-                              .join(", ") || "-"}
-                          </p>
+                          {item.product.product_type === "physical" && (
+                            <p className="text-sm text-muted-foreground">
+                              Varian:{" "}
+                              {item.variant?.options
+                                ?.map((o) => o.value)
+                                .join(", ") || "-"}
+                            </p>
+                          )}
 
                           {/* Review Status/Button */}
                           {item.review ? (
@@ -552,20 +572,24 @@ const OrderStatusPage = () => {
                     </p>
                   </div>
                 </div>
-                <div>
-                  <h4 className="mb-4 text-foreground">Alamat Pengiriman</h4>
-                  <p className="text-sm whitespace-pre-line text-muted-foreground">
-                    {order.shipping_address}
-                  </p>
-                </div>
+                {hasPhysicalProducts(order) && (
+                  <div>
+                    <h4 className="mb-4 text-foreground">Alamat Pengiriman</h4>
+                    <p className="text-sm whitespace-pre-line text-muted-foreground">
+                      {order.shipping_address}
+                    </p>
+                  </div>
+                )}
               </div>
 
               <Separator />
 
-              {/* Design Proof Section */}
-              <div>
-                <DesignProofViewer orderId={order.id} />
-              </div>
+              {/* Design Proof Section - Only for Physical Products */}
+              {hasPhysicalProducts(order) && (
+                <div>
+                  <DesignProofViewer orderId={order.id} />
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
@@ -612,6 +636,15 @@ const OrderStatusPage = () => {
                         Unduh Invoice
                       </>
                     )}
+                  </Button>
+                )}
+                {canUploadPhoto(order) && (
+                  <Button
+                    variant="default"
+                    onClick={() => handleUploadPhotoClick(order)}
+                  >
+                    <Camera className="mr-2 h-4 w-4" />
+                    Bagikan Foto
                   </Button>
                 )}
                 {canCancelOrder(order) && (
@@ -711,6 +744,18 @@ const OrderStatusPage = () => {
                 toast.success("Ulasan berhasil dikirim!");
                 invalidateOrderQueries();
                 setReviewDialogOpen(false);
+              }}
+            />
+          )}
+
+          {/* UGC Upload Dialog */}
+          {selectedOrderForUgc && (
+            <UGCUploadForm
+              open={ugcUploadOpen}
+              onOpenChange={setUgcUploadOpen}
+              orderId={selectedOrderForUgc.id}
+              onSuccess={() => {
+                toast.success("Foto berhasil diunggah!");
               }}
             />
           )}

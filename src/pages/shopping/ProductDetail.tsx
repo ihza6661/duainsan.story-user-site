@@ -28,6 +28,7 @@ import RelatedProducts from "@/features/product/components/ProductDetail/Related
 import ProductDetailSkeleton from "@/features/product/components/ProductDetail/ProductDetailSkeleton";
 import { ProductReviewsSection } from "@/features/reviews/components/ProductReviewsSection";
 import { RecommendedProducts } from "@/features/recommendations";
+import { MetaTags } from "@/components/seo/MetaTags";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -107,6 +108,12 @@ const ProductDetail = () => {
   // 3. Display the main content if data is loaded successfully
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <MetaTags
+        title={`${product.name} - DuaInsan.Story`}
+        description={product.description || `Pesan ${product.name} untuk acara spesial Anda. Harga mulai dari Rp ${product.base_price.toLocaleString("id-ID")}`}
+        image={product.featured_image?.image_url}
+        type="product"
+      />
       <main className="flex-grow">
         <ProductHero product={product} onAddToCart={handleAddToCart} />
         <ProductServices />

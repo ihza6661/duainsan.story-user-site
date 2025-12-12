@@ -37,7 +37,7 @@ const CheckoutPage = lazy(() => import("@/pages/shopping/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("@/pages/shopping/OrderConfirmationPage"));
 
 // Info pages - lazy loaded
-const Gallery = lazy(() => import("@/pages/info/Gallery"));
+const Gallery = lazy(() => import("@/pages/GalleryPage"));
 const CaraMemesan = lazy(() => import("@/pages/info/CaraMemesan"));
 const InfoPemesananCetak = lazy(() => import("@/pages/info/InfoPemesananCetak"));
 const OrderStatusPage = lazy(() => import("@/pages/info/OrderStatusPage"));
@@ -52,9 +52,16 @@ const MyReviewsPage = lazy(() => import("@/pages/reviews/MyReviewsPage").then(mo
 
 // Digital Invitations - lazy loaded
 const DigitalTemplatesPage = lazy(() => import("@/pages/digital-invitations/DigitalTemplatesPage"));
+const TemplatePreviewPage = lazy(() => import("@/pages/digital-invitations/TemplatePreviewPage"));
 const MyInvitationsPage = lazy(() => import("@/pages/digital-invitations/MyInvitationsPage"));
 const EditInvitationPage = lazy(() => import("@/pages/digital-invitations/EditInvitationPage"));
 const PublicInvitationPage = lazy(() => import("@/pages/digital-invitations/PublicInvitationPage"));
+
+// Notifications - lazy loaded
+const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
+
+// UGC - lazy loaded
+const MyUGCPage = lazy(() => import("@/pages/MyUGCPage"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -116,6 +123,10 @@ const App = () => (
 
                       <Route path="my-reviews" element={<MyReviewsPage />} />
 
+                      <Route path="my-photos" element={<MyUGCPage />} />
+
+                      <Route path="notifications" element={<NotificationsPage />} />
+
                       <Route path="my-invitations" element={<MyInvitationsPage />} />
 
                       <Route path="my-invitations/:id/edit" element={<EditInvitationPage />} />
@@ -151,7 +162,9 @@ const App = () => (
 
                     <Route path="digital-templates" element={<DigitalTemplatesPage />} />
 
-                    <Route path="invitation/:slug" element={<PublicInvitationPage />} />
+                    <Route path="digital-templates/:slug" element={<TemplatePreviewPage />} />
+
+                    <Route path="undangan/:slug" element={<PublicInvitationPage />} />
 
                     <Route path="cart" element={<Cart />} />
 

@@ -54,6 +54,7 @@ export interface Product {
   base_price: number;
   weight?: number | null;
   requires_shipping?: boolean;
+  product_type: 'physical' | 'digital';
   featured_image: ProductImage | null;
 }
 

@@ -2,21 +2,8 @@ import { useEffect } from "react";
 import { Calendar, MapPin, Clock, Heart } from "lucide-react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { InvitationTemplateProps } from "../types";
 import "./classic.css";
-
-export interface ClassicTemplateProps {
-  brideNickname: string;
-  groomNickname: string;
-  brideName: string;
-  groomName: string;
-  eventDate: string;
-  eventTime?: string;
-  venueName: string;
-  venueAddress?: string;
-  venueMapUrl?: string;
-  additionalInfo?: string;
-  photos: string[];
-}
 
 export const ClassicTemplate = ({
   brideNickname,
@@ -30,7 +17,7 @@ export const ClassicTemplate = ({
   venueMapUrl,
   additionalInfo,
   photos,
-}: ClassicTemplateProps) => {
+}: InvitationTemplateProps) => {
   // Extract first names for display
   const brideFirstName = brideNickname || brideName.split(" ")[0];
   const groomFirstName = groomNickname || groomName.split(" ")[0];

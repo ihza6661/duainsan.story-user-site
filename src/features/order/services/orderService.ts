@@ -11,6 +11,7 @@ export interface OrderItem {
   product: {
     id: number;
     name: string;
+    product_type: 'physical' | 'digital';
     featured_image?: {
       image_url: string;
       image: string;

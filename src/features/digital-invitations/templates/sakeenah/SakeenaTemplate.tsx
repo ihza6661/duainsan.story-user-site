@@ -2,43 +2,46 @@ import { useEffect } from "react";
 import { Calendar, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
+import { InvitationTemplateProps } from "../types";
 import "./sakeenah.css";
 
-export interface SakeenaTemplateProps {
-  brideNickname: string;
-  groomNickname: string;
-  brideName: string;
-  groomName: string;
-  eventDate: string;
-  eventTime?: string;
-  venueName: string;
-  venueAddress?: string;
-  venueMapUrl?: string;
-  additionalInfo?: string;
-  photos: string[];
-}
+export const SakeenaTemplate = (props: InvitationTemplateProps) => {
+  // Extract fields - prioritize new custom_fields over legacy fields
+  const brideFullName = props.brideFullName || props.brideName || "";
+  const brideNickname = props.brideNickname || brideFullName.split(" ")[0];
+  const brideParents = props.brideParents || "";
+  
+  const groomFullName = props.groomFullName || props.groomName || "";
+  const groomNickname = props.groomNickname || groomFullName.split(" ")[0];
+  const groomParents = props.groomParents || "";
+  
+  const akadDate = props.akadDate || props.eventDate || "";
+  const akadTime = props.akadTime || props.eventTime || "";
+  const akadLocation = props.akadLocation || props.venueName || "";
+  
+  const receptionDate = props.receptionDate || akadDate;
+  const receptionTime = props.receptionTime || "";
+  const receptionLocation = props.receptionLocation || props.venueAddress || "";
+  
+  const gmapsLink = props.gmapsLink || props.venueMapUrl || "";
+  const preweddingPhoto = props.preweddingPhoto || "";
+  const primaryColor = props.primaryColor || "#2C5F2D";
+  
+  const photos = props.photos || [];
+  const additionalInfo = props.additionalInfo || "";
 
-export const SakeenaTemplate = ({
-  brideNickname,
-  groomNickname,
-  brideName,
-  groomName,
-  eventDate,
-  eventTime,
-  venueName,
-  venueAddress,
-  venueMapUrl,
-  additionalInfo,
-  photos,
-}: SakeenaTemplateProps) => {
-  // Extract first names for display
-  const brideFirstName = brideNickname || brideName.split(" ")[0];
-  const groomFirstName = groomNickname || groomName.split(" ")[0];
+  // Extract first names for closing section (used in line 269)
+  const brideFirstName = brideNickname || brideFullName.split(" ")[0];
+  const groomFirstName = groomNickname || groomFullName.split(" ")[0];
 
-  // Format date
-  const formattedDate = format(new Date(eventDate), "EEEE, dd MMMM yyyy", {
+  // Format dates
+  const formattedAkadDate = akadDate ? format(new Date(akadDate), "EEEE, dd MMMM yyyy", {
     locale: idLocale,
-  });
+  }) : "";
+  
+  const formattedReceptionDate = receptionDate ? format(new Date(receptionDate), "EEEE, dd MMMM yyyy", {
+    locale: idLocale,
+  }) : "";
 
   useEffect(() => {
     // Scroll to top on mount
@@ -53,9 +56,9 @@ export const SakeenaTemplate = ({
         <div className="sakeena-hero-content">
           <div className="sakeena-bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
           <h1 className="sakeena-couple-names">
-            {brideFirstName} & {groomFirstName}
+            {brideNickname} & {groomNickname}
           </h1>
-          <div className="sakeena-date-badge">{formattedDate}</div>
+          <div className="sakeena-date-badge">{formattedAkadDate}</div>
         </div>
         <div className="sakeena-scroll-indicator">
           <div className="sakeena-scroll-arrow"></div>
@@ -94,15 +97,16 @@ export const SakeenaTemplate = ({
           <div className="sakeena-couple-grid">
             <div className="sakeena-couple-card">
               <div className="sakeena-couple-photo-wrapper">
-                {photos[0] && (
+                {(preweddingPhoto || photos[0]) && (
                   <img
-                    src={photos[0]}
-                    alt={brideName}
+                    src={preweddingPhoto || photos[0]}
+                    alt={brideFullName}
                     className="sakeena-couple-photo"
                   />
                 )}
               </div>
-              <h3 className="sakeena-couple-name">{brideName}</h3>
+              <h3 className="sakeena-couple-name">{brideFullName}</h3>
+              {brideParents && <p className="sakeena-couple-parents">{brideParents}</p>}
               <p className="sakeena-couple-title">Mempelai Wanita</p>
             </div>
 
@@ -110,15 +114,16 @@ export const SakeenaTemplate = ({
 
             <div className="sakeena-couple-card">
               <div className="sakeena-couple-photo-wrapper">
-                {photos[1] && (
+                {(preweddingPhoto || photos[1]) && (
                   <img
-                    src={photos[1]}
-                    alt={groomName}
+                    src={preweddingPhoto || photos[1]}
+                    alt={groomFullName}
                     className="sakeena-couple-photo"
                   />
                 )}
               </div>
-              <h3 className="sakeena-couple-name">{groomName}</h3>
+              <h3 className="sakeena-couple-name">{groomFullName}</h3>
+              {groomParents && <p className="sakeena-couple-parents">{groomParents}</p>}
               <p className="sakeena-couple-title">Mempelai Pria</p>
             </div>
           </div>
@@ -130,44 +135,86 @@ export const SakeenaTemplate = ({
         <div className="sakeena-container">
           <h2 className="sakeena-section-title">Waktu & Tempat</h2>
 
+          {/* Akad Nikah */}
           <div className="sakeena-event-card">
+            <h4 className="sakeena-event-title">Akad Nikah</h4>
             <div className="sakeena-event-icon-wrapper">
               <Calendar className="sakeena-event-icon" />
             </div>
             <div className="sakeena-event-details">
               <h3 className="sakeena-event-label">Tanggal</h3>
-              <p className="sakeena-event-value">{formattedDate}</p>
+              <p className="sakeena-event-value">{formattedAkadDate}</p>
             </div>
           </div>
 
-          {eventTime && (
+          {akadTime && (
             <div className="sakeena-event-card">
               <div className="sakeena-event-icon-wrapper">
                 <Clock className="sakeena-event-icon" />
               </div>
               <div className="sakeena-event-details">
                 <h3 className="sakeena-event-label">Waktu</h3>
-                <p className="sakeena-event-value">{eventTime} WIB</p>
+                <p className="sakeena-event-value">{akadTime} WIB</p>
               </div>
             </div>
           )}
 
-          <div className="sakeena-event-card">
-            <div className="sakeena-event-icon-wrapper">
-              <MapPin className="sakeena-event-icon" />
+          {akadLocation && (
+            <div className="sakeena-event-card">
+              <div className="sakeena-event-icon-wrapper">
+                <MapPin className="sakeena-event-icon" />
+              </div>
+              <div className="sakeena-event-details">
+                <h3 className="sakeena-event-label">Tempat</h3>
+                <p className="sakeena-event-value">{akadLocation}</p>
+              </div>
             </div>
-            <div className="sakeena-event-details">
-              <h3 className="sakeena-event-label">Tempat</h3>
-              <p className="sakeena-event-value">{venueName}</p>
-              {venueAddress && (
-                <p className="sakeena-event-address">{venueAddress}</p>
-              )}
-            </div>
-          </div>
+          )}
 
-          {venueMapUrl && (
+          {/* Reception */}
+          {receptionDate && (
+            <>
+              <div className="sakeena-event-divider"></div>
+              <div className="sakeena-event-card">
+                <h4 className="sakeena-event-title">Resepsi</h4>
+                <div className="sakeena-event-icon-wrapper">
+                  <Calendar className="sakeena-event-icon" />
+                </div>
+                <div className="sakeena-event-details">
+                  <h3 className="sakeena-event-label">Tanggal</h3>
+                  <p className="sakeena-event-value">{formattedReceptionDate}</p>
+                </div>
+              </div>
+
+              {receptionTime && (
+                <div className="sakeena-event-card">
+                  <div className="sakeena-event-icon-wrapper">
+                    <Clock className="sakeena-event-icon" />
+                  </div>
+                  <div className="sakeena-event-details">
+                    <h3 className="sakeena-event-label">Waktu</h3>
+                    <p className="sakeena-event-value">{receptionTime} WIB</p>
+                  </div>
+                </div>
+              )}
+
+              {receptionLocation && (
+                <div className="sakeena-event-card">
+                  <div className="sakeena-event-icon-wrapper">
+                    <MapPin className="sakeena-event-icon" />
+                  </div>
+                  <div className="sakeena-event-details">
+                    <h3 className="sakeena-event-label">Tempat</h3>
+                    <p className="sakeena-event-value">{receptionLocation}</p>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {gmapsLink && (
             <a
-              href={venueMapUrl}
+              href={gmapsLink}
               target="_blank"
               rel="noopener noreferrer"
               className="sakeena-map-button"

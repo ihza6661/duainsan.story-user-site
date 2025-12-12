@@ -30,13 +30,13 @@ const Footer = () => {
     <footer className="bg-background pt-8 sm:pt-16 pb-8 border-t border-border">
       <div className="px-4 sm:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 mb-12 gap-4 sm:gap-8">
-          {/* Products Section (Now Dynamic) */}
+          {/* Solusi Section (Now Dynamic) */}
           <div>
             <button
               className="sm:border-none border-b pb-8 sm:pb-0 border-border w-full flex items-center justify-between text-left text-lg uppercase mb-4 font-normal tracking-widest md:cursor-default md:pointer-events-none text-foreground"
               onClick={() => toggleSection("products")}
             >
-              Produk
+              Solusi
               <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2">
                 {openSection === "products" ? "−" : "+"}
               </span>

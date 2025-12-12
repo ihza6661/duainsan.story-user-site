@@ -132,17 +132,19 @@ const ProductHero: FC<ProductHeroProps> = ({ product, onAddToCart }) => {
         </div>
 
         <div className="mb-4">
-          <div className="text-lg text-muted-foreground">
-            Harga Satuan:
-            {!activeVariant && <span className="text-sm"> Mulai dari </span>}
-            {new Intl.NumberFormat("id-ID", {
-              style: "currency",
-              currency: "IDR",
-              minimumFractionDigits: 0,
-            }).format(pricePerItem)}
-          </div>
+          {product.product_type !== 'digital' && (
+            <div className="text-lg text-muted-foreground">
+              Harga Satuan:
+              {!activeVariant && <span className="text-sm"> Mulai dari </span>}
+              {new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0,
+              }).format(pricePerItem)}
+            </div>
+          )}
           <div className="text-2xl pt-1">
-            Total:{" "}
+            {product.product_type === 'digital' ? 'Harga' : 'Total'}:{" "}
             {new Intl.NumberFormat("id-ID", {
               style: "currency",
               currency: "IDR",

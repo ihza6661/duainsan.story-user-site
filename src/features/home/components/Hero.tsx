@@ -13,8 +13,8 @@ const phoneNumber = "+6283151770146";
 
 // Hero video
 const heroVideo = {
-  src: "/hero/hero.mp4",
-  poster: "/hero/1.jpg", // Fallback poster image
+  src: "/hero/hero_neo.mp4",
+  poster: "/hero/hero_fallback.png", // Fallback image
   alt: "Elegant Wedding Invitation Hero",
 };
 
@@ -179,7 +179,40 @@ export const Hero = () => {
                 className="group inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all px-6 py-3 rounded-full shadow-lg text-sm font-medium relative overflow-hidden"
               >
                 <ShoppingBag className="w-5 h-5" />
-                <span>Lihat Koleksi</span>
+                <span>Undangan Cetak</span>
+
+                {/* Slide arrow on hover */}
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  whileHover={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute right-4"
+                >
+                  →
+                </motion.div>
+              </motion.a>
+
+              {/* Digital Templates CTA */}
+              <motion.a
+                href="/digital-templates"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="group inline-flex items-center gap-2 bg-accent text-accent-foreground hover:bg-accent/90 transition-all px-6 py-3 rounded-full shadow-lg text-sm font-medium relative overflow-hidden"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <span>Template Digital</span>
 
                 {/* Slide arrow on hover */}
                 <motion.div
@@ -206,49 +239,6 @@ export const Hero = () => {
               </span>
             </motion.div>
           </motion.div>
-
-          {/* Decorative Floating Cards */}
-          <div className="relative hidden lg:block">
-            {/* Main floating card */}
-            <motion.div
-              initial={{ opacity: 0, x: 50, rotate: 5 }}
-              animate={{ opacity: 1, x: 0, rotate: 3 }}
-              transition={{ delay: 1, duration: 1, ease: "easeOut" }}
-              whileHover={{ opacity: 1, rotate: 0, scale: 1.05 }}
-              className="relative w-80 h-96 rounded-2xl overflow-hidden shadow-2xl transform opacity-60"
-            >
-              <img
-                src="/hero/8.webp"
-                alt="Invitation Sample"
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-
-            {/* Secondary smaller card */}
-            <motion.div
-              initial={{ opacity: 0, x: 30, rotate: -5 }}
-              animate={{ opacity: 1, x: 0, rotate: -8 }}
-              transition={{ delay: 1.3, duration: 1, ease: "easeOut" }}
-              whileHover={{ opacity: 1, rotate: -3, scale: 1.05 }}
-              className="absolute -bottom-10 -left-10 w-48 h-64 rounded-xl overflow-hidden shadow-xl transform opacity-60"
-            >
-              <img
-                src="/hero/5.webp"
-                alt="Featured Design"
-                className="w-full h-full object-cover"
-              />
-            </motion.div>
-
-            {/* Floating badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 2, duration: 0.5, type: "spring" }}
-              className="absolute -top-5 -right-5 bg-accent text-accent-foreground px-4 py-2 rounded-full shadow-lg text-sm font-semibold z-10"
-            >
-              🎉 Best Seller
-            </motion.div>
-          </div>
         </div>
       </div>
 

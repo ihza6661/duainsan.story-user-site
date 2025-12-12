@@ -2,88 +2,77 @@ import { useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { format } from "date-fns";
-import { 
-  ArrowLeft, 
-  Save, 
-  Eye, 
-  EyeOff, 
-  Upload, 
-  X, 
+import {
+  ArrowLeft,
+  Save,
+  Eye,
+  EyeOff,
+  Upload,
+  X,
   Loader2,
-  CheckCircle,
+  Share2,
+  AlertCircle,
   Calendar,
-  MapPin,
-  User,
-  Clock
+  Edit,
+  Check,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/buttons/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/utils/card";
-import { Input } from "@/components/ui/forms/input";
-import { Label } from "@/components/ui/forms/label";
-import { Textarea } from "@/components/ui/forms/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/utils/card";
 import { toast } from "@/hooks/ui/use-toast";
 import { Badge } from "@/components/ui/utils/badge";
-import { Separator } from "@/components/ui/layout-ui/separator";
-import { digitalInvitationService, type CustomizationData } from "@/features/digital-invitations/services/digitalInvitationService";
-
-// Form validation schema
-const invitationSchema = z.object({
-  bride_name: z.string().min(1, "Nama mempelai wanita harus diisi").max(255),
-  groom_name: z.string().min(1, "Nama mempelai pria harus diisi").max(255),
-  event_date: z.string().min(1, "Tanggal acara harus diisi"),
-  event_time: z.string().optional(),
-  venue_name: z.string().min(1, "Nama tempat harus diisi").max(255),
-  venue_address: z.string().optional(),
-  venue_map_url: z.string().url("URL peta tidak valid").optional().or(z.literal("")),
-  additional_info: z.string().max(2000).optional(),
-});
-
-type InvitationFormData = z.infer<typeof invitationSchema>;
+import { Form } from "@/components/ui/forms/form";
+import { Alert, AlertDescription } from "@/components/ui/feedback/alert";
+import { digitalInvitationService } from "@/features/digital-invitations/services/digitalInvitationService";
+import { DynamicFormGenerator } from "@/features/digital-invitations/components/DynamicFormGenerator";
+import { ExportButtons } from "@/features/digital-invitations/components/export/ExportButtons";
+import { ColorThemeSelector } from "@/features/digital-invitations/components/ColorThemeSelector";
+import { ScheduleActivationDialog } from "@/features/digital-invitations/components/ScheduleActivationDialog";
+import { format } from "date-fns";
+import { id as localeId } from "date-fns/locale";
 
 const EditInvitationPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [editingSlug, setEditingSlug] = useState(false);
+  const [newSlug, setNewSlug] = useState("");
 
   // Fetch invitation data
-  const { data: invitation, isLoading } = useQuery({
+  const { data: invitation, isLoading: invitationLoading } = useQuery({
     queryKey: ["invitation", id],
     queryFn: () => digitalInvitationService.getInvitationById(Number(id)),
     enabled: !!id,
   });
 
-  // Initialize form with invitation data
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isDirty },
-    reset,
-  } = useForm<InvitationFormData>({
-    resolver: zodResolver(invitationSchema),
-    values: invitation?.customization_data
-      ? {
-          bride_name: invitation.customization_data.bride_name || "",
-          groom_name: invitation.customization_data.groom_name || "",
-          event_date: invitation.customization_data.event_date || "",
-          event_time: invitation.customization_data.event_time || "",
-          venue_name: invitation.customization_data.venue_name || "",
-          venue_address: invitation.customization_data.venue_address || "",
-          venue_map_url: invitation.customization_data.venue_map_url || "",
-          additional_info: invitation.customization_data.additional_info || "",
-        }
-      : undefined,
+  // Fetch template fields for dynamic form
+  const { data: templateFields, isLoading: fieldsLoading } = useQuery({
+    queryKey: ["template-fields", invitation?.template?.id],
+    queryFn: () =>
+      digitalInvitationService.getTemplateFields(invitation!.template.id),
+    enabled: !!invitation?.template?.id,
+  });
+
+  // Initialize form with dynamic default values
+  const form = useForm({
+    defaultValues: invitation?.customization_data?.custom_fields || {},
+    values: invitation?.customization_data?.custom_fields || {},
   });
 
   // Update customization mutation
   const updateMutation = useMutation({
-    mutationFn: (data: CustomizationData) =>
-      digitalInvitationService.updateCustomization(Number(id), data),
+    mutationFn: (data: Record<string, any>) =>
+      digitalInvitationService.updateCustomization(Number(id), {
+        custom_fields: data,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invitation", id] });
       queryClient.invalidateQueries({ queryKey: ["my-invitations"] });
@@ -91,7 +80,7 @@ const EditInvitationPage = () => {
         title: "Berhasil disimpan",
         description: "Data undangan berhasil diperbarui",
       });
-      reset(undefined, { keepValues: true });
+      form.reset(form.getValues(), { keepValues: true });
     },
     onError: () => {
       toast({
@@ -137,13 +126,14 @@ const EditInvitationPage = () => {
 
   // Photo upload mutation
   const uploadPhotoMutation = useMutation({
-    mutationFn: (file: File) =>
-      digitalInvitationService.uploadPhoto(Number(id), file),
-    onSuccess: () => {
+    mutationFn: ({ file, photoType }: { file: File; photoType?: 'bride' | 'groom' }) =>
+      digitalInvitationService.uploadPhoto(Number(id), file, photoType),
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["invitation", id] });
+      const typeLabel = data.photo_type === 'bride' ? 'Mempelai Wanita' : data.photo_type === 'groom' ? 'Mempelai Pria' : '';
       toast({
         title: "Foto berhasil diunggah",
-        description: "Foto telah ditambahkan ke undangan",
+        description: typeLabel ? `Foto ${typeLabel} telah ditambahkan` : "Foto telah ditambahkan ke undangan",
       });
     },
     onError: () => {
@@ -168,19 +158,40 @@ const EditInvitationPage = () => {
     },
   });
 
-  const onSubmit = (data: InvitationFormData) => {
+  // Update slug mutation
+  const updateSlugMutation = useMutation({
+    mutationFn: (slug: string) =>
+      digitalInvitationService.updateSlug(Number(id), slug),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["invitation", id] });
+      queryClient.invalidateQueries({ queryKey: ["my-invitations"] });
+      setEditingSlug(false);
+      setNewSlug("");
+      toast({
+        title: "URL berhasil diperbarui",
+        description: `URL undangan telah diubah dari "${data.old_slug}" menjadi "${data.slug}"`,
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Gagal memperbarui URL",
+        description: error.response?.data?.errors?.slug?.[0] || error.response?.data?.message || "Terjadi kesalahan",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: Record<string, any>) => {
     updateMutation.mutate(data);
   };
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>, photoType?: 'bride' | 'groom') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     setUploadingPhoto(true);
     try {
-      for (const file of files) {
-        await uploadPhotoMutation.mutateAsync(file);
-      }
+      await uploadPhotoMutation.mutateAsync({ file, photoType });
     } finally {
       setUploadingPhoto(false);
       e.target.value = ""; // Reset input
@@ -188,18 +199,55 @@ const EditInvitationPage = () => {
   };
 
   const handleActivate = () => {
-    if (!invitation?.customization_data?.bride_name || !invitation?.customization_data?.groom_name) {
+    activateMutation.mutate();
+  };
+
+  const handleCopyLink = () => {
+    if (invitation?.public_url) {
+      navigator.clipboard.writeText(invitation.public_url);
       toast({
-        title: "Data belum lengkap",
-        description: "Lengkapi nama mempelai terlebih dahulu",
+        title: "Link disalin",
+        description: "Link undangan berhasil disalin ke clipboard",
+      });
+    }
+  };
+
+  const handlePreview = () => {
+    if (invitation?.slug) {
+      // Open preview in new tab
+      window.open(`/undangan/${invitation.slug}`, "_blank");
+    }
+  };
+
+  const handleEditSlug = () => {
+    setNewSlug(invitation?.slug || "");
+    setEditingSlug(true);
+  };
+
+  const handleCancelEditSlug = () => {
+    setEditingSlug(false);
+    setNewSlug("");
+  };
+
+  const handleSaveSlug = () => {
+    if (!newSlug.trim()) {
+      toast({
+        title: "URL tidak boleh kosong",
+        description: "Silakan masukkan URL yang valid",
         variant: "destructive",
       });
       return;
     }
-    activateMutation.mutate();
+
+    if (newSlug === invitation?.slug) {
+      setEditingSlug(false);
+      return;
+    }
+
+    updateSlugMutation.mutate(newSlug.trim().toLowerCase());
   };
 
-  if (isLoading) {
+  if (invitationLoading || fieldsLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
@@ -214,7 +262,9 @@ const EditInvitationPage = () => {
       <div className="container mx-auto px-4 py-8">
         <Card className="text-center py-12">
           <CardContent>
-            <h3 className="text-lg font-semibold mb-2">Undangan tidak ditemukan</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              Undangan tidak ditemukan
+            </h3>
             <Link to="/my-invitations">
               <Button variant="outline" className="mt-4">
                 Kembali ke Daftar Undangan
@@ -228,185 +278,80 @@ const EditInvitationPage = () => {
 
   const photoUrls = invitation.customization_data?.photo_urls || [];
   const isActive = invitation.status === "active";
+  const isDirty = form.formState.isDirty;
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen">
-      {/* Header */}
-      <div className="mb-6">
-        <Link to="/my-invitations">
-          <Button variant="ghost" size="sm" className="mb-4">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Kembali
-          </Button>
-        </Link>
-        
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Edit Undangan</h1>
-            <p className="text-muted-foreground">
-              Template: {invitation.template.name}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {isActive ? (
-              <Badge className="bg-green-500">Aktif</Badge>
-            ) : (
-              <Badge variant="secondary">Draft</Badge>
-            )}
+    <div className="min-h-screen bg-background py-20 sm:py-28">
+      <div className="container mx-auto px-4">
+        {/* <div className="container mx-auto px-4 py-8 min-h-screen"> */}
+        {/* Header */}
+        <div className="mb-6">
+          <Link to="/my-invitations">
+            <Button variant="ghost" size="sm" className="mb-4">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Kembali
+            </Button>
+          </Link>
+
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-3xl font-bold mb-2">Edit Undangan</h1>
+              <p className="text-muted-foreground">
+                Template: {invitation.template.name}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {isActive ? (
+                <Badge className="bg-green-500">Aktif</Badge>
+              ) : (
+                <Badge variant="secondary">Draft</Badge>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Form */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Informasi Mempelai</CardTitle>
-              <CardDescription>
-                Isi data mempelai untuk ditampilkan di undangan
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="bride_name">
-                      <User className="h-4 w-4 inline mr-2" />
-                      Nama Mempelai Wanita *
-                    </Label>
-                    <Input
-                      id="bride_name"
-                      placeholder="Contoh: Siti Aisyah"
-                      {...register("bride_name")}
-                    />
-                    {errors.bride_name && (
-                      <p className="text-sm text-destructive">
-                        {errors.bride_name.message}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Form */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Alert for unsaved changes */}
+            {isDirty && (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Anda memiliki perubahan yang belum disimpan. Klik "Simpan
+                  Perubahan" untuk menyimpan.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Dynamic Form */}
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
+                {templateFields?.fields && templateFields.fields.length > 0 ? (
+                  <DynamicFormGenerator
+                    fields={templateFields.fields}
+                    form={form}
+                  />
+                ) : (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <p className="text-muted-foreground">
+                        Template ini belum memiliki field kustomisasi.
                       </p>
-                    )}
-                  </div>
+                    </CardContent>
+                  </Card>
+                )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="groom_name">
-                      <User className="h-4 w-4 inline mr-2" />
-                      Nama Mempelai Pria *
-                    </Label>
-                    <Input
-                      id="groom_name"
-                      placeholder="Contoh: Ahmad Fauzi"
-                      {...register("groom_name")}
-                    />
-                    {errors.groom_name && (
-                      <p className="text-sm text-destructive">
-                        {errors.groom_name.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="event_date">
-                      <Calendar className="h-4 w-4 inline mr-2" />
-                      Tanggal Acara *
-                    </Label>
-                    <Input
-                      id="event_date"
-                      type="date"
-                      {...register("event_date")}
-                    />
-                    {errors.event_date && (
-                      <p className="text-sm text-destructive">
-                        {errors.event_date.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="event_time">
-                      <Clock className="h-4 w-4 inline mr-2" />
-                      Waktu Acara
-                    </Label>
-                    <Input
-                      id="event_time"
-                      type="time"
-                      placeholder="Contoh: 10:00"
-                      {...register("event_time")}
-                    />
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <Label htmlFor="venue_name">
-                    <MapPin className="h-4 w-4 inline mr-2" />
-                    Nama Tempat *
-                  </Label>
-                  <Input
-                    id="venue_name"
-                    placeholder="Contoh: Masjid Raya Jakarta"
-                    {...register("venue_name")}
-                  />
-                  {errors.venue_name && (
-                    <p className="text-sm text-destructive">
-                      {errors.venue_name.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="venue_address">Alamat Lengkap</Label>
-                  <Textarea
-                    id="venue_address"
-                    placeholder="Contoh: Jl. Raya Jakarta No. 123, Jakarta Pusat"
-                    rows={2}
-                    {...register("venue_address")}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="venue_map_url">Google Maps URL</Label>
-                  <Input
-                    id="venue_map_url"
-                    type="url"
-                    placeholder="https://maps.google.com/..."
-                    {...register("venue_map_url")}
-                  />
-                  {errors.venue_map_url && (
-                    <p className="text-sm text-destructive">
-                      {errors.venue_map_url.message}
-                    </p>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    Buka Google Maps, klik "Bagikan", lalu salin tautannya
-                  </p>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-2">
-                  <Label htmlFor="additional_info">Informasi Tambahan</Label>
-                  <Textarea
-                    id="additional_info"
-                    placeholder="Contoh: Dress code, protokol kesehatan, dll"
-                    rows={3}
-                    {...register("additional_info")}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Maksimal 2000 karakter
-                  </p>
-                </div>
-
-                <div className="flex gap-2">
+                {/* Save Button */}
+                <div className="flex justify-end">
                   <Button
                     type="submit"
                     disabled={!isDirty || updateMutation.isPending}
-                    className="flex-1"
+                    className="w-full md:w-auto"
                   >
                     {updateMutation.isPending ? (
                       <>
@@ -422,159 +367,446 @@ const EditInvitationPage = () => {
                   </Button>
                 </div>
               </form>
-            </CardContent>
-          </Card>
+            </Form>
 
-          {/* Photo Upload */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Foto Undangan</CardTitle>
-              <CardDescription>
-                Upload hingga 5 foto (max 5MB per foto)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {photoUrls.map((url, index) => (
-                  <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-muted group">
-                    <img
-                      src={url}
-                      alt={`Foto ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <Button
-                      size="icon"
-                      variant="destructive"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => deletePhotoMutation.mutate(index)}
-                      disabled={deletePhotoMutation.isPending}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-
-                {photoUrls.length < 5 && (
-                  <label className="relative aspect-square rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors cursor-pointer flex flex-col items-center justify-center gap-2">
-                    <Upload className="h-8 w-8 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">
-                      Upload Foto
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="sr-only"
-                      onChange={handleFileSelect}
-                      disabled={uploadingPhoto}
-                    />
-                  </label>
-                )}
-              </div>
-
-              {uploadingPhoto && (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary mr-2" />
-                  <span className="text-sm text-muted-foreground">
-                    Mengunggah foto...
-                  </span>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Status Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Status Undangan</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Status:</span>
-                {isActive ? (
-                  <Badge className="bg-green-500">Aktif</Badge>
-                ) : (
-                  <Badge variant="secondary">Draft</Badge>
-                )}
-              </div>
-
-              {isActive && (
-                <>
-                  <Separator />
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Views:</span>
-                      <span className="font-medium">{invitation.view_count}</span>
+            {/* Photo Upload Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Foto Mempelai</CardTitle>
+                <CardDescription>
+                  Upload foto mempelai wanita dan pria (maksimal 5MB per foto)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Bride Photo */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-medium">Foto Mempelai Wanita</h3>
+                      {photoUrls.find(p => p.type === 'bride') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const brideIndex = photoUrls.findIndex(p => p.type === 'bride');
+                            if (brideIndex !== -1) deletePhotoMutation.mutate(brideIndex);
+                          }}
+                          className="text-xs text-red-500 hover:text-red-700"
+                        >
+                          Hapus
+                        </button>
+                      )}
                     </div>
-                    {invitation.expires_at && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Berlaku hingga:</span>
-                        <span className="font-medium">
-                          {format(new Date(invitation.expires_at), "dd/MM/yyyy")}
-                        </span>
+                    
+                    {photoUrls.find(p => p.type === 'bride') ? (
+                      <div className="relative group aspect-square max-w-xs mx-auto">
+                        <img
+                          src={photoUrls.find(p => p.type === 'bride')?.url}
+                          alt="Foto Mempelai Wanita"
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
+                    ) : (
+                      <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileSelect(e, 'bride')}
+                          className="hidden"
+                          id="bride-photo-upload"
+                          disabled={uploadingPhoto}
+                        />
+                        <label htmlFor="bride-photo-upload">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            disabled={uploadingPhoto}
+                            asChild
+                          >
+                            <span className="cursor-pointer">
+                              {uploadingPhoto ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Mengunggah...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  Pilih Foto Mempelai Wanita
+                                </>
+                              )}
+                            </span>
+                          </Button>
+                        </label>
                       </div>
                     )}
                   </div>
-                </>
-              )}
 
-              <Separator />
+                  {/* Divider */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                  </div>
 
-              {isActive ? (
-                <div className="space-y-2">
-                  <Link to={invitation.public_url} target="_blank" rel="noopener noreferrer" className="block">
-                    <Button variant="outline" className="w-full">
-                      <Eye className="h-4 w-4 mr-2" />
-                      Lihat Undangan
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="destructive"
-                    className="w-full"
-                    onClick={() => deactivateMutation.mutate()}
-                    disabled={deactivateMutation.isPending}
-                  >
-                    {deactivateMutation.isPending ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {/* Groom Photo */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-medium">Foto Mempelai Pria</h3>
+                      {photoUrls.find(p => p.type === 'groom') && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const groomIndex = photoUrls.findIndex(p => p.type === 'groom');
+                            if (groomIndex !== -1) deletePhotoMutation.mutate(groomIndex);
+                          }}
+                          className="text-xs text-red-500 hover:text-red-700"
+                        >
+                          Hapus
+                        </button>
+                      )}
+                    </div>
+                    
+                    {photoUrls.find(p => p.type === 'groom') ? (
+                      <div className="relative group aspect-square max-w-xs mx-auto">
+                        <img
+                          src={photoUrls.find(p => p.type === 'groom')?.url}
+                          alt="Foto Mempelai Pria"
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
                     ) : (
-                      <EyeOff className="h-4 w-4 mr-2" />
+                      <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileSelect(e, 'groom')}
+                          className="hidden"
+                          id="groom-photo-upload"
+                          disabled={uploadingPhoto}
+                        />
+                        <label htmlFor="groom-photo-upload">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            disabled={uploadingPhoto}
+                            asChild
+                          >
+                            <span className="cursor-pointer">
+                              {uploadingPhoto ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Mengunggah...
+                                </>
+                              ) : (
+                                <>
+                                  <Upload className="h-4 w-4 mr-2" />
+                                  Pilih Foto Mempelai Pria
+                                </>
+                              )}
+                            </span>
+                          </Button>
+                        </label>
+                      </div>
                     )}
-                    Nonaktifkan
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  className="w-full"
-                  onClick={handleActivate}
-                  disabled={activateMutation.isPending}
-                >
-                  {activateMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                  )}
-                  Aktifkan Undangan
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+                  </div>
 
-          {/* Help Card */}
-          <Card className="bg-muted/50">
-            <CardHeader>
-              <CardTitle className="text-lg">💡 Tips</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm space-y-2 text-muted-foreground">
-              <p>• Pastikan semua data terisi dengan benar sebelum mengaktifkan</p>
-              <p>• Foto dengan rasio 1:1 (persegi) akan tampil lebih baik</p>
-              <p>• Link Google Maps membantu tamu menemukan lokasi</p>
-              <p>• Undangan dapat dinonaktifkan kapan saja</p>
-            </CardContent>
-          </Card>
+                  {/* Additional Photos (optional) */}
+                  {photoUrls.filter(p => !p.type || (p.type !== 'bride' && p.type !== 'groom')).length > 0 && (
+                    <>
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Foto Tambahan
+                          </span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {photoUrls.filter(p => !p.type || (p.type !== 'bride' && p.type !== 'groom')).map((photo, idx) => {
+                          const originalIndex = photoUrls.findIndex(p => p.url === photo.url);
+                          return (
+                            <div key={idx} className="relative group aspect-square">
+                              <img
+                                src={photo.url}
+                                alt={`Foto ${idx + 1}`}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => deletePhotoMutation.mutate(originalIndex)}
+                                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Activation Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Status Undangan</CardTitle>
+                <CardDescription>
+                  {isActive
+                    ? "Undangan Anda dapat diakses publik"
+                    : "Aktifkan untuk mulai membagikan"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Scheduled Activation Alert */}
+                {invitation.scheduled_activation_at && !isActive && (
+                  <Alert className="bg-primary/5 border-primary/20">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <AlertDescription className="text-sm">
+                      <strong>Dijadwalkan untuk aktif pada:</strong>
+                      <br />
+                      {format(
+                        new Date(invitation.scheduled_activation_at),
+                        "EEEE, dd MMMM yyyy 'pukul' HH:mm",
+                        { locale: localeId }
+                      )}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="flex flex-col gap-2">
+                  {isActive ? (
+                    <>
+                      <Button
+                        variant="outline"
+                        onClick={() =>
+                          window.open(invitation.public_url, "_blank")
+                        }
+                        className="w-full"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Lihat Undangan
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleCopyLink}
+                        className="w-full"
+                      >
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Salin Link
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => deactivateMutation.mutate()}
+                        disabled={deactivateMutation.isPending}
+                        className="w-full"
+                      >
+                        <EyeOff className="h-4 w-4 mr-2" />
+                        Nonaktifkan
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      {/* Preview Button */}
+                      <Button
+                        variant="outline"
+                        onClick={handlePreview}
+                        className="w-full"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview Undangan
+                      </Button>
+
+                      {/* Activate Now Button */}
+                      <Button
+                        onClick={handleActivate}
+                        disabled={activateMutation.isPending}
+                        className="w-full"
+                      >
+                        {activateMutation.isPending ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Mengaktifkan...
+                          </>
+                        ) : (
+                          <>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Aktifkan Sekarang
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Schedule Activation Button */}
+                      <Button
+                        variant="secondary"
+                        onClick={() => setScheduleDialogOpen(true)}
+                        className="w-full"
+                      >
+                        <Calendar className="h-4 w-4 mr-2" />
+                        {invitation.scheduled_activation_at
+                          ? "Ubah Jadwal Aktivasi"
+                          : "Jadwalkan Aktivasi"}
+                      </Button>
+                    </>
+                  )}
+                </div>
+
+                {isActive && invitation.public_url && (
+                  <div className="mt-4">
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Link Undangan:
+                    </p>
+                    <code className="block p-2 bg-muted rounded text-xs break-all">
+                      {invitation.public_url}
+                    </code>
+                  </div>
+                )}
+
+                {/* URL/Slug Editor */}
+                <div className="mt-4 pt-4 border-t">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-medium">URL Undangan</p>
+                    {!editingSlug && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleEditSlug}
+                        className="h-7 text-xs"
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        Edit URL
+                      </Button>
+                    )}
+                  </div>
+
+                  {editingSlug ? (
+                    <div className="space-y-3">
+                      <Alert className="bg-amber-50 border-amber-200 dark:bg-amber-950/20">
+                        <AlertCircle className="h-4 w-4 text-amber-600" />
+                        <AlertDescription className="text-xs text-amber-800 dark:text-amber-200">
+                          <strong>Perhatian:</strong> Mengubah URL akan membuat link lama tidak dapat diakses. 
+                          Pastikan untuk membagikan link baru kepada tamu.
+                        </AlertDescription>
+                      </Alert>
+
+                      <div className="space-y-2">
+                        <label className="text-xs text-muted-foreground">
+                          URL Slug (contoh: nama-mempelai-wedding)
+                        </label>
+                        <input
+                          type="text"
+                          value={newSlug}
+                          onChange={(e) => setNewSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+                          placeholder="contoh: ihza-iren-wedding"
+                          className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                          disabled={updateSlugMutation.isPending}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Preview: {window.location.origin}/undangan/<strong>{newSlug || 'url-anda'}</strong>
+                        </p>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={handleSaveSlug}
+                          disabled={updateSlugMutation.isPending || !newSlug.trim()}
+                          className="flex-1"
+                        >
+                          {updateSlugMutation.isPending ? (
+                            <>
+                              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                              Menyimpan...
+                            </>
+                          ) : (
+                            <>
+                              <Check className="h-3 w-3 mr-1" />
+                              Simpan URL
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleCancelEditSlug}
+                          disabled={updateSlugMutation.isPending}
+                        >
+                          <X className="h-3 w-3 mr-1" />
+                          Batal
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <code className="block p-2 bg-muted rounded text-xs break-all">
+                        /undangan/{invitation?.slug}
+                      </code>
+                      <p className="text-xs text-muted-foreground">
+                        Klik "Edit URL" untuk mengubah alamat undangan
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t space-y-2 text-sm text-muted-foreground">
+                  <p>👁️ Total views: {invitation.view_count}</p>
+                  {invitation.expires_at && (
+                    <p>
+                      ⏰ Aktif hingga:{" "}
+                      {new Date(invitation.expires_at).toLocaleDateString(
+                        "id-ID",
+                      )}
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Export Card */}
+            {isActive && (
+              <ExportButtons
+                invitationId={Number(id)}
+                disabled={!isActive}
+              />
+            )}
+
+            {/* Color Theme Card */}
+            <ColorThemeSelector
+              invitationId={Number(id)}
+              disabled={!isActive}
+            />
+
+            {/* Info Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Tips</CardTitle>
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground space-y-2">
+                <p>• Isi semua field yang wajib (*) sebelum mengaktifkan</p>
+                <p>• Upload foto berkualitas baik untuk hasil terbaik</p>
+                <p>• Periksa kembali tanggal dan waktu acara</p>
+                <p>• Link Google Maps membantu tamu menemukan lokasi</p>
+                {isActive && (
+                  <p>• Unduh PDF untuk mencetak atau membagikan offline</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
+
+        {/* Schedule Activation Dialog */}
+        <ScheduleActivationDialog
+          open={scheduleDialogOpen}
+          onOpenChange={setScheduleDialogOpen}
+          invitationId={Number(id)}
+          currentScheduledAt={invitation?.scheduled_activation_at}
+        />
       </div>
     </div>
   );

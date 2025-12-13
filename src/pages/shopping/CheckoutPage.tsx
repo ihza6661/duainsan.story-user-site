@@ -206,10 +206,11 @@ const CheckoutPage = () => {
       }
     };
 
-    if (!isDigitalOnly) {
+    // Only fetch shipping cost for rajaongkir method with physical products
+    if (!isDigitalOnly && shippingMethod === "rajaongkir") {
       fetchShippingCost();
     }
-  }, [cart, selectedCourier, toast, user, isDigitalOnly, hasPhysicalProducts]);
+  }, [cart, selectedCourier, shippingMethod, toast, user, isDigitalOnly, hasPhysicalProducts]);
 
   // Load Midtrans Script Dynamically
   useEffect(() => {
@@ -263,8 +264,8 @@ const CheckoutPage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Only require shipping for physical products
-    if (hasPhysicalProducts && shippingCost === 0 && cart && cart.total_weight > 0) {
+    // Only require shipping for physical products using rajaongkir
+    if (hasPhysicalProducts && shippingMethod === "rajaongkir" && shippingCost === 0 && cart && cart.total_weight > 0) {
       toast({
         title: "Pilih Layanan Pengiriman",
         description: "Anda harus memilih layanan pengiriman terlebih dahulu.",
@@ -941,7 +942,7 @@ const CheckoutPage = () => {
                     !user ||
                     !user.phone_number ||
                     !user.postal_code ||
-                    (shippingCost === 0 && cart && cart.total_weight > 0)
+                    (hasPhysicalProducts && shippingMethod === "rajaongkir" && shippingCost === 0 && cart && cart.total_weight > 0)
                   }
                 >
                   {isSubmitting && (

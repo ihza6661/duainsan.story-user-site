@@ -14,7 +14,7 @@ const phoneNumber = "+6283151770146";
 // Hero video
 const heroVideo = {
   src: "/hero/hero_neo.mp4",
-  poster: "/hero/hero_fallback.png", // Fallback image
+  // poster: "/hero/hero_fallback.png",
   alt: "Elegant Wedding Invitation Hero",
 };
 

@@ -11,7 +11,7 @@ import MetodePembayaran from "@/features/info/components/MetodePembayaran";
 import BestSeller from "@/features/product/components/categories/BestSeller";
 import { RecommendedProducts } from "@/features/recommendations";
 import OrderSteps from "@/pages/info/CaraMemesan";
-import { InstagramFeed } from "@/components/social/InstagramFeed";
+// import { InstagramFeed } from "@/components/social/InstagramFeed";
 
 const Home = () => {
   return (
@@ -24,7 +24,7 @@ const Home = () => {
       <WhyDuaInsan />
       <ExploreTheNewestTrend />
       <RecommendedProducts type="trending" limit={8} />
-      <InstagramFeed maxPosts={4} />
+      {/* <InstagramFeed maxPosts={4} /> */}
       <OrderSteps />
       <DuaInsanQuotes />
       <MetodePembayaran />

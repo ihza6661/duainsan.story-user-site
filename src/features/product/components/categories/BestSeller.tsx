@@ -8,8 +8,12 @@ import ProductCardSkeleton from "@/features/product/components/ProductCardSkelet
 
 const BestSeller = () => {
   // Fetch a general list of products from the API
-  const { data: productData, isLoading, isError } = useQuery({
-    queryKey: ['products', 'featured'], // Use a different key like 'featured' to cache this list separately
+  const {
+    data: productData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["products", "featured"], // Use a different key like 'featured' to cache this list separately
     queryFn: () => fetchProducts({}), // Fetch without any parameters
   });
 
@@ -17,16 +21,18 @@ const BestSeller = () => {
   const products = productData?.data.slice(0, 8) || [];
 
   return (
-    
-<div className="px-4 text-center">
+    <div className="px-4 text-center">
       <h2 className="inline-block text-lg sm:text-xl font-medium mb-4 sm:mb-6 uppercase tracking-widest mt-6 bg-background text-muted-foreground px-6 py-2 rounded-full shadow-sm">
-        Produk Andalan Kami
+        BestSeller
       </h2>
       <div className="flex space-x-5 overflow-x-scroll pb-6 sm:pb-10 custom-scrollbar">
         {isLoading ? (
           // Display skeletons while loading
           Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="flex-none w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/4 h-full">
+            <div
+              key={index}
+              className="flex-none w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/4 h-full"
+            >
               <ProductCardSkeleton />
             </div>
           ))

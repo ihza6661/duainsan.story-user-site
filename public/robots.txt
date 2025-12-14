@@ -1,4 +1,45 @@
+# robots.txt for Dua Insan Story
+# https://duainsanstory.eproject.tech
+
+# Allow all crawlers to access all content by default
+User-agent: *
+Allow: /
+
+# Disallow crawling of authentication pages
+Disallow: /login
+Disallow: /register
+
+# Disallow crawling of user-specific pages (logged-in users only)
+Disallow: /profile
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /my-reviews
+Disallow: /my-photos
+Disallow: /my-invitations
+Disallow: /notifications
+Disallow: /status-pesanan
+Disallow: /order-confirmation
+
+# Disallow crawling of cart (duplicate content)
+Disallow: /cart
+
+# Allow crawling of shared wishlist pages (public URLs)
+Allow: /wishlist/shared/
+
+# Allow crawling of public invitation pages
+Allow: /undangan/
+
+# Sitemap location
+Sitemap: https://duainsanstory.eproject.tech/sitemap.xml
+
+# Crawl-delay for polite crawlers (1 second between requests)
+Crawl-delay: 1
+
+# Specific rules for popular crawlers
 User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
 Allow: /
 
 User-agent: Bingbot
@@ -10,5 +51,3 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /

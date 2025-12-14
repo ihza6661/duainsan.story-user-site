@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/buttons/button';
+import * as Sentry from '@sentry/react';
 
 interface Props {
   children: ReactNode;
@@ -8,29 +9,46 @@ interface Props {
 interface State {
   hasError: boolean;
   error: Error | null;
+  eventId: string | null;
 }
 
 class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null,
+    eventId: null,
   };
 
   public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+    return { hasError: true, error, eventId: null };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log to error reporting service in production
+    // Log to Sentry in production
     if (import.meta.env.PROD) {
-      // TODO: Send to error tracking service (e.g., Sentry)
+      const eventId = Sentry.captureException(error, {
+        contexts: {
+          react: {
+            componentStack: errorInfo.componentStack,
+          },
+        },
+      });
+      this.setState({ eventId });
+    } else {
+      // Log to console in development
       console.error('Error boundary caught:', error, errorInfo);
     }
   }
 
   private handleReset = () => {
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, eventId: null });
     window.location.href = '/';
+  };
+
+  private handleReportFeedback = () => {
+    if (this.state.eventId) {
+      Sentry.showReportDialog({ eventId: this.state.eventId });
+    }
   };
 
   public render() {
@@ -65,6 +83,16 @@ class ErrorBoundary extends Component<Props, State> {
                 Muat Ulang Halaman
               </Button>
             </div>
+
+            {import.meta.env.PROD && this.state.eventId && (
+              <Button
+                variant="ghost"
+                onClick={this.handleReportFeedback}
+                className="w-full sm:w-auto text-sm"
+              >
+                Laporkan Masalah Ini
+              </Button>
+            )}
 
             <p className="text-sm text-muted-foreground">
               Jika masalah terus berlanjut, silakan hubungi tim dukungan kami.

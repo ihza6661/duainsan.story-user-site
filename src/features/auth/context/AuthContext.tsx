@@ -2,6 +2,8 @@
 
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { User, logoutUser } from '../services/auth/authService';
+import { setUser as setSentryUser } from '@/lib/sentry';
+import { trackLogin } from '@/lib/analytics';
 
 // --- Type Definitions & Context ---
 import { AuthContext, AuthContextType } from './AuthContext-definition';
@@ -25,6 +27,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     setIsLoading(false);
+    
+    // Set user in Sentry if already logged in
+    if (user) {
+      setSentryUser({
+        id: user.id.toString(),
+        email: user.email,
+        username: user.name,
+      });
+    }
   }, []);
 
   const login = (newToken: string, newUser: User) => {
@@ -33,6 +44,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem("user", JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
+    
+    // Set user in Sentry for error tracking
+    setSentryUser({
+      id: newUser.id.toString(),
+      email: newUser.email,
+      username: newUser.name,
+    });
+    
+    // Track login event in Google Analytics
+    trackLogin('email');
   };
 
   // ✅ --- NEW FUNCTION TO UPDATE USER STATE ---
@@ -54,6 +75,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       localStorage.removeItem("user");
       setToken(null);
       setUser(null);
+      
+      // Clear user in Sentry
+      setSentryUser(null);
+      
       window.location.href = '/login'; 
     }
   };

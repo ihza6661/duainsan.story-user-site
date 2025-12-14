@@ -11,11 +11,27 @@ import MetodePembayaran from "@/features/info/components/MetodePembayaran";
 import BestSeller from "@/features/product/components/categories/BestSeller";
 import { RecommendedProducts } from "@/features/recommendations";
 import OrderSteps from "@/pages/info/CaraMemesan";
+import { OrganizationStructuredData, WebsiteStructuredData } from "@/components/seo/StructuredData";
 // import { InstagramFeed } from "@/components/social/InstagramFeed";
 
 const Home = () => {
   return (
     <div className="min-h-screen w-full overflow-hidden">
+      <OrganizationStructuredData
+        name="Dua Insan Story"
+        url="https://duainsanstory.eproject.tech"
+        logo="https://duainsanstory.eproject.tech/newlogo.png"
+        sameAs={[
+          "https://instagram.com/duainsan.story",
+          "https://facebook.com/duainsan.story",
+        ]}
+      />
+      <WebsiteStructuredData
+        name="Dua Insan Story"
+        url="https://duainsanstory.eproject.tech"
+        description="Platform undangan pernikahan digital dan cetak terbaik di Indonesia. Desain eksklusif, kualitas premium, dan layanan profesional untuk hari spesial Anda."
+        searchUrl="https://duainsanstory.eproject.tech/products?search={search_term_string}"
+      />
       <Hero />
       <InvitationFeatureSection />
       <CategoryGrid />

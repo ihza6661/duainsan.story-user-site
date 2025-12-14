@@ -29,6 +29,7 @@ import ProductDetailSkeleton from "@/features/product/components/ProductDetail/P
 import { ProductReviewsSection } from "@/features/reviews/components/ProductReviewsSection";
 import { RecommendedProducts } from "@/features/recommendations";
 import { MetaTags } from "@/components/seo/MetaTags";
+import { ProductStructuredData, BreadcrumbStructuredData } from "@/components/seo/StructuredData";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -113,6 +114,29 @@ const ProductDetail = () => {
         description={product.description || `Pesan ${product.name} untuk acara spesial Anda. Harga mulai dari Rp ${product.base_price.toLocaleString("id-ID")}`}
         image={product.featured_image?.image_url}
         type="product"
+      />
+      <ProductStructuredData
+        name={product.name}
+        description={product.description || `${product.name} - Undangan pernikahan berkualitas dari Dua Insan Story`}
+        image={product.featured_image?.image_url || ""}
+        sku={product.id.toString()}
+        price={product.base_price}
+        priceCurrency="IDR"
+        availability={product.stock_quantity > 0 ? "InStock" : "OutOfStock"}
+        rating={product.average_rating && product.review_count ? {
+          ratingValue: product.average_rating,
+          reviewCount: product.review_count,
+          bestRating: 5,
+          worstRating: 1,
+        } : undefined}
+        url={window.location.href}
+      />
+      <BreadcrumbStructuredData
+        items={[
+          { name: "Home", url: `${window.location.origin}/` },
+          { name: "Products", url: `${window.location.origin}/products` },
+          { name: product.name, url: window.location.href },
+        ]}
       />
       <main className="flex-grow">
         <ProductHero product={product} onAddToCart={handleAddToCart} />

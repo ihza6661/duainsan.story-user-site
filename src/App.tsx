@@ -14,10 +14,12 @@ import { Toaster as Sonner } from "@/components/ui/feedback/sonner";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/layout/ScrollToTop";
+import SkipLink from "@/components/layout/SkipLink";
 import FloatingIcons from "@/components/ui/WhatsAppFloat";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import PublicOnlyRoute from "@/features/auth/components/PublicOnlyRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import PageViewTracker from "@/components/analytics/PageViewTracker";
 
 // --- Lazy-loaded Pages (Code Splitting) ---
 // Critical pages loaded immediately
@@ -33,6 +35,7 @@ const ProfilePage = lazy(() => import("@/pages/auth/ProfilePage"));
 const Products = lazy(() => import("@/pages/shopping/Products"));
 const ProductDetail = lazy(() => import("@/pages/shopping/ProductDetail"));
 const Cart = lazy(() => import("@/pages/shopping/Cart"));
+const CartRecovery = lazy(() => import("@/pages/shopping/CartRecovery"));
 const CheckoutPage = lazy(() => import("@/pages/shopping/CheckoutPage"));
 const OrderConfirmationPage = lazy(() => import("@/pages/shopping/OrderConfirmationPage"));
 
@@ -76,8 +79,9 @@ const queryClient = new QueryClient();
 const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SkipLink />
       <Header />
-      <main className="flex-grow">
+      <main id="main-content" className="flex-grow" tabIndex={-1}>
         <Outlet />
       </main>
       <Footer />
@@ -100,6 +104,7 @@ const App = () => (
             <BrowserRouter>
               <AuthProvider>
                 <ScrollToTop />
+                <PageViewTracker />
 
                 <Suspense fallback={<PageLoader />}>
                 <Routes>
@@ -167,6 +172,8 @@ const App = () => (
                     <Route path="undangan/:slug" element={<PublicInvitationPage />} />
 
                     <Route path="cart" element={<Cart />} />
+
+                    <Route path="cart/recover/:token" element={<CartRecovery />} />
 
                     <Route path="wishlist/shared/:token" element={<SharedWishlistPage />} />
 

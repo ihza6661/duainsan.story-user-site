@@ -16,9 +16,9 @@ export const InvitationPreview = ({
   invitationId,
   className = "",
 }: InvitationPreviewProps) => {
-  const { data: invitation, isLoading, error } = useQuery({
+  const { data: previewData, isLoading, error } = useQuery({
     queryKey: ["invitation-preview", invitationId],
-    queryFn: () => digitalInvitationService.getInvitationById(invitationId),
+    queryFn: () => digitalInvitationService.getPreviewData(invitationId),
     enabled: !!invitationId,
   });
 
@@ -33,7 +33,7 @@ export const InvitationPreview = ({
     );
   }
 
-  if (error || !invitation) {
+  if (error || !previewData) {
     return (
       <div className={`flex items-center justify-center min-h-[400px] bg-gray-50 rounded-lg ${className}`}>
         <div className="text-center">
@@ -44,13 +44,13 @@ export const InvitationPreview = ({
     );
   }
 
-  // Get customization data
-  const customization = invitation.customization_data || {};
+  // Get customization data from preview response
+  const customization = previewData.customization || {};
   const customFields = customization.custom_fields || {};
   const photos = customization.photo_urls || [];
 
   // Get the template component
-  const templateComponentName = invitation.template?.name || "";
+  const templateComponentName = previewData.template?.template_component || "";
   const TemplateComponent = templateComponentName
     ? getTemplateComponent(templateComponentName)
     : undefined;

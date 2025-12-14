@@ -3,6 +3,7 @@ import apiClient from "@/lib/api";
 export interface InvitationTemplate {
   id: number;
   product_id: number;
+  variant_id: number;
   slug: string;
   name: string;
   description: string;

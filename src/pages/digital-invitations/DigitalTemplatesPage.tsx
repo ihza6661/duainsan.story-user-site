@@ -23,12 +23,12 @@ const DigitalTemplatesPage = () => {
     queryFn: digitalInvitationService.getTemplates,
   });
 
-  const { addItem } = useCart();
+  const { addToCart } = useCart();
 
-  const handleAddToCart = async (productId: number, productName: string) => {
+  const handleAddToCart = async (variantId: number, productName: string) => {
     try {
       // Add digital product to cart
-      await addItem({ product_id: productId, quantity: 1 });
+      await addToCart({ variantId: variantId, quantity: 1 });
 
       toast({
         title: "Ditambahkan ke keranjang",
@@ -80,8 +80,10 @@ const DigitalTemplatesPage = () => {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4">
-            <Sparkles className="h-4 w-4" />
-            <span className="text-sm font-medium">Undangan Digital Modern</span>
+            <Sparkles className="h-4 w-4 text-foreground" />
+            <span className="text-sm font-medium text-foreground">
+              Undangan Digital Modern
+            </span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Template Undangan Digital
@@ -158,7 +160,7 @@ const DigitalTemplatesPage = () => {
 
               <CardContent>
                 <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-2xl font-bold text-primary">
+                  <span className="text-2xl font-bold text-foreground">
                     {formatPrice(template.price)}
                   </span>
                   <span className="text-sm text-muted-foreground line-through">
@@ -181,7 +183,7 @@ const DigitalTemplatesPage = () => {
                 <Button
                   className="flex-1"
                   onClick={() =>
-                    handleAddToCart(template.product_id, template.name)
+                    handleAddToCart(template.variant_id, template.name)
                   }
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />

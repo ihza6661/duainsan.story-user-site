@@ -29,7 +29,11 @@ export function CartItem({ item, onUpdateQuantity, onRemoveItem }: CartItemProps
   }
 
   // 4. Construct the final URL safely.
-  const imageUrl = getImageUrl(imageToDisplay?.image_url);
+  // For cart items, image_url is already a full URL from the API, so we need to check
+  const imageUrlRaw = imageToDisplay?.image_url;
+  const imageUrl = imageUrlRaw && (imageUrlRaw.startsWith('http://') || imageUrlRaw.startsWith('https://'))
+    ? imageUrlRaw  // Already a full URL, use as-is
+    : getImageUrl(imageUrlRaw);  // Relative path, use getImageUrl
 
   const variantDescription = item.customizations?.options?.map(opt => opt.value).join(' / ');
 

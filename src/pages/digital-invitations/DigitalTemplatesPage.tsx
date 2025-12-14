@@ -14,7 +14,6 @@ import { Skeleton } from "@/components/ui/utils/skeleton";
 import { Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { digitalInvitationService } from "@/features/digital-invitations/services/digitalInvitationService";
 import { useCart } from "@/features/cart/hooks/cart/use-cart";
-import { toast } from "@/hooks/ui/use-toast";
 import { getImageUrl } from "@/lib/utils";
 
 const DigitalTemplatesPage = () => {
@@ -26,21 +25,9 @@ const DigitalTemplatesPage = () => {
   const { addToCart } = useCart();
 
   const handleAddToCart = async (variantId: number, productName: string) => {
-    try {
-      // Add digital product to cart
-      await addToCart({ variantId: variantId, quantity: 1 });
-
-      toast({
-        title: "Ditambahkan ke keranjang",
-        description: `${productName} berhasil ditambahkan`,
-      });
-    } catch (error) {
-      toast({
-        title: "Gagal menambahkan",
-        description: "Terjadi kesalahan, silakan coba lagi",
-        variant: "destructive",
-      });
-    }
+    // Add digital product to cart
+    // Note: Toast is handled by CartProvider, no need to show it here
+    addToCart({ variantId: variantId, quantity: 1 });
   };
 
   const formatPrice = (price: number) => {

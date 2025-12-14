@@ -66,6 +66,9 @@ const NotificationsPage = lazy(() => import("@/pages/NotificationsPage"));
 // UGC - lazy loaded
 const MyUGCPage = lazy(() => import("@/pages/MyUGCPage"));
 
+// Addresses - lazy loaded
+const AddressesPage = lazy(() => import("@/pages/addresses/AddressesPage"));
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
@@ -121,6 +124,8 @@ const App = () => (
 
                     <Route element={<ProtectedRoute />}>
                       <Route path="profile" element={<ProfilePage />} />
+
+                      <Route path="profile/addresses" element={<AddressesPage />} />
 
                       <Route path="checkout" element={<CheckoutPage />} />
 

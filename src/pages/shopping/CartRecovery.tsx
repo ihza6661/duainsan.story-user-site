@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/utils/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alerts/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/feedback/alert";
 import apiClient from "@/lib/api";
 import { formatRupiah } from "@/lib/utils";
 

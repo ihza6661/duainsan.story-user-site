@@ -36,6 +36,8 @@ import { Textarea } from "@/components/ui/forms/textarea";
 
 import { useNavigate } from "react-router-dom";
 import { PromoCodeInput } from "@/features/promo/components/PromoCodeInput";
+import { AddressSelector } from "@/features/addresses/components/AddressSelector";
+import type { Address } from "@/features/addresses/types/address.types";
 
 const CheckoutPage = () => {
   const { cart, isLoading } = useCart();
@@ -82,6 +84,9 @@ const CheckoutPage = () => {
   // Promo Code State
   const [promoCode, setPromoCode] = useState<string>("");
   const [discountAmount, setDiscountAmount] = useState<number>(0);
+
+  // Selected Address State
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
   // Check if cart contains only digital products
   const isDigitalOnly = cart?.items.every(item => item.product.product_type === 'digital') ?? false;
@@ -276,17 +281,37 @@ const CheckoutPage = () => {
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
-    const fullAddress = [
-      user?.address,
-      user?.city_name,
-      user?.province_name,
-      user?.postal_code,
-    ]
-      .filter(Boolean)
-      .join(", ");
+    
+    // Use selected saved address if available, otherwise use user profile address
+    let fullAddress: string;
+    let postalCode: string;
+    
+    if (selectedAddress) {
+      fullAddress = [
+        selectedAddress.street,
+        selectedAddress.subdistrict,
+        selectedAddress.city,
+        selectedAddress.state,
+        selectedAddress.postal_code,
+        selectedAddress.country,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      postalCode = selectedAddress.postal_code;
+    } else {
+      fullAddress = [
+        user?.address,
+        user?.city_name,
+        user?.province_name,
+        user?.postal_code,
+      ]
+        .filter(Boolean)
+        .join(", ");
+      postalCode = String(user?.postal_code);
+    }
 
     formData.append("shipping_address", fullAddress);
-    formData.append("postal_code", String(user?.postal_code));
+    formData.append("postal_code", postalCode);
     formData.append("shipping_method", shippingMethod);
     formData.append("shipping_cost", String(shippingCost));
 
@@ -428,33 +453,56 @@ const CheckoutPage = () => {
               <CardHeader>
                 <CardTitle>Alamat Pengiriman</CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Alamat pengiriman dari profil anda
+                  Pilih alamat pengiriman atau gunakan alamat dari profil Anda
                 </p>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Provinsi</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {user?.province_name || ""}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label>Kota/Kabupaten</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {user?.city_name || ""}
-                  </p>
-                </div>
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="shipping_address">Alamat Lengkap</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {user?.address || ""}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label>Kode Pos</Label>
-                  <p className="text-sm text-muted-foreground">
-                    {user?.postal_code || ""}
-                  </p>
+              <CardContent>
+                <AddressSelector
+                  selectedAddressId={selectedAddress?.id || null}
+                  onSelectAddress={setSelectedAddress}
+                />
+                
+                {/* Display selected address or profile address */}
+                <div className="mt-4 p-4 bg-muted/50 rounded-md">
+                  <Label className="text-sm font-semibold mb-2 block">
+                    Alamat yang Akan Digunakan:
+                  </Label>
+                  {selectedAddress ? (
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      {selectedAddress.recipient_name && (
+                        <p className="font-medium text-foreground">
+                          {selectedAddress.recipient_name}
+                          {selectedAddress.recipient_phone && ` - ${selectedAddress.recipient_phone}`}
+                        </p>
+                      )}
+                      <p>
+                        {[
+                          selectedAddress.street,
+                          selectedAddress.subdistrict,
+                          selectedAddress.city,
+                          selectedAddress.state,
+                          selectedAddress.postal_code,
+                          selectedAddress.country,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p className="font-medium text-foreground">{user?.full_name}</p>
+                      <p>
+                        {[
+                          user?.address,
+                          user?.city_name,
+                          user?.province_name,
+                          user?.postal_code,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

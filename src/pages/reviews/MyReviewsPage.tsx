@@ -131,8 +131,6 @@ export function MyReviewsPage() {
   }
 
   return (
-    // <div className="container mt-20 mx-auto px-4 py-8">
-    // <div className="max-w-4xl mx-auto">
     <div className="min-h-screen bg-background py-20 sm:py-28">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8 text-foreground">Ulasan Saya</h1>
@@ -158,7 +156,7 @@ export function MyReviewsPage() {
                   <div key={review.id} className="border rounded-lg p-4">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">
+                        <h3 className="text-sm text-foreground">
                           {review.product.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">

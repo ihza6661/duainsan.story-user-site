@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
-import { Loader2, Edit2Icon, XCircle } from "lucide-react";
+import { Loader2, Edit2Icon, XCircle, MapPin, ChevronRight } from "lucide-react";
 
 import {
   getMyProfile,
@@ -464,6 +464,32 @@ const ProfilePage: FC = () => {
                   </Button>
                 </form>
               </Form>
+            </CardContent>
+          </Card>
+          
+          {/* Saved Addresses Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                Alamat Tersimpan
+              </CardTitle>
+              <CardDescription>
+                Kelola alamat pengiriman Anda untuk checkout lebih cepat
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Simpan beberapa alamat untuk memudahkan proses pemesanan. Pilih alamat yang berbeda saat checkout.
+                </p>
+                <Link to="/profile/addresses">
+                  <Button variant="outline" className="w-full flex items-center justify-between">
+                    <span>Kelola Alamat</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>

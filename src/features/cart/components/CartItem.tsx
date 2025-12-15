@@ -19,8 +19,8 @@ export function CartItem({ item, onUpdateQuantity, onRemoveItem }: CartItemProps
   let imageToDisplay = item.variant?.images?.find(img => img.is_featured);
 
   // 2. If not found, fall back to the main product's featured image.
-  if (!imageToDisplay) {
-    imageToDisplay = { image: item.product.featured_image, is_featured: true };
+  if (!imageToDisplay && item.product.featured_image) {
+    imageToDisplay = item.product.featured_image;
   }
 
   // 3. If still no image, take the VERY FIRST image from the variant's gallery.

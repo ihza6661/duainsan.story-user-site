@@ -37,12 +37,12 @@ const Footer = () => {
               onClick={() => toggleSection("products")}
             >
               Solusi
-              <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2">
-                {openSection === "products" ? "−" : "+"}
+              <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2 inline-block transition-transform duration-300 ease-in-out" style={{ transform: openSection === "products" ? "rotate(45deg)" : "rotate(0deg)" }}>
+                +
               </span>
             </button>
             <ul
-              className={`transition-all ease-in-out duration-1000 overflow-hidden md:block ${
+              className={`transition-all ease-in-out duration-300 overflow-hidden md:block ${
                 openSection === "products"
                   ? "max-h-96"
                   : "max-h-0 md:max-h-full"
@@ -82,8 +82,8 @@ const Footer = () => {
               onClick={() => toggleSection("service")}
             >
               Layanan
-              <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2">
-                {openSection === "service" ? "−" : "+"}
+              <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2 inline-block transition-transform duration-300 ease-in-out" style={{ transform: openSection === "service" ? "rotate(45deg)" : "rotate(0deg)" }}>
+                +
               </span>
             </button>
             <ul
@@ -125,8 +125,8 @@ const Footer = () => {
               onClick={() => toggleSection("info")}
             >
               Informasi
-              <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2">
-                {openSection === "info" ? "−" : "+"}
+              <span className="text-4xl text-muted-foreground font-thin md:hidden ml-2 inline-block transition-transform duration-300 ease-in-out" style={{ transform: openSection === "info" ? "rotate(45deg)" : "rotate(0deg)" }}>
+                +
               </span>
             </button>
             <ul

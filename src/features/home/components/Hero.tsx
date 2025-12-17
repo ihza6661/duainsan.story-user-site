@@ -53,6 +53,7 @@ export const Hero = () => {
     "Create Your Perfect Invitation",
     80,
   );
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center font-serif bg-background overflow-hidden">
@@ -60,7 +61,7 @@ export const Hero = () => {
       <div className="absolute inset-0">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: videoLoaded ? 1 : 0 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
           className="absolute inset-0"
         >
@@ -71,6 +72,7 @@ export const Hero = () => {
             muted
             loop
             playsInline
+            onCanPlay={() => setVideoLoaded(true)}
             className="w-full h-full object-cover brightness-[0.85] contrast-110 saturate-90"
           />
         </motion.div>
@@ -80,6 +82,7 @@ export const Hero = () => {
       </div>
 
       {/* Main Content */}
+      {videoLoaded ? (
       <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full p-20 sm:py-32">
         <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
           {/* Glass Card with Enhanced Content */}
@@ -241,8 +244,19 @@ export const Hero = () => {
           </motion.div>
         </div>
       </div>
+      ) : (
+        // Loading state while video is loading
+        <div className="relative z-20 flex items-center justify-center min-h-screen">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full"
+          />
+        </div>
+      )}
 
       {/* Scroll Indicator */}
+      {videoLoaded && (
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -257,6 +271,7 @@ export const Hero = () => {
         <span className="text-xs uppercase tracking-wider">Scroll</span>
         <ChevronDown className="w-5 h-5" />
       </motion.div>
+      )}
     </section>
   );
 };

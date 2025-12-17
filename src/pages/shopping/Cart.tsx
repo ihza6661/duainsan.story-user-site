@@ -74,10 +74,10 @@ export default function CartPage() {
         >
           {/* Kolom Kiri: Daftar Item */}
 
-          <div className="col-span-1 md:col-span-2 rounded-xl shadow-sm">
-            <Card className="h-full shadow-none bg-background">
+          <div className="col-span-1 md:col-span-2 shadow-sm">
+            <Card className="h-full shadow-none rounded-xl">
               <CardContent className="p-0 sm:p-2 md:p-4">
-                <div className="divide-y divide-border">
+                <div className="divide-solid divide-border">
                   {cart.items.map((item) => (
                     <CartItem
                       key={item.id}

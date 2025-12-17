@@ -90,7 +90,7 @@ export const Hero = () => {
             className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 border border-white/20 ring-1 ring-black/5"
           >
             {/* Main Headline with Typewriter Effect */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4 leading-tight tracking-wide min-h-[1.2em]">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-4 leading-tight tracking-wide min-h-[1.2em]">
               {displayedText}
               {!isComplete && (
                 <motion.span
@@ -106,7 +106,7 @@ export const Hero = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.5, duration: 0.6 }}
-              className="text-base sm:text-lg text-foreground italic mb-8"
+              className="text-base sm:text-lg text-primary italic mb-8"
             >
               Make every event unforgettable — starting with the invitation.
             </motion.p>
@@ -129,12 +129,12 @@ export const Hero = () => {
                     className="text-center"
                   >
                     <div className="flex justify-center mb-2">
-                      <Icon className="w-5 h-5 text-foreground" />
+                      <Icon className="w-5 h-5 text-primary" />
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">
+                    <div className="text-xl sm:text-2xl font-bold text-primary mb-1">
                       {stat.value}
                     </div>
-                    <div className="text-xs text-foreground">{stat.label}</div>
+                    <div className="text-xs text-primary">{stat.label}</div>
                   </motion.div>
                 );
               })}
@@ -152,7 +152,7 @@ export const Hero = () => {
                 href={`https://wa.me/${phoneNumber.replace("+", "")}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center gap-2 border-2 border-foreground text-foreground hover:bg-foreground hover:text-background transition-all px-6 py-3 rounded-full shadow-lg text-sm font-medium relative overflow-hidden"
+                className="group inline-flex items-center gap-2 border-2 border-primary text-secondary-foreground px-6 py-3 rounded-full shadow-lg text-sm font-medium relative overflow-hidden"
               >
                 <motion.div
                   animate={{ y: [0, -2, 0] }}
@@ -233,8 +233,8 @@ export const Hero = () => {
               transition={{ delay: 4, duration: 0.6 }}
               className="mt-6 flex items-center gap-2 text-xs text-muted-foreground"
             >
-              <CheckCircle className="w-4 h-4 text-foreground" />
-              <span className="text-foreground">
+              <CheckCircle className="w-4 h-4 text-primary" />
+              <span className="text-primary font-medium">
                 Free design consultation • Fast delivery • 100% customizable
               </span>
             </motion.div>

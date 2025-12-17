@@ -15,6 +15,7 @@ import {
   ColorTheme,
 } from "@/features/digital-invitations/services/digitalInvitationService";
 import { cn } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/types";
 
 interface ColorThemeSelectorProps {
   invitationId: number;
@@ -53,12 +54,13 @@ export const ColorThemeSelector = ({
       });
       setSelectedTheme(null);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal menerapkan tema",
-        description:
-          error.response?.data?.message ||
-          "Terjadi kesalahan saat menerapkan tema",
+        description: getErrorMessage(
+          error,
+          "Terjadi kesalahan saat menerapkan tema"
+        ),
         variant: "destructive",
       });
     },

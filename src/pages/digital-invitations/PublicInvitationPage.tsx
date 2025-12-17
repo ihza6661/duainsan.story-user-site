@@ -56,14 +56,18 @@ const PublicInvitationPage = () => {
   const photoData = customization.photo_urls || customization.photo_paths || [];
   
   // Extract photos - handle both old format (array of strings) and new format (array of objects)
-  const photos = photoData.map((item: any) => {
+  const photos = photoData.map((item: string | { url?: string; type?: string }) => {
     if (typeof item === 'string') return item;
-    return item.url || item;
+    return item.url || '';
   });
   
   // Extract bride and groom photos by type
-  const bridePhoto = photoData.find((item: any) => item.type === 'bride')?.url || photos[0] || '';
-  const groomPhoto = photoData.find((item: any) => item.type === 'groom')?.url || photos[1] || '';
+  const bridePhoto = photoData.find((item: string | { url?: string; type?: string }) => 
+    typeof item === 'object' && item.type === 'bride'
+  )?.url || photos[0] || '';
+  const groomPhoto = photoData.find((item: string | { url?: string; type?: string }) => 
+    typeof item === 'object' && item.type === 'groom'
+  )?.url || photos[1] || '';
   
   const colorTheme = invitation.colorTheme || null;
 

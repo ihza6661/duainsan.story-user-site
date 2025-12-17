@@ -7,6 +7,7 @@ import { createReview, updateReview } from "@/services/review/reviewService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialogs/dialog";
 import { toast } from "@/hooks/ui/use-toast";
 import { Review } from "@/types/review";
+import { getErrorMessage } from "@/lib/types";
 
 interface ReviewDialogProps {
   open: boolean;
@@ -61,10 +62,10 @@ export function ReviewDialog({
       onSuccess?.();
       onOpenChange(false);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal Mengirim Ulasan",
-        description: error.response?.data?.message || "Terjadi kesalahan saat mengirim ulasan.",
+        description: getErrorMessage(error, "Terjadi kesalahan saat mengirim ulasan."),
         variant: "destructive",
       });
     },
@@ -95,10 +96,10 @@ export function ReviewDialog({
       onSuccess?.();
       onOpenChange(false);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal Memperbarui Ulasan",
-        description: error.response?.data?.message || "Terjadi kesalahan saat memperbarui ulasan.",
+        description: getErrorMessage(error, "Terjadi kesalahan saat memperbarui ulasan."),
         variant: "destructive",
       });
     },

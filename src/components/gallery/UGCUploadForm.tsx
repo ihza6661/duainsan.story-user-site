@@ -15,6 +15,7 @@ import {
 import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
 import ugcService, { type SubmitUGCPayload } from "@/services/api/ugcService";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/types";
 
 interface UGCUploadFormProps {
   open: boolean;
@@ -50,10 +51,11 @@ export function UGCUploadForm({
       onOpenChange(false);
       onSuccess?.();
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message ||
-        "Gagal mengunggah foto. Silakan coba lagi.";
+    onError: (error: unknown) => {
+      const message = getErrorMessage(
+        error,
+        "Gagal mengunggah foto. Silakan coba lagi."
+      );
       toast.error(message);
     },
   });

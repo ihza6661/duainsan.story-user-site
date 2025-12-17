@@ -8,6 +8,7 @@
  */
 
 import ReactGA from "react-ga4";
+import { AnalyticsItem } from "./types";
 
 /**
  * Initialize Google Analytics 4
@@ -187,7 +188,7 @@ export const trackViewCart = (cartValue: number, itemCount: number) => {
 };
 
 // Track when user initiates checkout
-export const trackBeginCheckout = (cartValue: number, items: any[]) => {
+export const trackBeginCheckout = (cartValue: number, items: AnalyticsItem[]) => {
   try {
     ReactGA.event("begin_checkout", {
       currency: "IDR",
@@ -245,7 +246,7 @@ export const trackPurchase = (order: {
   value: number;
   tax?: number;
   shipping?: number;
-  items: any[];
+  items: AnalyticsItem[];
   coupon?: string;
 }) => {
   try {
@@ -283,7 +284,7 @@ export const trackSearch = (searchTerm: string) => {
 // Track when user views product list
 export const trackViewItemList = (
   listName: string,
-  items: any[]
+  items: AnalyticsItem[]
 ) => {
   try {
     ReactGA.event("view_item_list", {
@@ -304,7 +305,7 @@ export const trackViewItemList = (
 // Track when user selects item from list
 export const trackSelectItem = (
   listName: string,
-  item: any,
+  item: AnalyticsItem,
   index: number
 ) => {
   try {

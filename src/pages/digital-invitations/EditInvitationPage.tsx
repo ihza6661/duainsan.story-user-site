@@ -29,6 +29,7 @@ import { toast } from "@/hooks/ui/use-toast";
 import { Badge } from "@/components/ui/utils/badge";
 import { Form } from "@/components/ui/forms/form";
 import { Alert, AlertDescription } from "@/components/ui/feedback/alert";
+import { getErrorMessage } from "@/lib/types";
 import { digitalInvitationService } from "@/features/digital-invitations/services/digitalInvitationService";
 import { DynamicFormGenerator } from "@/features/digital-invitations/components/DynamicFormGenerator";
 import { ExportButtons } from "@/features/digital-invitations/components/export/ExportButtons";
@@ -69,7 +70,7 @@ const EditInvitationPage = () => {
 
   // Update customization mutation
   const updateMutation = useMutation({
-    mutationFn: (data: Record<string, any>) =>
+    mutationFn: (data: Record<string, string | number | boolean>) =>
       digitalInvitationService.updateCustomization(Number(id), {
         custom_fields: data,
       }),
@@ -172,16 +173,16 @@ const EditInvitationPage = () => {
         description: `URL undangan telah diubah dari "${data.old_slug}" menjadi "${data.slug}"`,
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal memperbarui URL",
-        description: error.response?.data?.errors?.slug?.[0] || error.response?.data?.message || "Terjadi kesalahan",
+        description: getErrorMessage(error, "Terjadi kesalahan"),
         variant: "destructive",
       });
     },
   });
 
-  const onSubmit = (data: Record<string, any>) => {
+  const onSubmit = (data: Record<string, string | number | boolean>) => {
     updateMutation.mutate(data);
   };
 

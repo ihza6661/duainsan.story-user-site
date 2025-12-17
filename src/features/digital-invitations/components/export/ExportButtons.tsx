@@ -12,6 +12,7 @@ import {
 import { toast } from "@/hooks/ui/use-toast";
 import { digitalInvitationService } from "../../services/digitalInvitationService";
 import { exportInvitationToImage, ImageFormat } from "@/lib/imageExport";
+import { getErrorMessage } from "@/lib/types";
 import {
   Select,
   SelectContent,
@@ -53,12 +54,13 @@ export const ExportButtons = ({
       });
       setIsExporting(false);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal mengekspor PDF",
-        description:
-          error.response?.data?.message ||
-          "Terjadi kesalahan saat mengekspor PDF",
+        description: getErrorMessage(
+          error,
+          "Terjadi kesalahan saat mengekspor PDF"
+        ),
         variant: "destructive",
       });
       setIsExporting(false);
@@ -74,12 +76,13 @@ export const ExportButtons = ({
         description: "File PDF telah disimpan ke server",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal menyimpan PDF",
-        description:
-          error.response?.data?.message ||
-          "Terjadi kesalahan saat menyimpan PDF",
+        description: getErrorMessage(
+          error,
+          "Terjadi kesalahan saat menyimpan PDF"
+        ),
         variant: "destructive",
       });
     },
@@ -102,10 +105,13 @@ export const ExportButtons = ({
         title: "Gambar berhasil diunduh",
         description: `File ${imageFormat.toUpperCase()} undangan telah diunduh ke perangkat Anda`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Gagal mengekspor gambar",
-        description: error.message || "Terjadi kesalahan saat mengekspor gambar",
+        description: getErrorMessage(
+          error,
+          "Terjadi kesalahan saat mengekspor gambar"
+        ),
         variant: "destructive",
       });
     } finally {

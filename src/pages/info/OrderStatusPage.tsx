@@ -24,6 +24,7 @@ import {
 } from "@/features/order/services/orderService";
 import { Loader2, FileDown, Star, Camera } from "lucide-react";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/types";
 import {
   getOrderStatusInfo,
   getPaymentStatusInfo,
@@ -249,8 +250,8 @@ const OrderStatusPage = () => {
       setOrderToCancel(null);
       invalidateOrderQueries();
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Gagal membatalkan pesanan");
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Gagal membatalkan pesanan"));
     },
   });
 

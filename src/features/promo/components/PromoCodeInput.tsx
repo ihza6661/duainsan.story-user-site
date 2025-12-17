@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/forms/input';
 import { Button } from '@/components/ui/buttons/button';
 import { validatePromoCode, PromoCodeValidationResponse } from '../services/promoCodeService';
 import { cn } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/types';
 
 interface PromoCodeInputProps {
   subtotal: number;
@@ -39,9 +40,11 @@ export const PromoCodeInput: React.FC<PromoCodeInputProps> = ({
         discountAmount: discount_amount,
       });
     },
-    onError: (err: any) => {
-      const errorMessage =
-        err.response?.data?.message || 'Kode promo tidak valid atau sudah tidak berlaku';
+    onError: (err: unknown) => {
+      const errorMessage = getErrorMessage(
+        err,
+        'Kode promo tidak valid atau sudah tidak berlaku'
+      );
       setError(errorMessage);
       setAppliedPromo(null);
     },

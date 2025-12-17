@@ -68,9 +68,9 @@ const MyInvitationsPage = () => {
           title: "Berhasil dibagikan",
           description: "Link undangan telah dibagikan",
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Only show error if it's NOT user cancellation
-        if (error.name !== 'AbortError') {
+        if (error instanceof Error && error.name !== 'AbortError') {
           toast({
             title: "Gagal membagikan",
             description: "Terjadi kesalahan saat membagikan link",

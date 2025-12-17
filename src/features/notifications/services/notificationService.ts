@@ -6,7 +6,7 @@ export interface Notification {
   type: 'order_status' | 'design_proof' | 'payment' | 'cancellation' | 'digital_invitation_ready';
   title: string;
   message: string;
-  data: Record<string, any> | null;
+  data: Record<string, string | number | boolean | null> | null;
   is_read: boolean;
   read_at: string | null;
   created_at: string;

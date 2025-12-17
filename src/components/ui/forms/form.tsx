@@ -124,7 +124,7 @@ const FormMessage = React.forwardRef<
 FormMessage.displayName = "FormMessage"
 
 export {
-  useFormContext,
+  useFormContext, // eslint-disable-line react-refresh/only-export-components
   Form,
   FormItem,
   FormLabel,

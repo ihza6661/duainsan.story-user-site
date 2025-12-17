@@ -15,7 +15,7 @@ import { captureError, startSpan, addBreadcrumb } from "./sentry";
 /**
  * Use Sentry.captureException() in try-catch blocks to log errors
  */
-export async function processCheckoutExample(checkoutData: any) {
+export async function processCheckoutExample(checkoutData: Record<string, unknown>) {
   try {
     const response = await fetch('/api/checkout', {
       method: 'POST',
@@ -368,7 +368,7 @@ export function captureAPIErrorExample(error: Error, endpoint: string, method: s
 /**
  * Capture error with context for form validation failures
  */
-export function captureFormErrorExample(error: Error, formData: any) {
+export function captureFormErrorExample(error: Error, formData: Record<string, unknown>) {
   captureError(error, {
     form: {
       form_name: "checkout_form",
@@ -381,7 +381,7 @@ export function captureFormErrorExample(error: Error, formData: any) {
 /**
  * Capture error with context for payment failures
  */
-export function capturePaymentErrorExample(error: Error, paymentData: any) {
+export function capturePaymentErrorExample(error: Error, paymentData: Record<string, unknown>) {
   captureError(error, {
     payment: {
       order_id: paymentData.order_id,

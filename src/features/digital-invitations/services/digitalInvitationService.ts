@@ -69,7 +69,7 @@ export interface DigitalInvitation {
     venue_map_url?: string;
     additional_info?: string;
     photo_urls?: Array<{ url: string; type?: 'bride' | 'groom' | null }>;
-    custom_fields?: Record<string, any>;
+    custom_fields?: Record<string, string | number | boolean>;
     has_photos?: boolean;
   } | null;
   created_at: string;
@@ -86,7 +86,7 @@ export interface CustomizationData {
   venue_map_url?: string;
   additional_info?: string;
   photo_paths?: string[];
-  custom_fields?: Record<string, any>;
+  custom_fields?: Record<string, string | number | boolean>;
 }
 
 export interface ColorTheme {

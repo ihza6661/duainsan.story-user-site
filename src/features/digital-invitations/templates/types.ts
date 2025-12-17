@@ -62,8 +62,8 @@ export interface InvitationTemplateProps {
   // Color theme (applied via CSS variables)
   colorTheme?: ColorThemeData | null;
   
-  // Allow any additional custom fields
-  [key: string]: any;
+  // Allow any additional custom fields (string, number, or boolean values)
+  [key: string]: string | number | boolean | string[] | ColorThemeData | null | undefined;
 }
 
 /**

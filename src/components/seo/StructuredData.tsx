@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet-async";
  */
 
 interface StructuredDataProps {
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export const StructuredData = ({ data }: StructuredDataProps) => {

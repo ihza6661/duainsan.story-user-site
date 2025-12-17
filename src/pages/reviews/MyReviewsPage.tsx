@@ -29,6 +29,7 @@ import {
 import { toast } from "@/hooks/ui/use-toast";
 import { ReviewDialog } from "@/features/reviews/components/ReviewDialog";
 import { getImageUrl } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -83,12 +84,13 @@ export function MyReviewsPage() {
       setDeleteDialogOpen(false);
       setReviewToDelete(null);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Gagal Menghapus Ulasan",
-        description:
-          error.response?.data?.message ||
-          "Terjadi kesalahan saat menghapus ulasan.",
+        description: getErrorMessage(
+          error,
+          "Terjadi kesalahan saat menghapus ulasan."
+        ),
         variant: "destructive",
       });
     },

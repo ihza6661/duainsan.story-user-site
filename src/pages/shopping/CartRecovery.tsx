@@ -12,6 +12,8 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/feedback/alert";
 import apiClient from "@/lib/api";
 import { formatRupiah } from "@/lib/utils";
+import { useCallback } from "react";
+import { isApiError } from "@/lib/types";
 
 interface CartItem {
   product_name: string;
@@ -52,25 +54,32 @@ export default function CartRecovery() {
     }
 
     fetchCartData();
-  }, [token, navigate]);
+  }, [token, navigate, fetchCartData]);
 
-  const fetchCartData = async () => {
+  const fetchCartData = useCallback(async () => {
     try {
       setLoading(true);
       const response = await apiClient.get(`/v1/cart/recover/${token}`);
       setCartData(response.data.data);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch abandoned cart:", err);
-      setError({
-        error: err.response?.data?.error || "invalid_token",
-        message: err.response?.data?.message || "Token pemulihan tidak valid.",
-        recovered_at: err.response?.data?.recovered_at,
-      });
+      if (isApiError(err)) {
+        setError({
+          error: err.response?.data?.error || "invalid_token",
+          message: err.response?.data?.message || "Token pemulihan tidak valid.",
+          recovered_at: err.response?.data?.recovered_at,
+        });
+      } else {
+        setError({
+          error: "invalid_token",
+          message: "Token pemulihan tidak valid.",
+        });
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   const handleRecover = async () => {
     try {
@@ -88,12 +97,19 @@ export default function CartRecovery() {
           } 
         });
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to recover cart:", err);
-      setError({
-        error: err.response?.data?.error || "recovery_failed",
-        message: err.response?.data?.message || "Gagal memulihkan keranjang. Silakan coba lagi.",
-      });
+      if (isApiError(err)) {
+        setError({
+          error: err.response?.data?.error || "recovery_failed",
+          message: err.response?.data?.message || "Gagal memulihkan keranjang. Silakan coba lagi.",
+        });
+      } else {
+        setError({
+          error: "recovery_failed",
+          message: "Gagal memulihkan keranjang. Silakan coba lagi.",
+        });
+      }
     } finally {
       setRecovering(false);
     }

@@ -168,7 +168,7 @@ export const initSentry = () => {
  *   throw error;
  * }
  */
-export const captureError = (error: Error, context?: Record<string, any>) => {
+export const captureError = (error: Error, context?: Record<string, unknown>) => {
   if (context) {
     Sentry.withScope((scope) => {
       Object.keys(context).forEach((key) => {
@@ -202,7 +202,7 @@ export const addBreadcrumb = (breadcrumb: {
   message: string;
   category?: string;
   level?: Sentry.SeverityLevel;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }) => {
   Sentry.addBreadcrumb(breadcrumb);
 };

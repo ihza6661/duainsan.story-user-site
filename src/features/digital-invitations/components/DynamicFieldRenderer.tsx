@@ -29,7 +29,7 @@ export function DynamicFieldRenderer<T extends FieldValues>({
 }: DynamicFieldRendererProps<T>) {
   const fieldName = field.field_key as Path<T>;
 
-  const renderInput = (value: any, onChange?: (value: string) => void) => {
+  const renderInput = (value: string | number | boolean, onChange?: (value: string) => void) => {
     switch (field.field_type) {
       case 'textarea':
         return (
@@ -145,7 +145,7 @@ export function DynamicFieldRenderer<T extends FieldValues>({
     <FormField
       control={control}
       name={fieldName}
-      defaultValue={field.default_value as any}
+      defaultValue={field.default_value as string | undefined}
       rules={{
         required: field.validation_rules.required 
           ? `${field.field_label} wajib diisi`
@@ -186,7 +186,7 @@ export function DynamicFieldRenderer<T extends FieldValues>({
               React.cloneElement(renderInput(formField.value), {
                 ...formField,
                 value: formField.value || '',
-                onChange: (e: any) => {
+                onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
                   // Handle different input types
                   if (field.field_type === 'image') {
                     const files = e.target.files;

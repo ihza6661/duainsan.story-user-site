@@ -104,7 +104,7 @@ export function BackgroundImage({
   webpSrc?: string;
   children?: React.ReactNode;
   className?: string;
-  [key: string]: any;
+  style?: React.CSSProperties;
 }) {
   const webpSource = webpSrc || src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
   

@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/dialogs/alert-dialog";
 import { getImageUrl } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/types";
 
 const MyUGCPage = () => {
   const queryClient = useQueryClient();
@@ -44,9 +45,8 @@ const MyUGCPage = () => {
       setDeleteDialogOpen(false);
       setItemToDelete(null);
     },
-    onError: (error: any) => {
-      const message =
-        error.response?.data?.message || "Gagal menghapus foto";
+    onError: (error: unknown) => {
+      const message = getErrorMessage(error, "Gagal menghapus foto");
       toast.error(message);
     },
   });

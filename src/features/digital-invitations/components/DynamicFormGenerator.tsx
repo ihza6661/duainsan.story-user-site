@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 interface DynamicFormGeneratorProps {
   fields: TemplateField[];
-  form: UseFormReturn<any>;
+  form: UseFormReturn<Record<string, string | number | boolean>>;
 }
 
 // Category labels and icons

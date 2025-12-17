@@ -66,7 +66,7 @@ export const Hero = () => {
         >
           <video
             src={heroVideo.src}
-            poster={heroVideo.poster}
+            // poster={heroVideo.poster}
             autoPlay
             muted
             loop
@@ -80,7 +80,7 @@ export const Hero = () => {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full">
+      <div className="relative z-20 max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full p-20 sm:py-32">
         <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
           {/* Glass Card with Enhanced Content */}
           <motion.div

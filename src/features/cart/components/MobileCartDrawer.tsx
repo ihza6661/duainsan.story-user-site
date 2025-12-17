@@ -103,18 +103,18 @@ export function MobileCartDrawer({
                 (img) => img.is_featured,
               );
 
-              if (!imageToDisplay) {
-                imageToDisplay = {
-                  image: item.product.featured_image,
-                  is_featured: true,
-                };
+              if (!imageToDisplay && item.product.featured_image) {
+                imageToDisplay = item.product.featured_image;
               }
 
               if (!imageToDisplay && item.variant?.images?.length > 0) {
                 imageToDisplay = item.variant.images[0];
               }
 
-              const imageUrl = getImageUrl(imageToDisplay?.image_url);
+              const imageUrlRaw = imageToDisplay?.image_url;
+              const imageUrl = imageUrlRaw && (imageUrlRaw.startsWith('http://') || imageUrlRaw.startsWith('https://'))
+                ? imageUrlRaw
+                : getImageUrl(imageUrlRaw);
               const variantDescription = item.customizations?.options
                 ?.map((opt) => opt.value)
                 .join(" / ");

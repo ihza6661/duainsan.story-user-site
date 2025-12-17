@@ -197,7 +197,7 @@ export const Hero = () => {
                 href="/digital-templates"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="group inline-flex items-center gap-2 bg-accent text-accent-foreground hover:bg-accent/90 transition-all px-6 py-3 rounded-full shadow-lg text-sm font-medium relative overflow-hidden"
+                className="group inline-flex items-center gap-2 bg-accent text-primary hover:bg-accent/90 transition-all px-6 py-3 rounded-full shadow-lg text-sm font-medium relative overflow-hidden"
               >
                 <svg
                   className="w-5 h-5"
